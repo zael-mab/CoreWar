@@ -27,9 +27,11 @@ int main(int ac, char **av)
 		char 	*line;
 		int 	fd;
 		t_head 	head;
+		t_head	labels;
 		t_asmdata	sdata;
 
 		ft_bzero (&head, sizeof (t_head));
+		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
 		init_head (&head);
 
@@ -51,24 +53,28 @@ int main(int ac, char **av)
 		while (get_next_line(fd, &line) > 0)
 		{
 			// line = ft_strtrim(line);
-			if (sdata.name && sdata.comment)
-				line = avoid_comment((line));		// avoid comment 
+			if (sdata.n == -1 && sdata.c == -1)
+				line = avoid_comment((line));							// avoid comment 
 
-			// if (!sdata.name || !sdata.comment)
-			check_champion(line, &sdata);			// check and save the name & the comment
+			if (ft_strlen(line) && sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
+				{
+					t_node *p;
+					p = insert_node (&head, ft_strtrim(line), -1);					//	insert eash line 
+					save_labels(&labels, ft_strtrim(line), p->position);
+				}
 
-			if (sdata.name && sdata.comment && !sdata.p_ex_code)
-				sdata.p_ex_code = head.l_size + 1;
+			check_champion(line, &sdata);								// check and save the name & the comment
 
-			if (ft_strlen(line) && sdata.name)					//	avoid empty lines
-				insert_node (&head, ft_strtrim(line));				//	insert eash line 
+			// ft_printf ("%d, %d\n", sdata.n, sdata.c);
+			// if (sdata.n == -1 && sdata.c == -1 && !sdata.p_ex_code)
+				// sdata.p_ex_code = head.l_size + 1;
 
-			// ft_printf ("%s\n", line);
+
 
 			free (line);
 		}
 
-		ft_printf ("\t[%s] | [%s]\n\t %d\n", sdata.name, sdata.comment, sdata.error);
+		// ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
 		display_nodes (&head);
 		
 		close (fd);

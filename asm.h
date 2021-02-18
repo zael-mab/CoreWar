@@ -26,6 +26,7 @@ typedef struct      s_node
 {
     void            *data;
     size_t          position;
+    int             operation_num;
     struct s_node   *next;
 }                   t_node;
 
@@ -47,7 +48,7 @@ typedef struct      s_asmdata
     int             p_ex_code;
 }                   t_asmdata;
 
-boolean     insert_node(t_head *head, void    *data);
+t_node      *insert_node(t_head *head, void    *data, int pos);
 void        display_nodes(t_head *first);
 void        init_head(t_head *head);
 char 	    *avoid_comment (char *line);
@@ -55,6 +56,7 @@ boolean     check_champion (char *line, t_asmdata *sdata);
 boolean     join (char *line, t_asmdata *sdata, char **cmd, int v);
 t_node      *search(t_node *l, void* x);
 
+t_node      *save_labels(t_head *labels, char *lin, int pos);
 
 
 # endif

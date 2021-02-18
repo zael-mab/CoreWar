@@ -21,13 +21,14 @@ void    init_head(t_head *head)
 }
 
 
-boolean     insert_node(t_head *head, void    *data)
+t_node     *insert_node(t_head *head, void    *data, int pos)
 {
     t_node  *new_node;
     t_node  *p;
 
     new_node = ft_memalloc (sizeof (t_node));
-    new_node->data = ft_strdup(data);
+    new_node->data = data;
+    new_node->operation_num = pos > -1 ? pos : -1;
     new_node->next = NULL;
     if (head->first == NULL)
     {
@@ -43,8 +44,8 @@ boolean     insert_node(t_head *head, void    *data)
         new_node->position = head->l_size++;
     }
     if (new_node->position + 1 == head->l_size)
-        return (1);
-    return (0);
+        return (new_node);
+    return (NULL);
 }
 
 
@@ -67,7 +68,48 @@ void    display_nodes(t_head *head)
     p = head->first;
     while (p != NULL)
     {
-        ft_printf ("%s\n", p->data);
+        ft_printf ("[%d]_%s\n", p->position, p->data);
         p = p->next;
     }
+}
+
+
+t_node    *save_labels(t_head *labels, char *line, int pos)
+{
+    int j;
+    int i;
+    char *tmp;
+    t_node *p;
+
+    j = -1;
+    while (line[++j])
+        if (line[j] == LABEL_CHAR)
+            break ;
+    if (ft_strlen(line) > j)
+    {
+        tmp = ft_strncpy(ft_strnew(j), line, j);
+        i = -1;
+        while (++i <= j)
+        {
+            // ft_printf ("'%c'", tmp[i]);
+            if (ft_isdigit(tmp[i]) ||  tmp[i] == 95 || (tmp[i] >= 97 && tmp[i] <= 122));
+            else
+                break ;
+        }
+        if (j == i)
+        {
+            if (ft_strlen(line) > j + 1){
+                p = insert_node(labels, tmp, pos);
+                ft_printf ("%s ---->%d\n", p->data, p->operation_num + 1);
+                }
+            else{
+                p = insert_node(labels, tmp, pos + 1);
+                ft_printf ("%s ====>%d\n", p->data, p->operation_num);
+            }
+            free (tmp);
+            return (p);
+        }
+        free (tmp);
+    }
+    return (NULL);
 }
