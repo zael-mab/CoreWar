@@ -30,10 +30,11 @@ int main(int ac, char **av)
 		t_head	labels;
 		t_asmdata	sdata;
 
-		ft_bzero (&head, sizeof (t_head));
+		ft_bzero (&head, sizeof (t_head)); 
 		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
 		init_head (&head);
+		init_head (&labels);
 
 		// /////////////////////////////////////
 		// int 	i;			// maybe I should use it !?!?! 
@@ -58,9 +59,9 @@ int main(int ac, char **av)
 
 			if (ft_strlen(line) && sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
 				{
-					t_node *p;
-					p = insert_node (&head, ft_strtrim(line), -1);					//	insert eash line 
-					save_labels(&labels, ft_strtrim(line), p->position);
+					// t_node *p = NULL;
+					// insert_node (&head, ft_strtrim(line), -1);					//	insert eash line 
+					save_labels(&labels, ft_strtrim(line), &head);
 				}
 
 			check_champion(line, &sdata);								// check and save the name & the comment
@@ -76,7 +77,6 @@ int main(int ac, char **av)
 
 		// ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
 		display_nodes (&head);
-		
 		close (fd);
 	}
 	

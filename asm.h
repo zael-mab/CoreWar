@@ -56,7 +56,7 @@ boolean     check_champion (char *line, t_asmdata *sdata);
 boolean     join (char *line, t_asmdata *sdata, char **cmd, int v);
 t_node      *search(t_node *l, void* x);
 
-t_node      *save_labels(t_head *labels, char *lin, int pos);
+t_node      *save_labels(t_head *labels, char *lin, t_head *head);
 
 
 # endif
