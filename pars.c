@@ -111,3 +111,57 @@ boolean         join (char *line, t_asmdata *sdata, char **cmd, int v)
     free (tmp);
     return (1);
 }
+
+//////////////////////////////////////////////////
+
+void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata)
+{
+    t_node *instruct;
+    t_node *lbl;
+    char *tmp;
+    int i;
+    int j;
+
+    instruct = NULL;
+    lbl = NULL;
+    instruct = head->first;
+    sdata->p_ex_code = -1;
+    while (instruct != NULL)
+    {
+        // ft_printf ("instructions.%d= %s\n", instruct->position, instruct->data);
+        i = -1;
+        while (instruct->data[++i])
+            if (instruct->data[i] < 'a' || instruct->data[i] > 'z')
+                break;
+
+        ////////
+        j = -1;
+        while (++j < 16)
+        {
+            tmp = ft_strnew(i);
+            if (!ft_strcmp(ft_strncpy(tmp, instruct->data, i), sdata->op_tabe[j]))
+            {
+                ft_printf ("mutch = %d | in the instruction [%s]==[%s]\n", i, sdata->op_tabe[j], instruct->data);
+                instruct->op_code = j;
+            }
+            
+            
+            
+
+
+            /////////
+            lbl = labels->first;
+            while (lbl != NULL)
+            {
+                lbl = lbl->next;
+            }
+            free (tmp);
+        }
+
+        ////////
+        
+        instruct = instruct->next;
+    }
+}
+
+

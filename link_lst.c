@@ -68,7 +68,10 @@ void    display_nodes(t_head *head)
     p = head->first;
     while (p != NULL)
     {
-        ft_printf ("[%d]_%s\n", p->position, p->data);
+        ft_printf ("[%d]_%s ", p->position, p->data);
+        if (p->operation_num > -1)
+            ft_printf ("goto->%d", p->operation_num);
+        ft_putchar ('\n');
         p = p->next;
     }
 }
@@ -79,9 +82,10 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
     int j;
     int i;
     char *tmp;
-    static int tmp_post = 0;
-    t_node p;
-    t_node t;
+    static int tmp_post;
+    t_node p;                       //[  marker: 
+    t_node t;                       //  # End of file  ]   if a label didn't followed by '\n' at the end of file it's an error fix it .
+
 
     ft_bzero(&p, sizeof (t_node));
     ft_bzero(&t, sizeof (t_node));
@@ -89,41 +93,40 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
     while (line[++j])
         if (line[j] == LABEL_CHAR)
             break ;
-///////////
+
+
+/////////////
+
+
+
+/////////////
     if (ft_strlen(line) > j)
     {
         tmp = ft_strncpy(ft_strnew(j), line, j);
         i = -1;
         while (++i <= j)
-        {
             if (ft_isdigit(tmp[i]) ||  tmp[i] == 95 || (tmp[i] >= 97 && tmp[i] <= 122));
             else
                 break ;
-        }
+
 ///////////
         if (j == i)
         {
-            // t_node *p = NULL;
-            if (ft_strlen(line) > j + 1){
+            if (ft_strlen(line) > j + 1)
+            {
                 p = *insert_node (head, ft_strtrim (j + 1 +line), -1);					//	insert eash line 
-                t = *insert_node(labels, tmp, p.position);          //	insert exutable code 
+                t = *insert_node(labels, tmp, p.position);
             }
             else
                 t = *insert_node(labels, tmp, tmp_post);
-            free (tmp);
             return (NULL);
         }
         free (tmp);
     }
-    p = *insert_node (head, line, -1);
-    tmp_post = p.position + 1;					//	insert exutable code  
+    p = *insert_node (head, line, -1); 
+    tmp_post = p.position + 1;	 
     return (NULL);
 }
-
-// t_op      *creat_op_table(t_op_head *op_head, void  *data)
-// {
-
-// }
 
 void    operations(char **operat, int i);
 
@@ -142,8 +145,6 @@ void        creat_op_table(t_asmdata *sdata)
         ft_strcpy(sdata->op_tabe[i],operat);
         free (operat);
     }
-    while (--i)
-        ft_printf ("[%d]%s\n", i + 1, sdata->op_tabe[i]);
 }
 
 void    operations(char **operat, int i)
@@ -161,7 +162,7 @@ void    operations(char **operat, int i)
     *operat = (i == 10 ? ft_strdup("sti") : *operat);
     *operat = (i == 11 ? ft_strdup("fork") : *operat);
     *operat = (i == 12 ? ft_strdup("lld") : *operat);
-    *operat = (  i == 13 ? ft_strdup("lldi") : *operat);
+    *operat = (i == 13 ? ft_strdup("lldi") : *operat);
     *operat = (i == 14 ? ft_strdup("lfork") : *operat);
     *operat = (i == 15 ? ft_strdup("aff") : *operat);
 }

@@ -24,9 +24,14 @@ typedef enum {F , T}    boolean;
 
 typedef struct      s_node
 {
-    void            *data;
+    char            *data;
     size_t          position;
-    int             operation_num;
+    int             operation_num;          //labels
+    int             op_code;
+    int             op_arg1;
+    int             op_arg2;
+    int             op_arg3;
+    char            *op_args[3];
     struct s_node   *next;
 }                   t_node;
 
@@ -46,6 +51,7 @@ typedef struct      s_asmdata
     int             e;
     int             error;
     int             p_ex_code;
+    char            **op_tabe;
 }                   t_asmdata;
 
 t_node      *insert_node(t_head *head, void    *data, int pos);
@@ -57,6 +63,8 @@ boolean     join (char *line, t_asmdata *sdata, char **cmd, int v);
 t_node      *search(t_node *l, void* x);
 
 t_node      *save_labels(t_head *labels, char *lin, t_head *head);
+void        creat_op_table(t_asmdata *sdata);
+void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata);
 
 
 # endif

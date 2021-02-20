@@ -24,10 +24,12 @@ int main(int ac, char **av)
 {
 	if (ac == 2)
 	{
-		char 	*line;
-		int 	fd;
-		t_head 	head;
-		t_head	labels;
+		char 		*line;
+		int 		fd;
+		int 		ln;
+		// char 		*tmp;
+		t_head 		head;
+		t_head		labels;
 		t_asmdata	sdata;
 
 		ft_bzero (&head, sizeof (t_head)); 
@@ -36,47 +38,43 @@ int main(int ac, char **av)
 		init_head (&head);
 		init_head (&labels);
 
-		// /////////////////////////////////////
-		// int 	i;			// maybe I should use it !?!?! 
-		// i = -1;
-		// while (++i <= ft_strlen(av[1]))
-		// {
-		// 	if (av[1][i] == '.')
-		// 		if (av[1][i + 1] != 's' || ft_strlen(av[1]) != i + 2)
-		// 		{
-		// 			ft_printf ("Error\n");
-		// 			return (0);
-		// 		}
-		// }/////////////////////////////////
-
+// /////////////////////////////////////
 		fd = open(av[1], O_RDONLY);
 		sdata.error = -1;
+		creat_op_table(&sdata);
+		ln = 0;
 		while (get_next_line(fd, &line) > 0)
 		{
-			// line = ft_strtrim(line);
-			if (sdata.n == -1 && sdata.c == -1)
-				line = avoid_comment((line));							// avoid comment 
+			// tmp = ft_strtrim(line);
+			// free (line);
+			// line = tmp;
 
-			if (ft_strlen(line) && sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
-				{
-					// t_node *p = NULL;
-					// insert_node (&head, ft_strtrim(line), -1);					//	insert eash line 
+			if (sdata.n == -1 && sdata.c == -1)
+				line = avoid_comment(line);							// avoid comment 
+			
+			// ft_printf("-------%s\n", line);
+
+			if (sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
 					save_labels(&labels, ft_strtrim(line), &head);
-				}
 
 			check_champion(line, &sdata);								// check and save the name & the comment
 
-			// ft_printf ("%d, %d\n", sdata.n, sdata.c);
-			// if (sdata.n == -1 && sdata.c == -1 && !sdata.p_ex_code)
-				// sdata.p_ex_code = head.l_size + 1;
-
-
-
 			free (line);
+			ln++;									// I'll need ya later.
 		}
 
+///////////////***********///////////
 		// ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
-		display_nodes (&head);
+		// ft_printf ("\t----------\n");
+		// display_nodes (&labels);
+		// ft_printf ("\t----------\n");
+		// display_nodes (&head);
+		ft_printf ("\t-----*----\n\n");
+
+/////////////***********///////////
+
+		pars_instructions(&head, &labels, &sdata);
+
 		close (fd);
 	}
 	
@@ -104,4 +102,3 @@ char 	*avoid_comment (char *line)				// deal with the comments  !!!
 	}
 	return (line);
 }
-
