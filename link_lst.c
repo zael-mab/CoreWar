@@ -106,20 +106,62 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
             // t_node *p = NULL;
             if (ft_strlen(line) > j + 1){
                 p = *insert_node (head, ft_strtrim (j + 1 +line), -1);					//	insert eash line 
-                t = *insert_node(labels, tmp, p.position);
-                ft_printf ("%s ---->%d\n", t.data, t.operation_num);
+                t = *insert_node(labels, tmp, p.position);          //	insert exutable code 
             }
-            else{
+            else
                 t = *insert_node(labels, tmp, tmp_post);
-                ft_printf ("%s ====>%d\n", t.data, t.operation_num);
-            }
-            // ft_memdel((void *)(makep));
             free (tmp);
             return (NULL);
         }
         free (tmp);
     }
     p = *insert_node (head, line, -1);
-    tmp_post = p.position + 1;					//	insert eash line 
+    tmp_post = p.position + 1;					//	insert exutable code  
     return (NULL);
+}
+
+// t_op      *creat_op_table(t_op_head *op_head, void  *data)
+// {
+
+// }
+
+void    operations(char **operat, int i);
+
+void        creat_op_table(t_asmdata *sdata)
+{
+    int i;
+    char *operat;
+
+    i = -1;
+    operat =ft_strnew(5);
+    sdata->op_tabe = (char **)malloc (16 * sizeof (char *));
+    while (++i < 16)
+    {
+        operations(&operat, i);
+        sdata->op_tabe[i] = (char *)malloc (ft_strlen(operat) * sizeof (char));
+        ft_strcpy(sdata->op_tabe[i],operat);
+        free (operat);
+    }
+    while (--i)
+        ft_printf ("[%d]%s\n", i + 1, sdata->op_tabe[i]);
+}
+
+void    operations(char **operat, int i)
+{
+    *operat = (i == 0 ? ft_strdup("live") : *operat);
+    *operat = (i == 1 ? ft_strdup("ld") : *operat);
+    *operat = i == 2 ? ft_strdup("st") : *operat;
+    *operat = (i == 3 ? ft_strdup("add") : *operat);
+    *operat = (i == 4 ? ft_strdup("sub") : *operat);
+    *operat = (i == 5 ? ft_strdup("and") : *operat);
+    *operat = (i == 6 ? ft_strdup("or") : *operat);
+    *operat = (i == 7 ? ft_strdup("xor") : *operat);
+    *operat = (i == 8 ? ft_strdup("zjmp") : *operat);
+    *operat = (i == 9 ? ft_strdup("ldi") : *operat);
+    *operat = (i == 10 ? ft_strdup("sti") : *operat);
+    *operat = (i == 11 ? ft_strdup("fork") : *operat);
+    *operat = (i == 12 ? ft_strdup("lld") : *operat);
+    *operat = (  i == 13 ? ft_strdup("lldi") : *operat);
+    *operat = (i == 14 ? ft_strdup("lfork") : *operat);
+    *operat = (i == 15 ? ft_strdup("aff") : *operat);
 }
