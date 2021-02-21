@@ -14,7 +14,9 @@ NAME = asm
 
 SRC = 	main.c\
 		link_lst.c\
-		pars.c
+		pars.c\
+		set_op.c\
+		args.c
 OBJ = $(SRC:.c=.o)
 
 HEADER = asm.h

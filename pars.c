@@ -58,7 +58,7 @@ boolean     check_champion (char *line, t_asmdata *sdata)
         sdata->s = 0;
     }
 
-//////////
+/////////////////////
     j = -1;
     while (line[++j])
     {
@@ -68,7 +68,7 @@ boolean     check_champion (char *line, t_asmdata *sdata)
             sdata->s = j + 1;
     }
 
-//////////
+/////////////////////
     if (sdata->n == 1 && sdata->s && sdata->e && sdata->error == -1)
         if ((sdata->name = ft_strscpy(ft_strnew(PROG_NAME_LENGTH), line, sdata->s, sdata->e)))
             sdata->n = -1;
@@ -77,7 +77,7 @@ boolean     check_champion (char *line, t_asmdata *sdata)
         if((sdata->comment = ft_strscpy(ft_strnew(COMMENT_LENGTH), line, sdata->s, sdata->e)))
             sdata->c = -1;
 
-/////////   
+/////////////////////
     if (sdata->s && (sdata->c == 1 || sdata->n == 1))
     {
 
@@ -114,16 +114,18 @@ boolean         join (char *line, t_asmdata *sdata, char **cmd, int v)
 
 //////////////////////////////////////////////////
 
-void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata)
+void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata, t_hop *op)
 {
-    t_node *instruct;
-    t_node *lbl;
+    t_node  *instruct;
+    t_node  *lbl;
+    t_op    *op_list;
     char *tmp;
     int i;
-    int j;
+    // int j;
 
     instruct = NULL;
     lbl = NULL;
+    op_list = NULL;
     instruct = head->first;
     sdata->p_ex_code = -1;
     while (instruct != NULL)
@@ -135,33 +137,47 @@ void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata)
                 break;
 
         ////////
-        j = -1;
-        while (++j < 16)
+        if (i > 0)
         {
-            tmp = ft_strnew(i);
-            if (!ft_strcmp(ft_strncpy(tmp, instruct->data, i), sdata->op_tabe[j]))
-            {
-                ft_printf ("mutch = %d | in the instruction [%s]==[%s]\n", i, sdata->op_tabe[j], instruct->data);
-                instruct->op_code = j;
-            }
-            
-            
+            tmp = ft_strncpy(ft_strnew(5), instruct->data, i);
+            op_list = op_search(op->fopr, tmp);
+            ft_printf ("list[%s] ===>   tmp[%s]\n", op_list->name, instruct->data);
+
+            pars_args(instruct->data + i, op_list);
             
 
-
-            /////////
-            lbl = labels->first;
-            while (lbl != NULL)
-            {
-                lbl = lbl->next;
-            }
             free (tmp);
         }
+            
 
-        ////////
+        // op_list = op->fopr;
+        // while (op_list)
+        // {
+        //     if ( i > 0 && !ft_strcmp(op_list->name, tmp))
+        //     {
+        //         ft_printf("[%d]_%s |\t %s \n", op_list->code, instruct->data, op_list->name);
+        //         // pars_args(instruct->data + i, op_list);
+
+
+        //         // instruct->op_code = op_list->code;
+        //         // instruct->op_arg1 = op_list->arg1;
+        //         // instruct->op_arg2 = op_list->arg2;
+        //         // instruct->op_arg3 = op_list->arg3;
+        //     }
+        //     op_list = op_list->nop;
+
+
+
+            lbl = labels->first;
+            while (lbl)
+                lbl = lbl->next;        
+
         
-        instruct = instruct->next;
-    }
+        // }
+            ////////
+            instruct = instruct->next;
+        }
+    // }
 }
 
 

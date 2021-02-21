@@ -29,19 +29,22 @@ int main(int ac, char **av)
 		int 		ln;
 		// char 		*tmp;
 		t_head 		head;
+		t_hop 		op;
 		t_head		labels;
 		t_asmdata	sdata;
 
 		ft_bzero (&head, sizeof (t_head)); 
+		ft_bzero (&op, sizeof (t_hop)); 
 		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
 		init_head (&head);
 		init_head (&labels);
+		init_op(&op);
 
 // /////////////////////////////////////
 		fd = open(av[1], O_RDONLY);
 		sdata.error = -1;
-		creat_op_table(&sdata);
+		set_op_table(&op);
 		ln = 0;
 		while (get_next_line(fd, &line) > 0)
 		{
@@ -70,10 +73,10 @@ int main(int ac, char **av)
 		// ft_printf ("\t----------\n");
 		// display_nodes (&head);
 		ft_printf ("\t-----*----\n\n");
-
+		// displa_op(&op);
 /////////////***********///////////
 
-		pars_instructions(&head, &labels, &sdata);
+		pars_instructions(&head, &labels, &sdata, &op);
 
 		close (fd);
 	}

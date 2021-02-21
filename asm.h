@@ -51,20 +51,52 @@ typedef struct      s_asmdata
     int             e;
     int             error;
     int             p_ex_code;
-    char            **op_tabe;
 }                   t_asmdata;
 
+
+typedef struct      s_op
+{
+    char            *name;
+    int             code;
+    int             args_num;
+    int             arg1;
+    int             arg2;
+    int             arg3;
+    int             cycle;
+    struct  s_op    *nop;
+}                   t_op;
+
+typedef struct      s_hop
+{
+    size_t          pos;
+    struct s_op     *fopr;
+}                   t_hop;
+
 t_node      *insert_node(t_head *head, void    *data, int pos);
-void        display_nodes(t_head *first);
+void        display_nodes(t_head *first);       //
 void        init_head(t_head *head);
 char 	    *avoid_comment (char *line);
 boolean     check_champion (char *line, t_asmdata *sdata);
 boolean     join (char *line, t_asmdata *sdata, char **cmd, int v);
 t_node      *search(t_node *l, void* x);
+t_op        *op_search(t_op *l, void* x);
+
 
 t_node      *save_labels(t_head *labels, char *lin, t_head *head);
-void        creat_op_table(t_asmdata *sdata);
-void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata);
+void        creat_op_table(t_hop *op, int i);
+void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata, t_hop *op);
+
+void        operations(char **operat, int i);
+void        init_op(t_hop *op);
+int         set_args_num(int i);
+int         set_arg1(int i);
+int         set_arg2(int i);
+int         set_arg3(int i);
+void        set_op_table(t_hop *op);
+
+void        displa_op(t_hop *op);       //
+
+int         pars_args(char  *instruction, t_op *op);
 
 
 # endif

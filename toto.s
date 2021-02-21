@@ -16,7 +16,7 @@ J
 
 
 
-		ld   %0,r3		
+		ld   %0,r13		
 
 
 
@@ -27,7 +27,7 @@ label:zjmp %:avantdebt
 						# de l'instruction suivante
 titi:
 toto:
-code:live %42			# 5
+code:live 42			# 5
 		sti  r15,%0,r14			# 6
 		zjmp %-200			# 3
 		live %42			# 5
