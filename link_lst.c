@@ -106,6 +106,7 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
                 break ;
 
 /////////////////
+
         if (j == i)
         {
             if (ft_strlen(line) > j + 1)

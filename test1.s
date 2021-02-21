@@ -4,10 +4,10 @@
 
 x1:
 l2:		sti r1, \%:live,\%1
-		and	r1, \%0,r1
+		and	r00012, \%0,r1
 
 live:
-	live \%1
+	live \%21
 	zjmp \%:live
 
 # Executable co,pilation:
