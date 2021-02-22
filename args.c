@@ -16,31 +16,29 @@
 int         check_reg(char *line, int arg);
 
 
-int         pars_args(char  *instruction, t_op *op)
+int         pars_args(char  *instruction, t_asmdata *sdata, int x)
 {
     int j;
     int x = 0;
 
     j = -1;
-    int cnt = -1;
+    int cnt = -1;       //
     char **tab = ft_strsplit(instruction, ',');
-    ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-\n", op->name);
+    ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-\n", sdata->name);
     while (tab[++j])
     {
         x = -1;
-        cnt = (j == 0 ? op->arg1 : cnt);
-        cnt = (j == 1 ? op->arg2 : cnt);
-        cnt = (j == 2 ? op->arg3 : cnt);
+        cnt = op_tab[x].args[j];
         while (tab[j][++x])
         {
             
             if (tab[j][x] == 'r' && ft_isdigit(tab[j][x + 1]))
             {
-                if (ft_atoi(x + 1 + tab[j]) < 1 || ft_atoi(x + 1 + tab[j]) > 16)
-                    ft_printf ("Error! %d \n", ft_atoi(x + 1 + tab[j]));
-                ft_putchar ('R');
-                check_reg(tab[j], cnt);
-                break ;
+                // if (ft_atoi(x + 1 + tab[j]) < 1 || ft_atoi(x + 1 + tab[j]) > 16)
+                //     ft_printf ("Error! %d \n", ft_atoi(x + 1 + tab[j]));
+                // ft_putchar ('R');
+                // check_reg(tab[j], cnt);
+                // break ;
             }
             if (tab[j][x] == 'r' && !ft_isdigit(tab[j][x + 1]))
                 ft_printf("!Error\n");

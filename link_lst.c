@@ -21,13 +21,6 @@ void    init_head(t_head *head)
 }
 ///////////////////////////////////
 
-void        init_op(t_hop *op)
-{
-    op = ft_memalloc(sizeof (t_hop));
-    op->pos = 1;
-    op->fopr = NULL;
-}
-
 
 t_node     *insert_node(t_head *head, void    *data, int pos)
 {
@@ -55,27 +48,17 @@ t_node     *insert_node(t_head *head, void    *data, int pos)
 }
 
 
-t_node  *search(t_node *l, void* x)
+t_node  *search(t_node *l, char* x)
 {
     if (l == NULL)
         return NULL;
-    if (l->data == x)
+    if (!ft_strcmp(l->data, x))
         return (l);
     else
         return (search(l->next, x));
 
 }
 
-
-t_op  *op_search(t_op *l, void *x)
-{
-    if (l == NULL)
-        return NULL;
-    if (!ft_strcmp(l->name , x))
-        return (l);
-    else
-        return (op_search(l->nop, x));
-}
 
 t_node    *save_labels(t_head *labels, char *line, t_head *head)
 {
@@ -125,96 +108,4 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
     return (NULL);
 }
 
-
-
-
 //////////////////////////////////
-void        set_op_table(t_hop *op)
-{
-    int i;
-
-    i = 0;
-    while (++i < 17)
-        creat_op_table(op, i);
-}
-
-
-/////////////////////////////////
-void        creat_op_table(t_hop *op, int i)
-{
-    t_op    *n_op;
-    t_op    *l;
-    char    *name;
-
-    l = NULL;
-    n_op = ft_memalloc (sizeof (t_op));
-    n_op->nop = NULL;
-    operations(&name, i);
-    n_op->name = name;
-    n_op->code = i;
-    n_op->args_num = set_args_num(i);
-    n_op->arg1 = set_arg1(i);
-    n_op->arg2 = set_arg2(i);
-    n_op->arg3 = set_arg3(i);
-    if (op->fopr == NULL)
-        op->fopr = n_op;
-    else
-    {
-        l = op->fopr;
-        while (l->nop != NULL)
-            l = l->nop;
-        l->nop = n_op;
-    }
-}
-
-///////////////////////////////////
-void        displa_op(t_hop *op)
-{
-    t_op *tmp;
-
-    tmp = op->fopr;
-    while (tmp)
-    {
-        ft_printf ("'%s'|num =  %d \t|", tmp->name, tmp->args_num);
-        if (tmp->arg1 & T_REG)
-            ft_printf (" reg ");
-        if (tmp->arg1 & T_DIR)
-            ft_printf (" dir ");
-        if (tmp->arg1 & T_IND)
-            ft_printf (" ind ");
-        ft_putchar (',');
-        if (tmp->arg2 & T_REG)
-            ft_printf (" reg ");
-        if (tmp->arg2 & T_DIR)
-            ft_printf (" dir ");
-        if (tmp->arg2 & T_IND)
-            ft_printf (" ind ");
-        ft_putchar (',');
-        if (tmp->arg3 & T_REG)
-            ft_printf (" reg ");
-        if (tmp->arg3 & T_DIR)
-            ft_printf (" dir ");
-        if (tmp->arg3 & T_IND)
-            ft_printf (" ind ");
-        ft_putchar ('\n');
-
-        tmp = tmp->nop;
-    }
-}
-
-void    display_nodes(t_head *head)
-{
-    t_node *p;
-
-    p = NULL;
-    p = head->first;
-    while (p != NULL)
-    {
-        ft_printf ("[%d]_%s ", p->position, p->data);
-        if (p->operation_num > -1)
-            ft_printf ("goto->%d", p->operation_num);
-        ft_putchar ('\n');
-        p = p->next;
-    }
-}
-/////////////////////////////////

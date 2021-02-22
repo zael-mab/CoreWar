@@ -29,22 +29,24 @@ int main(int ac, char **av)
 		int 		ln;
 		// char 		*tmp;
 		t_head 		head;
-		t_hop 		op;
+		// t_hop 		op;
 		t_head		labels;
 		t_asmdata	sdata;
 
 		ft_bzero (&head, sizeof (t_head)); 
-		ft_bzero (&op, sizeof (t_hop)); 
+		// ft_bzero (&op, sizeof (t_hop)); 
 		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
 		init_head (&head);
 		init_head (&labels);
-		init_op(&op);
+		// init_op(&op);
 
 // /////////////////////////////////////
 		fd = open(av[1], O_RDONLY);
 		sdata.error = -1;
-		set_op_table(&op);
+
+		// set_op_table(&op);
+		
 		ln = 0;
 		while (get_next_line(fd, &line) > 0)
 		{
@@ -76,7 +78,7 @@ int main(int ac, char **av)
 		// displa_op(&op);
 /////////////***********///////////
 
-		pars_instructions(&head, &labels, &sdata, &op);
+		pars_instructions(&head, &labels, &sdata);
 
 		close (fd);
 	}

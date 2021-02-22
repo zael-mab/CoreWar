@@ -14,6 +14,7 @@ NAME = asm
 
 SRC = 	main.c\
 		link_lst.c\
+		op.c\
 		pars.c\
 		set_op.c\
 		args.c
