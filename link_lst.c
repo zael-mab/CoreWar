@@ -60,6 +60,23 @@ t_node  *search(t_node *l, char* x)
 }
 
 
+void        display_nodes(t_head *head)
+{
+    t_node *l;
+
+    l = head->first;
+    while (l)
+    {
+        ft_printf("_|%d|\t[%s]\t",  l->position, l->data);
+        if (l->operation_num > -1)
+            ft_printf ("-%d-", l->operation_num);
+        ft_putchar ('\n');
+        l = l->next;
+    }
+}
+
+
+
 t_node    *save_labels(t_head *labels, char *line, t_head *head)
 {
     int j;
@@ -69,14 +86,12 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
     t_node p;                       //[  marker: 
     t_node t;                       //  # End of file  ]   if a label didn't followed by '\n' at the end of file it's an error fix it .
 
-
     ft_bzero(&p, sizeof (t_node));
     ft_bzero(&t, sizeof (t_node));
     j = -1;
     while (line[++j])
         if (line[j] == LABEL_CHAR)
             break ;
-
 
 ///////////////////////
     if (ft_strlen(line) > j)
@@ -89,9 +104,9 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
                 break ;
 
 /////////////////
-
         if (j == i)
         {
+            ft_printf ("*****%c***\n", line[i]);
             if (ft_strlen(line) > j + 1)
             {
                 p = *insert_node (head, ft_strtrim (j + 1 +line), -1);					//	insert eash line 

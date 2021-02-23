@@ -69,13 +69,12 @@ int main(int ac, char **av)
 		}
 
 ///////////////***********///////////
-		// ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
-		// ft_printf ("\t----------\n");
+		ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
+		ft_printf ("\t----------\n");
 		// display_nodes (&labels);
-		// ft_printf ("\t----------\n");
+		ft_printf ("\t----------\n");
 		// display_nodes (&head);
 		ft_printf ("\t-----*----\n\n");
-		// displa_op(&op);
 /////////////***********///////////
 
 		pars_instructions(&head, &labels, &sdata);

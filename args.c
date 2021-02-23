@@ -16,33 +16,48 @@
 int         check_reg(char *line, int arg);
 
 
-int         pars_args(char  *instruction, t_asmdata *sdata, int x)
+int         pars_args(char  *instruction, t_asmdata *sdata, int y)
 {
     int j;
-    int x = 0;
+    int x;
+    int w;
 
     j = -1;
-    int cnt = -1;       //
+    w = y;
+    x = 0;
     char **tab = ft_strsplit(instruction, ',');
-    ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-\n", sdata->name);
+
+    ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-%d\n", instruction, sdata->error);
     while (tab[++j])
     {
+        if (ft_strlen(tab[j]) < 2)
+            ft_printf ("~7~~~~~~~~~Error~~~~~~~~[%s]\n", instruction);
         x = -1;
-        cnt = op_tab[x].args[j];
         while (tab[j][++x])
         {
             
             if (tab[j][x] == 'r' && ft_isdigit(tab[j][x + 1]))
             {
-                // if (ft_atoi(x + 1 + tab[j]) < 1 || ft_atoi(x + 1 + tab[j]) > 16)
-                //     ft_printf ("Error! %d \n", ft_atoi(x + 1 + tab[j]));
-                // ft_putchar ('R');
-                // check_reg(tab[j], cnt);
-                // break ;
+                if (ft_atoi(x + 1 + tab[j]) < 1 || ft_atoi(x + 1 + tab[j]) > 16)
+                {
+                    ft_printf ("~~3~~~~~Error!~~~~~~~~~~%d \n", ft_atoi(x + 1 + tab[j]));
+                    return (0);
+                }
+                ft_putchar ('R');
+                check_reg(tab[j], op_tab[y].args[j]);
+                break ;
             }
             if (tab[j][x] == 'r' && !ft_isdigit(tab[j][x + 1]))
-                ft_printf("!Error\n");
-            else if (tab[j][x] == '%')
+            {
+                ft_printf("~~4~~~~~~~~Error~~~~~~~~~\n");
+                return (0);
+            }
+            else if (tab[j][x] == '%' && tab[j][x + 1] == ':')
+            {
+                ft_printf ("D_Lebel");
+                break;
+            }
+            else if (tab[j][x] == '%')                          //DIRECT_CHAR (%) and a number or label (LABEL_CHAR (:) in front of it)
             {
                 //check_dir();
                 ft_putchar ('D');
@@ -54,9 +69,17 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int x)
                 // check_ind();
                 break ;
             }
+            
         }
         ft_printf("-%s-\n", tab[j]);
 
+    }
+    if (j == op_tab[y].args_numb)
+        ft_printf ("\t__j=[%d]__[%d]\n", j, op_tab[y].args_numb);
+    else
+    {
+        ft_printf ("~5~~~~~Error number of argument~~~~~~~~~~\n");
+        return (0);
     }
     return (1);
 }
@@ -84,7 +107,7 @@ int         check_reg(char *line, int arg)
         }
         else
         {
-            ft_printf ("Error [%s] \n", tmp);
+            ft_printf ("~6~~~~~~~~~~Error [%s]~~~~~~~~\n", tmp);
             break ;
         }
     }
