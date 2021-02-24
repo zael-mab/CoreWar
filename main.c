@@ -27,25 +27,20 @@ int main(int ac, char **av)
 		char 		*line;
 		int 		fd;
 		int 		ln;
-		// char 		*tmp;
 		t_head 		head;
-		// t_hop 		op;
 		t_head		labels;
 		t_asmdata	sdata;
 
 		ft_bzero (&head, sizeof (t_head)); 
-		// ft_bzero (&op, sizeof (t_hop)); 
 		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
-		init_head (&head);
-		init_head (&labels);
-		// init_op(&op);
+		// init_head (&head);
+		// init_head (&labels);
 
-// /////////////////////////////////////
+// ////////////////////////
 		fd = open(av[1], O_RDONLY);
 		sdata.error = -1;
 
-		// set_op_table(&op);
 		
 		ln = 0;
 		while (get_next_line(fd, &line) > 0)
@@ -68,16 +63,49 @@ int main(int ac, char **av)
 			ln++;									// I'll need ya later.
 		}
 
+// ////////////////////////////////////////
+		if (ln == 0)
+		{
+			list_del_all(&head);
+			list_del_all(&labels);
+			ft_printf ("empty file\n");
+			exit (1);
+		}
+		if (ft_strlen(sdata.name) > PROG_NAME_LENGTH || ft_strlen(sdata.comment) > COMMENT_LENGTH)
+		{
+			list_del_all(&head);
+			list_del_all(&labels);
+			ft_printf ("~0*~~~~~~~~Error length~~~~~~~~|%d|%d|\n", ft_strlen(sdata.name), ft_strlen(sdata.comment));
+			exit (0);
+		}
+		if (sdata.n != -1 || sdata.c != -1)
+		{
+			list_del_all(&head);
+			list_del_all(&labels);
+			ft_printf ("~0~~~~~~~~Error~~~~~~~~|%d|%d|\n", sdata.c, sdata.n);
+			exit (0);
+		}
+
+
 ///////////////***********///////////
 		ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
 		ft_printf ("\t----------\n");
-		// display_nodes (&labels);
+		display_nodes (&labels);
 		ft_printf ("\t----------\n");
-		// display_nodes (&head);
+		display_nodes (&head);
 		ft_printf ("\t-----*----\n\n");
 /////////////***********///////////
 
-		pars_instructions(&head, &labels, &sdata);
+		if (!pars_instructions(&head, labels, &sdata))
+		{
+			list_del_all(&head);
+			list_del_all(&labels);
+			exit (0);
+		}
+
+
+		// decode_to_byte_code();
+/////////////////////////////////////////////////////
 
 		close (fd);
 	}

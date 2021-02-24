@@ -67,7 +67,6 @@ boolean     check_champion (char *line, t_asmdata *sdata)
         if (line[j] == '"' && !sdata->s)
             sdata->s = j + 1;
     }
-
 /////////////////////
     if (sdata->n == 1 && sdata->s && sdata->e && sdata->error == -1)
         if ((sdata->name = ft_strscpy(ft_strnew(PROG_NAME_LENGTH), line, sdata->s, sdata->e)))
@@ -115,7 +114,7 @@ boolean         join (char *line, t_asmdata *sdata, char **cmd, int v)
 //////////////////////////////////////////////////
 
 
-void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata)       //REG_NUMBER
+int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)       //REG_NUMBER
 {
     t_node  *instruct;
     t_node  *lbl;
@@ -129,11 +128,20 @@ void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata)   
 
     while (instruct != NULL)
     {
-        // ft_printf ("instructions.%d= %s\n", instruct->position, instruct->data);
         i = -1;
         while (instruct->data[++i])
             if (instruct->data[i] < 'a' || instruct->data[i] > 'z')
                 break;
+        if (i == 0 && ft_strlen (instruct->data) > 0)
+        {
+            ft_printf("wrang command [%s]\n", instruct->data);
+            return (0);
+        }
+        // ft_printf ("instructions.%d= %s\n", instruct->position, i + instruct->data);
+
+
+
+
     /////////////////
         if (i > 0)
         {
@@ -142,20 +150,31 @@ void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata)   
             int x = -1;
             while (++x < 17)
             {
-                if (!ft_strcmp(tmp, op_tab[x].name) && pars_args(instruct->data + i, sdata, x))
+                if (!ft_strcmp(tmp, op_tab[x].name))
                 {
-                    ft_printf ("mutch %s ==> [%s]\n", op_tab[x].name, tmp);
-                    if (!pars_args(instruct->data + i, sdata, x))
+                    if (!pars_args(instruct->data + i, sdata, x, labels))
+                    {
                         ft_printf("~1~~~~~~Error~~~~~~~~\n");
+                        return (0);
+                    }
                     break ;
                 }
             }
             if (x == 17)
+            {
                 ft_printf ("~2~~~~~~~~~~~Error~~~~~~~~~~\n");
-            ft_printf("%d", sdata->error);
+                return (0);
+            }
+            ft_printf("{%d}", sdata->error);
             // ft_printf ("list[%s] ===>   tmp[%s]\n", op_list->name, instruct->data);
             free (tmp);
         }
+
+
+
+
+
+
     //////////////////////
         // while (op_list)
         // {
@@ -170,13 +189,18 @@ void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata)   
                 // instruct->op_arg3 = op_list->arg3;
             // }
 
-            lbl = labels->first;
+            lbl = labels.first;
             // while (lbl)          use the searsh(); !!!
                 // lbl = lbl->next;        
         // }
-            ////////
+            ////////./
             instruct = instruct->next;
+
+
+
+            
     }
+    return (1);
 }
 
 

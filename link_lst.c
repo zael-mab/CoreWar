@@ -19,6 +19,26 @@ void    init_head(t_head *head)
     head->first = NULL;
     head->l_size = 0;
 }
+
+void    *list_get(t_head *head)
+{
+    t_node  *l;
+    char    *data;
+    if (head->first == NULL)
+        return (NULL);
+    l = head->first;
+    data = l->data;
+    head->first = head->first->next;
+    head->l_size--;
+    free (l);
+    return (data);
+}
+
+void    list_del_all (t_head *head)
+{
+    while (head->first != NULL)
+        list_get(head);
+}
 ///////////////////////////////////
 
 

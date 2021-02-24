@@ -84,11 +84,18 @@ t_node      *search(t_node *l, char* x);
 t_node      *save_labels(t_head *labels, char *lin, t_head *head);
 // void        creat_op_table(t_hop *op, int i);
 
-void        pars_instructions(t_head *head, t_head *labels, t_asmdata *sdata);
+int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata);
 
 void        operations(char **operat, int i);
 
-int         pars_args(char  *instruction, t_asmdata *sdata, int y);
+int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels);
+int         check_dir_lebel(char *line, int arg, t_head labels);
+
+
+
+
+void        *list_get(t_head *head);
+void        list_del_all (t_head *head);
 
 
 # endif
