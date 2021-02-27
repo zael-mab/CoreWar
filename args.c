@@ -26,9 +26,8 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels
     w = y;
     x = 0;
     char **tab = ft_strsplit(instruction, ',');
-
-    ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-_-_-_-./_-%d\n", instruction, sdata->error);    /////
-
+    sdata->p_ex_code +=1;       //
+    // ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-_-_-_-./_-%d\n", instruction, sdata->error);    /////
     while (tab[++j])
     {
         if (ft_strlen(ft_strtrim(tab[j])) == 0)
@@ -44,13 +43,14 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels
             
             if (tab[j][x] == 'r' && ft_isdigit(tab[j][x + 1]))
             {
-                if (ft_atoi(x + 1 + tab[j]) < 1 || ft_atoi(x + 1 + tab[j]) > 16)
+                if (ft_atoi(x + 1 + tab[j]) < 1 || ft_atoi(x + 1 + tab[j]) > REG_NUMBER)
                 {
                     ft_printf ("~~3~~~~~Error!~~~~~~~~~~%d \n", ft_atoi(x + 1 + tab[j]));   /////
                     return (0);
                 }
-                ft_putchar ('R');   //////
-                check_reg(tab[j], op_tab[y].args[j]);
+                ft_putstr ("R= ");   //////
+                if (!check_reg(tab[j], op_tab[y].args[j]))
+                    return (0);
                 break ;
             }
 // //////////////////////
@@ -64,22 +64,28 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels
             {
                 if (labels.first == NULL)
                     return (0);
-                check_dir_lebel(3 + tab[j], op_tab[y].args[j], labels);
-                ft_printf ("D_Lebel");
+                ft_printf ("D_Lebel= ");
+                if (!check_dir_lebel(x + 2 + tab[j], op_tab[y].args[j], labels))
+                    return (0);
                 break;
             }
 // ////////////////////
 
             else if (tab[j][x] == '%')                          //DIRECT_CHAR (%) and a number or label (LABEL_CHAR (:) in front of it)
             {
-                // check_dir();
-                ft_putchar ('D');
+                ft_putstr ("D= ");
+                if (!check_dir(x + 1 + tab[j], op_tab[y].args[j]))
+                    return (0);
                 break ;
             }
-            else if (ft_isdigit(tab[j][x]))
+            else if (ft_isdigit(tab[j][x]) || tab[j][x] == ':')
             {
                 ft_putchar ('I');
-                // check_ind();
+                if (ft_atoi(x + tab[j]) < -1)
+                    ft_printf ("= %d\n", ft_atoi(x + tab[j]));
+                if (tab[j][x] == ':')
+                    if (!check_ind(x + 1 + tab[j], op_tab[y].args[j], labels))
+                        return (0);
                 break ;
             }
         }
@@ -131,20 +137,15 @@ int                check_dir_lebel(char *line, int arg, t_head labels)
 
     ft_printf("%s\n", line);
     l  = search(labels.first, tmp);
-    // ft_memdel ((void *)tmp);
 
     if (!(arg & T_DIR))
     {
         ft_printf ("!!!Error at arg num[%s]\n", line);
-        ft_memdel((void *) l);
-        // ft_memdel ((void *)tmp);
         return (0);
     }
     if (l)
     {
-        ft_printf ("\t \tlable === %s\n", l->data);
-        ft_memdel((void *) l);
-        // list_get(l);
+        // ft_printf ("\t \tlable === %s\n", l->data);
         return (1);
     }
     return (0);

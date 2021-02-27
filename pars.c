@@ -165,7 +165,6 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)     
                 ft_printf ("~2~~~~~~~~~~~Error~~~~~~~~~~\n");
                 return (0);
             }
-            ft_printf("{%d}", sdata->error);
             // ft_printf ("list[%s] ===>   tmp[%s]\n", op_list->name, instruct->data);
             free (tmp);
         }

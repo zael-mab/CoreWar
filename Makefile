@@ -16,7 +16,7 @@ SRC = 	main.c\
 		link_lst.c\
 		op.c\
 		pars.c\
-		set_op.c\
+		check_args.c\
 		args.c
 OBJ = $(SRC:.c=.o)
 

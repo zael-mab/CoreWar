@@ -34,8 +34,6 @@ int main(int ac, char **av)
 		ft_bzero (&head, sizeof (t_head)); 
 		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
-		// init_head (&head);
-		// init_head (&labels);
 
 // ////////////////////////
 		fd = open(av[1], O_RDONLY);
@@ -89,11 +87,11 @@ int main(int ac, char **av)
 
 ///////////////***********///////////
 		ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
-		ft_printf ("\t----------\n");
-		display_nodes (&labels);
-		ft_printf ("\t----------\n");
-		display_nodes (&head);
-		ft_printf ("\t-----*----\n\n");
+		// ft_printf ("\t----------\n");
+		// display_nodes (&labels);
+		// ft_printf ("\t----------\n");
+		// display_nodes (&head);
+		// ft_printf ("\t-----*----\n\n");
 /////////////***********///////////
 
 		if (!pars_instructions(&head, labels, &sdata))
@@ -105,13 +103,14 @@ int main(int ac, char **av)
 
 
 		// decode_to_byte_code();
+		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
 
 		close (fd);
 	}
 	
 	if (ac == 1)
-		ft_printf ("No file detected!\n");
+		ft_printf ("Syntax error at token [TOKEN][001:001] END (null)!\n");
 	if (ac > 2)
 		ft_printf ("Too many files!\n");
 }

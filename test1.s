@@ -2,7 +2,7 @@
 .comment    "This city needs me"
 
 loop:
-        sti r1, %:live, %1
+        sti r1, %:live, %-001
 live:
         live %0
         ld %0, r2
