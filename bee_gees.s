@@ -28,5 +28,3 @@ endwhile:
 
 live: live %4
 	zjmp %:live
-xxm:
-

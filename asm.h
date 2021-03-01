@@ -26,18 +26,19 @@ typedef struct      s_node
 {
     char            *data;
     size_t          position;
-    int             operation_num;          //labels -pointes operation-
-    int             op_code;
-    int             op_arg1;
-    int             op_arg2;
-    int             op_arg3;
-    char            *op_args[3];
+    size_t          code;
+    int             operation_num;          //labels -pointes operation-. (need to calculate the number of bytes btween the arg_label and the instruction tha label pointed to)
+    int             op_code;                //num of operater.
+    int             w_args[3];                // what arg.
+    // char            op_args[3];            //split the args[number of args]!!
+    size_t          command_size;
     struct s_node   *next;
 }                   t_node;
 
 typedef struct      s_head
 {
     size_t          l_size;
+    size_t          code_size;
     struct s_node   *first;
 }                   t_head;
 
@@ -50,7 +51,7 @@ typedef struct 	s_op
 	int 		op_code;
 	int			wait_to_run;
 	char		des[60];
-	int			x;
+	int			encoding_code;
 	int			dir_size;
 }				t_op;
 
@@ -65,9 +66,10 @@ typedef struct      s_asmdata
     int             e;
     int             error;
     int             p_ex_code;
+    int             x;
 }                   t_asmdata;
 
-t_op            op_tab[17];
+t_op            g_op_tab[17];
 
 
 
@@ -87,7 +89,7 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata);
 
 void        operations(char **operat, int i);
 
-int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels);
+int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels);
 int         check_dir_lebel(char *line, int arg, t_head labels);
 int         check_dir(char *line, int arg);
 int         check_ind(char *line, int arg, t_head labels);

@@ -84,15 +84,37 @@ void        display_nodes(t_head *head)
 {
     t_node *l;
 
+    int i;
     l = head->first;
     while (l)
     {
-        ft_printf("_|%d|\t[%s]\t",  l->position, l->data);
+        head->code_size += l->command_size;
+        ft_printf("_|%.2d|\t[%s]\t",  l->code, l->data);
         if (l->operation_num > -1)
             ft_printf ("-%d-", l->operation_num);
+        if (l->code > 0)
+        {
+            ft_printf("******");
+            i = -1;
+            while (++i < 3)
+            {
+                if (l->w_args[i] & T_DIR)
+                    ft_printf ("arg%d = DIR\n", i);
+                if (l->w_args[i] & T_REG)
+                    ft_printf ("arg%d = REG\n", i);
+                if (l->w_args[i] & T_IND)
+                    ft_printf ("arg%d = IND\n", i);
+                if (l->w_args[i] & T_LAB)
+                    ft_printf ("arg%d = LIB\n", i );
+                ft_printf ("command size = %d\n", l->command_size);
+            }
+        }
+        
         ft_putchar ('\n');
         l = l->next;
     }
+    ft_printf ("command size = %d\n", head->code_size);
+
 }
 
 

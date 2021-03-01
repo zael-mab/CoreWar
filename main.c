@@ -101,11 +101,13 @@ int main(int ac, char **av)
 			exit (0);
 		}
 
+		display_nodes (&head);
 
 		// decode_to_byte_code();
 		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
 
+		ft_printf ("\n\n%x\n", COREWAR_EXEC_MAGIC);
 		close (fd);
 	}
 	

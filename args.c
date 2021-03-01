@@ -16,7 +16,7 @@
 int         check_reg(char *line, int arg);
 
 
-int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels)
+int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels)
 {
     int j;
     int x;
@@ -25,14 +25,14 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels
     j = -1;
     w = y;
     x = 0;
-    char **tab = ft_strsplit(instruction, ',');
+    char **tab = ft_strsplit(sdata->x + instruction->data, ',');
     sdata->p_ex_code +=1;       //
-    // ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-_-_-_-./_-%d\n", instruction, sdata->error);    /////
+    // ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-_-_-_-./_-%d\n", instruction->data, sdata->error);    /////
     while (tab[++j])
     {
         if (ft_strlen(ft_strtrim(tab[j])) == 0)
         {
-            ft_printf ("~7~~~~~Error~~~~~~~~arg num %d is empty at line[%s]\n", j, instruction);
+            ft_printf ("~7~~~~~Error~~~~~~~~arg num %d is empty at line[%s]\n", j, instruction->data);
             return (0);
         }
 /////////////////////////////
@@ -49,8 +49,10 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels
                     return (0);
                 }
                 ft_putstr ("R= ");   //////
-                if (!check_reg(tab[j], op_tab[y].args[j]))
+                if (!check_reg(tab[j], g_op_tab[y].args[j]))
                     return (0);
+                instruction->command_size += 1;
+                instruction->w_args[j] = T_REG;
                 break ;
             }
 // //////////////////////
@@ -65,8 +67,10 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels
                 if (labels.first == NULL)
                     return (0);
                 ft_printf ("D_Lebel= ");
-                if (!check_dir_lebel(x + 2 + tab[j], op_tab[y].args[j], labels))
+                if (!check_dir_lebel(x + 2 + tab[j], g_op_tab[y].args[j], labels))
                     return (0);
+                instruction->command_size += (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
+                instruction->w_args[j] = T_LAB + T_DIR;
                 break;
             }
 // ////////////////////
@@ -74,8 +78,10 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels
             else if (tab[j][x] == '%')                          //DIRECT_CHAR (%) and a number or label (LABEL_CHAR (:) in front of it)
             {
                 ft_putstr ("D= ");
-                if (!check_dir(x + 1 + tab[j], op_tab[y].args[j]))
+                if (!check_dir(x + 1 + tab[j], g_op_tab[y].args[j]))
                     return (0);
+                instruction->command_size += (g_op_tab[y].dir_size == 0 ? 4 : 2);
+                instruction->w_args[j] = T_DIR;
                 break ;
             }
             else if (ft_isdigit(tab[j][x]) || tab[j][x] == ':')
@@ -84,22 +90,26 @@ int         pars_args(char  *instruction, t_asmdata *sdata, int y, t_head labels
                 if (ft_atoi(x + tab[j]) < -1)
                     ft_printf ("= %d\n", ft_atoi(x + tab[j]));
                 if (tab[j][x] == ':')
-                    if (!check_ind(x + 1 + tab[j], op_tab[y].args[j], labels))
+                    if (!check_ind(x + 1 + tab[j], g_op_tab[y].args[j], labels))
                         return (0);
+                instruction->command_size += IND_SIZE;
+                instruction->w_args[j] = T_IND;
                 break ;
             }
         }
         ft_printf("-%s-\n", tab[j]);
     }    
-    if (j != op_tab[y].args_numb)
+    if (j != g_op_tab[y].args_numb)
     {
         ft_printf ("~5~~~~~Error at the number of arguments~~~~~~~~~~\n");  ///////
         return (0);
     }
+    instruction->command_size += g_op_tab[y].encoding_code;
     return (1);
 }
 
 
+/////////////////////////////////////////
 int         check_reg(char *line, int arg)
 {
     char *tmp = ft_strtrim(line);
@@ -108,7 +118,8 @@ int         check_reg(char *line, int arg)
     i = -1;
     while (tmp[++i])
     {
-        if (tmp[i] == 'r' && ft_atoi(1 + tmp) > 0)
+        int x = ft_atoi (1 + tmp);
+        if (tmp[i] == 'r' && x > 0)
         {
             if (!(arg & T_REG))
             {
@@ -129,7 +140,7 @@ int         check_reg(char *line, int arg)
     return (1);
 }
 
-
+///////////////////////////////////////
 int                check_dir_lebel(char *line, int arg, t_head labels)
 {
     char *tmp = ft_strtrim (line);
