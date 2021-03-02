@@ -103,11 +103,38 @@ int main(int ac, char **av)
 
 		display_nodes (&head);
 
+		int fp;
+		int jumper;
+		char n;
+
+		fp = open ("test.cor", O_CREAT | O_RDWR, 0600);
+		jumper = -1;
+		n = jumper + 1;
+		
+		char *h;
+		h = ft_strnew(sizeof (COREWAR_EXEC_MAGIC));
+		h = (char *)COREWAR_EXEC_MAGIC ;
+		write (fp, &h, 4);
+		lseek(fp, 4*sizeof (char), SEEK_END);
+		
+		ft_printf ("\n\n%x\n", h);
+
+		jumper = -1;
+		while (sdata.name[++jumper])
+			write (fp, &sdata.name[jumper], 1);
+
+		jumper = -1;
+		while (sdata.comment[++jumper])
+			write (fp, &sdata.comment[jumper], 1);
+
+		
+
 		// decode_to_byte_code();
 		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
 
-		ft_printf ("\n\n%x\n", COREWAR_EXEC_MAGIC);
+
+		close (fp);
 		close (fd);
 	}
 	
