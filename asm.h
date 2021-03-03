@@ -19,7 +19,7 @@
 #include "op.h"
 #include<fcntl.h> 
 #include<errno.h>
-
+#include<stdio.h>
 typedef enum {F , T}    boolean;
 
 typedef struct      s_node

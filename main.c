@@ -55,7 +55,11 @@ int main(int ac, char **av)
 			if (sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
 					save_labels(&labels, ft_strtrim(line), &head);
 
-			check_champion(line, &sdata);								// check and save the name & the comment
+			if (!check_champion(line, &sdata))								// check and save the name & the comment
+			{
+				// perror("incorect file\n");			// don't forget to free;
+				exit(1);
+			}
 
 			free (line);
 			ln++;									// I'll need ya later.
@@ -101,7 +105,7 @@ int main(int ac, char **av)
 			exit (0);
 		}
 
-		display_nodes (&head);
+		// display_nodes (&head);
 
 		int fp;
 		int jumper;
@@ -115,18 +119,25 @@ int main(int ac, char **av)
 		h = ft_strnew(sizeof (COREWAR_EXEC_MAGIC));
 		h = (char *)COREWAR_EXEC_MAGIC ;
 		write (fp, &h, 4);
-		lseek(fp, 4*sizeof (char), SEEK_END);
+		// lseek(fp, 4*sizeof (char), SEEK_END);
 		
 		ft_printf ("\n\n%x\n", h);
 
 		jumper = -1;
 		while (sdata.name[++jumper])
 			write (fp, &sdata.name[jumper], 1);
-
+		int c = PROG_NAME_LENGTH - ft_strlen(sdata.name) + 4;
+		lseek(fp, c * sizeof (char), SEEK_END);
+	
+		h = (char *)head.code_size ;
+		write(fp, &h, 4);
+	
 		jumper = -1;
 		while (sdata.comment[++jumper])
 			write (fp, &sdata.comment[jumper], 1);
 
+		c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
+		lseek(fp, c * sizeof (char), SEEK_END);
 		
 
 		// decode_to_byte_code();
