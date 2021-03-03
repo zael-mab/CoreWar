@@ -103,11 +103,12 @@ int main(int ac, char **av)
 
 		display_nodes (&head);
 
-		// decode_to_byte_code();
+		decode(&sdata);
 		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
 
-		ft_printf ("\n\n%x\n", COREWAR_EXEC_MAGIC);
+		// char str[]
+		// ft_printf ("\n\n%d\n", NULL);
 		close (fd);
 	}
 	

@@ -19,6 +19,7 @@
 #include "op.h"
 #include<fcntl.h> 
 #include<errno.h>
+#include <stdio.h>
 
 typedef enum {F , T}    boolean;
 
@@ -100,5 +101,6 @@ int         check_ind(char *line, int arg, t_head labels);
 void        *list_get(t_head *head);
 void        list_del_all (t_head *head);
 
+void        decode(t_asmdata *data);
 
 # endif
