@@ -19,7 +19,6 @@
 // combine these code into a single machine language command.
 // output this machine language command.
 
-
 int main(int ac, char **av)
 {
 	if (ac == 2)
@@ -55,7 +54,11 @@ int main(int ac, char **av)
 			if (sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
 					save_labels(&labels, ft_strtrim(line), &head);
 
-			check_champion(line, &sdata);								// check and save the name & the comment
+			if (!check_champion(line, &sdata))								// check and save the name & the comment
+			{
+				// perror("incorect file\n");			// don't forget to free;
+				exit(1);
+			}
 
 			free (line);
 			ln++;									// I'll need ya later.
@@ -101,15 +104,44 @@ int main(int ac, char **av)
 			exit (0);
 		}
 
-		display_nodes (&head);
+		// display_nodes (&head);
 
-		decode(&sdata);
+		int fp;
+		int jumper;
+		int c;
+		char *hold;
+
+		fp = open ("test.cor", O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
+		jumper = -1;
+		
+		hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
+		write (fp, &hold, 4);												// revers the magic_code and print it as a hex
+
+		jumper = -1;
+		while (sdata.name[++jumper] && write (fp, &sdata.name[jumper], 1));	// print the name
+
+		c = PROG_NAME_LENGTH - ft_strlen(sdata.name) + 4;
+		lseek(fp, c * sizeof (char), SEEK_END);
+
+		hold = (char *)reverse_endian(head.code_size);							// revers the code_size and print it.
+		write(fp, &hold, 4);
+
+	
+		jumper = -1;
+		while (sdata.comment[++jumper] && write (fp, &sdata.comment[jumper], 1));	// print the comment
+		c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
+		lseek(fp, c * sizeof (char), SEEK_END);
+		
+
+
+		// decode(&sdata);
 		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
 
 		// char str[]
 		// ft_printf ("\n\n%d\n", NULL);
 		close (fd);
+		close (fp);
 	}
 	
 	if (ac == 1)
@@ -117,6 +149,21 @@ int main(int ac, char **av)
 	if (ac > 2)
 		ft_printf ("Too many files!\n");
 }
+
+
+
+size_t reverse_endian (size_t i)
+{
+    unsigned char c1, c2, c3, c4;
+
+	c1 = i & 255;
+	c2 = (i >> 8) & 255;
+	c3 = (i >> 16) & 255;
+	c4 = (i >> 24) & 255;
+
+	return ((size_t)c1 << 24) + ((size_t)c2 << 16) + ((size_t)c3 << 8) + c4;
+}
+
 
 
 char 	*avoid_comment (char *line)				// deal with the comments  !!!

@@ -55,7 +55,7 @@ boolean     check_champion (char *line, t_asmdata *sdata)
     {
         sdata->error = -1;
         sdata->e = 0;
-        sdata->s = 0;
+        sdata->s = 0;       //fixed this s = -1 & e = -1
     }
 
 /////////////////////
@@ -66,6 +66,13 @@ boolean     check_champion (char *line, t_asmdata *sdata)
             sdata->e = j + 1;
         if (line[j] == '"' && !sdata->s)
             sdata->s = j + 1;
+    }
+/////////////////////////
+    // check the restof line "something"x
+    if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(line)) - sdata->e)
+    {
+        ft_printf("#Errorin the line[%s] \n", line);
+        return (0);
     }
 /////////////////////
     if (sdata->n == 1 && sdata->s && sdata->e && sdata->error == -1)
@@ -98,9 +105,15 @@ boolean         join (char *line, t_asmdata *sdata, char **cmd, int v)
 
     tmp = ft_strnew(ft_strlen(line));
     if (sdata->error == 0)
+    {
         *cmd = ft_strjoin (ft_strnew(v), line + sdata->s);
+        *cmd = ft_strjoin (*cmd, "\n");
+    }
     if (sdata->error > 0 && !sdata->e)
+    {
         *cmd = ft_strjoin (*cmd, line);
+        *cmd = ft_strjoin (*cmd, "\n");
+    }
     if (sdata->error > 0 && sdata->e)
     {
         *cmd = ft_strjoin(*cmd, ft_strscpy(tmp, line, 0, sdata->e));
@@ -162,6 +175,7 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)     
                 ft_printf ("~2~~~~~~~~~~~Error~~~~~~~~~~\n");
                 return (0);
             }
+            head->code_size += instruct->command_size;
             // ft_printf ("list[%s] ===>   tmp[%s]\n", op_list->name, instruct->data);
             free (tmp);
         }

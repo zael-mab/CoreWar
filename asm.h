@@ -39,7 +39,7 @@ typedef struct      s_node
 typedef struct      s_head
 {
     size_t          l_size;
-    size_t          code_size;
+    size_t             code_size;
     struct s_node   *first;
 }                   t_head;
 
@@ -76,8 +76,8 @@ t_op            g_op_tab[17];
 
 
 t_node      *insert_node(t_head *head, void    *data, int pos);
-void        display_nodes(t_head *head);       //
-void        init_head(t_head *head);
+void        display_nodes(t_head *head);       // DELETE 
+void        init_head(t_head *head);            //DELETE
 char 	    *avoid_comment (char *line);
 boolean     check_champion (char *line, t_asmdata *sdata);
 boolean     join (char *line, t_asmdata *sdata, char **cmd, int v);
@@ -86,7 +86,7 @@ t_node      *search(t_node *l, char* x);
 
 t_node      *save_labels(t_head *labels, char *lin, t_head *head);
 
-int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata);
+int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata);
 
 void        operations(char **operat, int i);
 
@@ -100,7 +100,7 @@ int         check_ind(char *line, int arg, t_head labels);
 
 void        *list_get(t_head *head);
 void        list_del_all (t_head *head);
+size_t      reverse_endian (size_t i);  // CHANGE it !!!
 
 void        decode(t_asmdata *data);
-
 # endif

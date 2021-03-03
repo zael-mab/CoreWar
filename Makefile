@@ -17,7 +17,8 @@ SRC = 	main.c\
 		op.c\
 		pars.c\
 		check_args.c\
-		args.c
+		args.c\
+		convert.c
 OBJ = $(SRC:.c=.o)
 
 HEADER = asm.h

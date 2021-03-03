@@ -1,1 +1,3 @@
+https://developer.ibm.com/technologies/systems/articles/au-endianc/
 https://stackoverflow.com/questions/22057846/hex-file-reading-in-c-programming
+
