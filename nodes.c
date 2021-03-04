@@ -1,3 +1,10 @@
+
+
+//  try new sort & search methods ;
+//  minimize the error parts and the loops for each line;
+//  free ****;
+//  norme
+
 #include "lem_in.h"
 
 
@@ -218,8 +225,3 @@ void    list_del_all (t_head *head)
         list_get(head);
 }
 
-
-//  try new sort & search methods ;
-//  minimize the error parts and the loops for each line;
-//  free ****;
-//  norme

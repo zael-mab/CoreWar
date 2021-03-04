@@ -153,7 +153,7 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)     
     /////////////////
         if (sdata->x > 0)
         {
-            tmp = ft_strncpy(ft_strnew(5), instruct->data, sdata->x);
+            tmp = ft_strncpy(ft_strnew(5), instruct->data, sdata->x);       //CHANGE that just point to it, no need to allocate I think !.
             ft_printf ("\t<%s>\n", tmp);
             int x = -1;
             while (++x < 17)
@@ -167,6 +167,50 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)     
                     }
                     instruct->command_size += 1;
                     instruct->code = (x == 17 ? -1 : g_op_tab[x].op_code);
+// ////////////////////////////////////////////////////////
+                    instruct->encodin_code = g_op_tab[x].encoding_code;
+                    if (instruct->encodin_code > 0)
+                    {
+                        int z;
+
+                        z = 2;
+                        while (++z < 6)
+                        {
+                            if (z == 3)
+                            {
+                                if (instruct->w_args[z] == REG_CODE)
+                                    instruct->encodin += REG_CODE << 6;
+                                if (instruct->w_args[z] == DIR_CODE)
+                                    instruct->encodin += DIR_CODE << 6;
+                                if (instruct->w_args[z] == IND_CODE)
+                                    instruct->encodin += IND_CODE << 6;
+                            }
+                            if (z == 4)
+                            {
+                                if (instruct->w_args[z] == REG_CODE)
+                                    instruct->encodin += REG_CODE << 4;
+                                if (instruct->w_args[z] == DIR_CODE)
+                                    instruct->encodin += DIR_CODE << 4;
+                                if (instruct->w_args[z] == IND_CODE)
+                                    instruct->encodin += IND_CODE << 4;
+                            }
+                            if (z == 5)
+                            {
+                                if (instruct->w_args[z] == REG_CODE)
+                                    instruct->encodin += REG_CODE << 2;
+                                if (instruct->w_args[z] == DIR_CODE)
+                                    instruct->encodin += DIR_CODE << 2;
+                                if (instruct->w_args[z] == IND_CODE)
+                                    instruct->encodin += IND_CODE << 2;
+                            }
+
+                        }
+                    }
+
+// ///////////////////////////////////////////////////////////
+                    ft_printf ("\t\t\t--[%d]--\n", instruct->encodin);
+                    ft_printf ("\t\t\t--[%d]--\n", 1 << 2);
+
                     break ;
                 }
             }
@@ -176,12 +220,11 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)     
                 return (0);
             }
             head->code_size += instruct->command_size;
-            // ft_printf ("list[%s] ===>   tmp[%s]\n", op_list->name, instruct->data);
+
             free (tmp);
         }
 
         instruct = instruct->next;
-
             
     }
     return (1);

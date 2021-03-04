@@ -35,16 +35,18 @@
 void        decode(t_asmdata *data, t_head *cmmnd, int fd)
 {
     t_node *cmd;
-    // char *hold;
 
     if (cmmnd->first == NULL || fd < 0)
         exit(0);
     cmd = cmmnd->first;
     while (cmd)
     {
-        // hold = (char *)reverse_endian(cmd->code);
-        write (fd, &cmd->code, 1);
-        lseek(fd, sizeof (char), SEEK_END);
+        if (cmd->code > 0)
+        {
+            write (fd, &cmd->code, 1);
+            write (fd, &cmd->encodin,1);
+            lseek(fd, sizeof (char), SEEK_END);
+        }
         ft_printf("\t\t====%s=====\n", cmd->data);
         cmd = cmd->next;
     }

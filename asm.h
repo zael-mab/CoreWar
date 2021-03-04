@@ -28,9 +28,11 @@ typedef struct      s_node
     char            *data;
     size_t          position;
     size_t          code;
+    int             encodin_code;
+    int             encodin;
     int             operation_num;          //labels -pointes operation-. (need to calculate the number of bytes btween the arg_label and the instruction tha label pointed to)
     int             op_code;                //num of operater.
-    int             w_args[3];                // what arg.
+    int             w_args[6];                // what arg.
     // char            op_args[3];            //split the args[number of args]!!
     size_t          command_size;
     struct s_node   *next;

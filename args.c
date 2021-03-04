@@ -53,6 +53,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                     return (0);
                 instruction->command_size += 1;
                 instruction->w_args[j] = T_REG;
+                instruction->w_args[j + 3] = REG_CODE;
                 break ;
             }
 // //////////////////////
@@ -71,6 +72,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                     return (0);
                 instruction->command_size += (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
                 instruction->w_args[j] = T_LAB + T_DIR;
+                instruction->w_args[j + 3] = DIR_CODE;
                 break;
             }
 // ////////////////////
@@ -82,6 +84,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                     return (0);
                 instruction->command_size += (g_op_tab[y].dir_size == 0 ? 4 : 2);
                 instruction->w_args[j] = T_DIR;
+                instruction->w_args[j + 3] = DIR_CODE;
                 break ;
             }
             else if (ft_isdigit(tab[j][x]) || tab[j][x] == ':')
@@ -94,6 +97,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                         return (0);
                 instruction->command_size += IND_SIZE;
                 instruction->w_args[j] = T_IND;
+                instruction->w_args[j + 3] = IND_CODE;
                 break ;
             }
         }

@@ -106,17 +106,16 @@ int main(int ac, char **av)
 
 		// display_nodes (&head);
 		int fp;
-		// int jumper;
-		// int c;
-		// char *hold;
+		int jumper;
+		int c;
 
 		fp = open ("test.cor", O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
-		// jumper = -1;
-/*
+		jumper = -1;
 		
 		
-		hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
-		write (fp, &hold, 4);												// revers the magic_code and print it as a hex
+		// hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
+		int y = reverse_endian(COREWAR_EXEC_MAGIC);
+		write (fp, &y, 4);												// revers the magic_code and print it as a hex
 
 		jumper = -1;
 		while (sdata.name[++jumper] && write (fp, &sdata.name[jumper], 1));	// print the name
@@ -124,17 +123,16 @@ int main(int ac, char **av)
 		c = PROG_NAME_LENGTH - ft_strlen(sdata.name) + 4;
 		lseek(fp, c * sizeof (char), SEEK_END);
 
-		hold = (char *)reverse_endian(head.code_size);							// revers the code_size and print it.
-		write(fp, &hold, 4);
+		y = reverse_endian(head.code_size);							// revers the code_size and print it.
+		write(fp, &y, 4);
 
 	
 		jumper = -1;
 		while (sdata.comment[++jumper] && write (fp, &sdata.comment[jumper], 1));	// print the comment
 		c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
-		// lseek(fp, c * sizeof (char), SEEK_END);
+		lseek(fp, c * sizeof (char), SEEK_END);
 		
 
-*/
 		decode(&sdata, &head, fp);
 
 		// ft_printf ("Writing output program to %s\n", corfile);
