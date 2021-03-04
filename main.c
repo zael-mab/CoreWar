@@ -105,14 +105,15 @@ int main(int ac, char **av)
 		}
 
 		// display_nodes (&head);
-
 		int fp;
-		int jumper;
-		int c;
-		char *hold;
+		// int jumper;
+		// int c;
+		// char *hold;
 
 		fp = open ("test.cor", O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
-		jumper = -1;
+		// jumper = -1;
+/*
+		
 		
 		hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
 		write (fp, &hold, 4);												// revers the magic_code and print it as a hex
@@ -130,16 +131,15 @@ int main(int ac, char **av)
 		jumper = -1;
 		while (sdata.comment[++jumper] && write (fp, &sdata.comment[jumper], 1));	// print the comment
 		c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
-		lseek(fp, c * sizeof (char), SEEK_END);
+		// lseek(fp, c * sizeof (char), SEEK_END);
 		
 
+*/
+		decode(&sdata, &head, fp);
 
-		// decode(&sdata);
 		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
 
-		// char str[]
-		// ft_printf ("\n\n%d\n", NULL);
 		close (fd);
 		close (fp);
 	}

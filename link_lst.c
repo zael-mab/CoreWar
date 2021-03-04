@@ -106,7 +106,7 @@ void        display_nodes(t_head *head)
                     ft_printf ("arg%d = IND\n", i);
                 if (l->w_args[i] & T_LAB)
                     ft_printf ("arg%d = LIB\n", i );
-                ft_printf ("command size = %d\n", l->command_size);
+                ft_printf ("command size = %d | command num = %d\n", l->command_size, l->op_code);
             }
         }
         

@@ -102,5 +102,5 @@ void        *list_get(t_head *head);
 void        list_del_all (t_head *head);
 size_t      reverse_endian (size_t i);  // CHANGE it !!!
 
-void        decode(t_asmdata *data);
+void        decode(t_asmdata *data, t_head *cmmnd, int fd);
 # endif

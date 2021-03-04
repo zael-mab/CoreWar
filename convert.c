@@ -31,63 +31,22 @@
 //            +reg ==> convert the number x (rx)    [r1]=>[0x01].
 //            +dit ==> 
 
-char	*it_base(unsigned long long vl, int base);
 
-void        decode(t_asmdata *data)
+void        decode(t_asmdata *data, t_head *cmmnd, int fd)
 {
-    int fd;
-    // int str = COREWAR_EXEC_MAGIC;
-    // int i = sizeof (COREWAR_EXEC_MAGIC);
-    FILE *fp;
-    fp = fopen("file.txt","wb+");
-    fd = open ("z.cor", O_CREAT | O_APPEND | O_RDWR, 0600, "wb+");
-    if (fd < 0)
+    t_node *cmd;
+    // char *hold;
+
+    if (cmmnd->first == NULL || fd < 0)
+        exit(0);
+    cmd = cmmnd->first;
+    while (cmd)
     {
-        perror ("open");
-        exit(1);
+        // hold = (char *)reverse_endian(cmd->code);
+        write (fd, &cmd->code, 1);
+        lseek(fd, sizeof (char), SEEK_END);
+        ft_printf("\t\t====%s=====\n", cmd->data);
+        cmd = cmd->next;
     }
-    // while (++i < 8)
-    // {
-    //     int j = 3;
-    //     while (--j)
-        // write (fd, &arr[i], 1);
-        fprintf(fp, "%i", COREWAR_EXEC_MAGIC);
-        ft_printf("%x\n", COREWAR_EXEC_MAGIC);
-    //     i--;
-    //     lseek(fd, i*sizeof (str), SEEK_END);
-    //     str++;
-    // }
-    ft_printf("%s\n", data->name);
-
-    char *t = it_base((unsigned long long)COREWAR_EXEC_MAGIC, 0);
-    ft_printf ("%s\n", t);
-    // while (*data->name)
-    // {
-        // write(fd, &data->name)
-    // }
-    close (fd);
-}
-
-char	*it_base(unsigned long long vl, int base)
-{
-	int x;
-    char *arr;
-    unsigned long long i;
-
-	i = vl;
-	x = 1;
-	while ((i = i / base) >= 1)
-		x++;
-	arr = ft_strnew(x);
-	i = (vl > 0 ? vl : -vl);
-	while (x--)
-	{
-		if (i % base < 10)
-			arr[x] = i % base + '0';
-		else
-			arr[x] = i % base + 'a' - 10;
-		i = i / base;
-	}
-	arr[x] = ((x == 0) ? '-' : '0');
-    return (arr);
+    ft_printf ("%d\n", data->error);
 }
