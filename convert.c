@@ -53,8 +53,8 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
             {
                 // if (cmd->arg[data->x] & T_REG)
                 // {
-                    ft_printf ("####%d- %d-####\n", cmd->arg[data->x], cmd->w_args[data->x + 6]);
-                    write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+                ft_printf ("####%d- %d-####\n", cmd->arg[data->x], cmd->w_args[data->x + 6]);
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
 
                 // }
 

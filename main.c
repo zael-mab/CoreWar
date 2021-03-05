@@ -34,7 +34,7 @@ int main(int ac, char **av)
 		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
 
-// ////////////////////////			CHECK THE .s
+// ////////////////////////			CHECK THE .s extend
 		fd = open(av[1], O_RDONLY);
 		sdata.error = -1;
 
@@ -52,7 +52,7 @@ int main(int ac, char **av)
 			// ft_printf("-------%s\n", line);
 
 			if (sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
-					save_labels(&labels, ft_strtrim(line), &head);
+					save_labels(&labels, ft_strtrim(line), &head);		//	labels and instrucions
 
 			if (!check_champion(line, &sdata))								// check and save the name & the comment
 			{
@@ -89,7 +89,7 @@ int main(int ac, char **av)
 
 
 ///////////////***********///////////
-		ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
+		// ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
 		// ft_printf ("\t----------\n");
 		// display_nodes (&labels);
 		// ft_printf ("\t----------\n");
@@ -97,56 +97,56 @@ int main(int ac, char **av)
 		// ft_printf ("\t-----*----\n\n");
 /////////////***********///////////
 
-		if (!pars_instructions(&head, labels, &sdata))
-		{
-			list_del_all(&head);
-			list_del_all(&labels);
-			exit (0);
-		}
+		// if (!pars_instructions(&head, labels, &sdata))
+		// {
+		// 	list_del_all(&head);
+		// 	list_del_all(&labels);
+		// 	exit (0);
+		// }
 
 		// display_nodes (&head);
-		int fp;
-		int jumper;
-		int c;
+		// int fp;
+		// int jumper;
+		// int c;
 
-		fp = open ("test.cor", O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
-		jumper = -1;
+		// fp = open ("test.cor", O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
+		// jumper = -1;
 		
 		
-		// hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
-		int y = reverse_endian(COREWAR_EXEC_MAGIC);
-		write (fp, &y, 4);												// revers the magic_code and print it as a hex
+		// // hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
+		// int y = reverse_endian(COREWAR_EXEC_MAGIC);
+		// write (fp, &y, 4);												// revers the magic_code and print it as a hex
 
-		jumper = -1;
-		while (sdata.name[++jumper] && write (fp, &sdata.name[jumper], 1));	// print the name
+		// jumper = -1;
+		// while (sdata.name[++jumper] && write (fp, &sdata.name[jumper], 1));	// print the name
 
-		c = PROG_NAME_LENGTH - ft_strlen(sdata.name) + 4;
-		lseek(fp, c * sizeof (char), SEEK_END);
+		// c = PROG_NAME_LENGTH - ft_strlen(sdata.name) + 4;
+		// lseek(fp, c * sizeof (char), SEEK_END);
 
-		y = reverse_endian(head.code_size);							// revers the code_size and print it.
-		write(fp, &y, 4);
+		// y = reverse_endian(head.code_size);							// revers the code_size and print it.
+		// write(fp, &y, 4);
 
 	
-		jumper = -1;
-		while (sdata.comment[++jumper] && write (fp, &sdata.comment[jumper], 1));	// print the comment
-		c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
-		lseek(fp, c * sizeof (char), SEEK_END);
+		// jumper = -1;
+		// while (sdata.comment[++jumper] && write (fp, &sdata.comment[jumper], 1));	// print the comment
+		// c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
+		// lseek(fp, c * sizeof (char), SEEK_END);
 		
 
-		decode(&sdata, &head, fp);
+		// decode(&sdata, &head, fp);
 
 		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
 
 
-		ft_printf ("\t----------\n");
-		display_nodes (&labels);
-		ft_printf ("\t----------\n");
-		display_nodes (&head);
-		ft_printf ("\t-----*----\n\n");
+		// ft_printf ("\t----------\n");
+		// display_nodes (&labels);
+		// ft_printf ("\t----------\n");
+		// display_nodes (&head);
+		// ft_printf ("\t-----*----\n\n");
 	
 		close (fd);
-		close (fp);
+		// close (fp);
 	}
 	
 	if (ac == 1)

@@ -29,15 +29,14 @@ int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
     }
     if (x == 0)
         return (0);
-    x = (ft_atoi(line));
-    // if (x > 0)
-        instr->arg[data.y] = reverse_endian (x);
-    // else
-    // {
-        // instr->arg[data.y] = x;
-        // instr->arg[data.y] = reverse_endian (instr->arg[data.y]);
-    // }
-    // write (1, &instr->arg[data.y], 4);
+    x = ft_atoi(line);
+    if (x > -1)
+        instr->arg[data.y] = (ft_atoi(line)) << 8;
+    else
+    {
+        instr->arg[data.y] = x << 16;
+        instr->arg[data.y] = (reverse_endian (instr->arg[data.y]));
+    }
     ft_printf ("\t\t!!!!dir*%d*=[%d]!!!!\n",data.y , instr->arg[data.y]);
     
     return (1);
@@ -45,7 +44,7 @@ int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
 
 
 
-int                check_ind(char *line, int arg, t_head labels)
+int                check_ind(char *line, int arg, t_head labels, t_asmdata *data)
 {
     char *tmp = ft_strtrim (line);
     t_node *l;
@@ -60,6 +59,7 @@ int                check_ind(char *line, int arg, t_head labels)
     }
     if (l)
     {
+        data->lb = l->position;
         // ft_printf ("\t \tlable === %s\n", l->data);
         return (1);
     }

@@ -105,7 +105,7 @@ void        display_nodes(t_head *head)
         head->code_size += l->command_size;
         ft_printf("_|%.2d|\t[%s]\t",  l->position, l->data);
         if (l->operation_num > -1)
-            ft_printf ("-%d-", l->size_ind);
+            ft_printf ("-%d-", l->operation_num);
         if (l->code > 0)
         {
             ft_printf("******");
@@ -136,40 +136,29 @@ void        display_nodes(t_head *head)
 t_node    *save_labels(t_head *labels, char *line, t_head *head)
 {
     int j;
-    int i;
     char *tmp;
     static int tmp_post;
     t_node p;                       //[  marker: 
-    t_node t;                       //  # End of file  ]   if a label didn't followed by '\n' at the end of file it's an error fix it .
 
     ft_bzero(&p, sizeof (t_node));
-    ft_bzero(&t, sizeof (t_node));
     j = -1;
     while (line[++j])
         if (line[j] == LABEL_CHAR)
             break ;
 
-///////////////////////
     if (ft_strlen(line) > j)
     {
         tmp = ft_strncpy(ft_strnew(j), line, j);
-        i = -1;
-        while (++i <= j)
-            if (ft_isdigit(tmp[i]) ||  tmp[i] == 95 || (tmp[i] >= 97 && tmp[i] <= 122));
-            else
-                break ;
-
-/////////////////
-        if (j == i)
+        if (j == check_isdigit(tmp, j))
         {
-            ft_printf ("*****%c***\n", line[i]);
             if (ft_strlen(line) > j + 1)
             {
                 p = *insert_node (head, ft_strtrim (j + 1 +line), -1);					//	insert eash line 
-                t = *insert_node(labels, tmp, p.position);
+                insert_node(labels, tmp, p.position);
             }
             else
-                t = *insert_node(labels, tmp, tmp_post);
+                insert_node(labels, tmp, tmp_post);
+            free (tmp);
             return (NULL);
         }
         free (tmp);
@@ -180,3 +169,15 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
 }
 
 //////////////////////////////////
+
+int     check_isdigit(char *tmp,  int j)
+{
+    int i;
+    
+    i = -1;
+    while (++i <= j)
+        if (ft_isdigit(tmp[i]) ||  tmp[i] == 95 || (tmp[i] >= 97 && tmp[i] <= 122));
+        else
+            break ;
+    return (i);
+}

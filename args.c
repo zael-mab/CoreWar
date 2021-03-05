@@ -58,13 +58,18 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                 instruction->w_args[j + 3] = REG_CODE;
                 break ;
             }
-// //////////////////////
+
+
+// /////////////////////////////
 
             if (sdata->op_args[j][x] == 'r' && !ft_isdigit(sdata->op_args[j][x + 1]))
             {
                 ft_printf("~~4~~~~~~~~Error~~~~~~~~~\n");   ///////
                 return (0);
             }
+
+
+
             else if (sdata->op_args[j][x] == '%' && sdata->op_args[j][x + 1] == ':')
             {
                 t_node *l;
@@ -78,10 +83,12 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                 instruction->command_size += (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
                 instruction->w_args[j] = T_LAB + T_DIR;
                 instruction->w_args[j + 3] = DIR_CODE;
+                sdata->lb += (j == 2 ? 4 : j + 1);
                 // instruction->arg[j] = l->size_ind;
                 break;
             }
-// ////////////////////
+// ///////////////////////////////////
+
 
             else if (sdata->op_args[j][x] == '%')                          //DIRECT_CHAR (%) and a number or label (LABEL_CHAR (:) in front of it)
             {
@@ -94,13 +101,19 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                 instruction->w_args[j + 3] = DIR_CODE;
                 break ;
             }
+// ///////////////////////////////////////
+
             else if (ft_isdigit(sdata->op_args[j][x]) || sdata->op_args[j][x] == ':')
             {
                 ft_putchar ('I');
-                if (ft_atoi(x + sdata->op_args[j]) < -1)
+                if (ft_atoi(x + sdata->op_args[j]) > -1) // !!!
+                {
+                    instruction->arg[j] = ft_atoi(x + sdata->op_args[j]);
                     ft_printf ("= %d\n", ft_atoi(x + sdata->op_args[j]));
+
+                }
                 if (sdata->op_args[j][x] == ':')
-                    if (!check_ind(x + 1 + sdata->op_args[j], g_op_tab[y].args[j], labels))
+                    if (!check_ind(x + 1 + sdata->op_args[j], g_op_tab[y].args[j], labels, sdata))
                         return (0);
                 instruction->command_size += IND_SIZE;
                 instruction->w_args[j] = T_IND;

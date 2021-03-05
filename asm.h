@@ -98,6 +98,7 @@ t_node      *search_by_name(t_node *l, char* x);
 
 
 t_node      *save_labels(t_head *labels, char *lin, t_head *head);
+int         check_isdigit(char *tmp, int j);
 
 int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata);
 
@@ -106,7 +107,7 @@ void        operations(char **operat, int i);
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels);
 t_node      *check_dir_lebel(char *line, int arg, t_head labels);
 int         check_dir(char *line, int arg, t_node *instr, t_asmdata data);
-int         check_ind(char *line, int arg, t_head labels);
+int         check_ind(char *line, int arg, t_head labels, t_asmdata *data);
 
 int         check_reg(char *line, int arg, t_node *instru, t_asmdata data);
 
@@ -120,4 +121,5 @@ int         reverse_endian (int i);
 void        decode(t_asmdata *data, t_head *cmmnd, int fd);
 void        add_encodin_code(t_asmdata *sdata, t_node *instruct);
 void        init_encodin_byte(t_node *instr, int p, int shift);
+
 # endif
