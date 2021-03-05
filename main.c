@@ -34,7 +34,7 @@ int main(int ac, char **av)
 		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
 
-// ////////////////////////
+// ////////////////////////			CHECK THE .s
 		fd = open(av[1], O_RDONLY);
 		sdata.error = -1;
 

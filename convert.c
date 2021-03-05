@@ -43,12 +43,25 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
     {
         if (cmd->code > 0)
         {
+            ft_printf("\t\t====%s=====\n", cmd->data);
+
             write (fd, &cmd->code, 1);
             write (fd, &cmd->encodin,1);
-            lseek(fd, sizeof (char), SEEK_END);
+            data->x = -1;
+            while (++data->x < cmd->arg_num)
+            {
+                // if (cmd->arg[data->x] & T_REG)
+                // {
+                    ft_printf ("-%d-\n",cmd->arg[data->x]);
+                    write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+
+                // }
+
+            }
+            // lseek(fd, sizeof (char), SEEK_END);
         }
-        ft_printf("\t\t====%s=====\n", cmd->data);
         cmd = cmd->next;
     }
     ft_printf ("%d\n", data->error);
 }
+

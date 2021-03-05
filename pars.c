@@ -67,14 +67,17 @@ boolean     check_champion (char *line, t_asmdata *sdata)
         if (line[j] == '"' && !sdata->s)
             sdata->s = j + 1;
     }
-/////////////////////////
+
+//      ///////////////////////
     // check the restof line "something"x
     if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(line)) - sdata->e)
     {
         ft_printf("#Errorin the line[%s] \n", line);
         return (0);
     }
-/////////////////////
+
+//      /////////////////////
+    
     if (sdata->n == 1 && sdata->s && sdata->e && sdata->error == -1)
         if ((sdata->name = ft_strscpy(ft_strnew(PROG_NAME_LENGTH), line, sdata->s, sdata->e)))
             sdata->n = -1;
@@ -83,7 +86,8 @@ boolean     check_champion (char *line, t_asmdata *sdata)
         if((sdata->comment = ft_strscpy(ft_strnew(COMMENT_LENGTH), line, sdata->s, sdata->e)))
             sdata->c = -1;
 
-/////////////////////
+//      /////////////////////
+    
     if (sdata->s && (sdata->c == 1 || sdata->n == 1))
     {
 
@@ -127,10 +131,11 @@ boolean         join (char *line, t_asmdata *sdata, char **cmd, int v)
 //////////////////////////////////////////////////
 
 
-int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)       //REG_NUMBER
+int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)       //REG_NUMBER
 {
     t_node  *instruct;
-    char *tmp;
+    char    *tmp;
+    int     x;
 
     instruct = NULL;
     instruct = head->first;
@@ -146,16 +151,14 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)     
             ft_printf("wrang command [%s]\n", instruct->data);
             return (0);
         }
-        // ft_printf ("instructions.%d= %s\n", instruct->position, i + instruct->data);
 
+///////////////////////////    ///////////////
 
-
-    /////////////////
         if (sdata->x > 0)
         {
             tmp = ft_strncpy(ft_strnew(5), instruct->data, sdata->x);       //CHANGE that just point to it, no need to allocate I think !.
             ft_printf ("\t<%s>\n", tmp);
-            int x = -1;
+            x = -1;
             while (++x < 17)
             {
                 if (!ft_strcmp(tmp, g_op_tab[x].name))
@@ -163,57 +166,30 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)     
                     if (!pars_args(instruct, sdata, x, labels))
                     {
                         ft_printf("~1~~~~~~Error~~~~~~~~\n");
+                        ft_memdel((void**) sdata->op_args);
                         return (0);
                     }
                     instruct->command_size += 1;
                     instruct->code = (x == 17 ? -1 : g_op_tab[x].op_code);
-// ////////////////////////////////////////////////////////
+                    instruct->arg_num = g_op_tab[x].args_numb;
+///////////////////////////    ///////////////
+
+
+            
+            
                     instruct->encodin_code = g_op_tab[x].encoding_code;
                     if (instruct->encodin_code > 0)
-                    {
-                        int z;
+                        add_encodin_code(sdata, instruct);
 
-                        z = 2;
-                        while (++z < 6)
-                        {
-                            if (z == 3)
-                            {
-                                if (instruct->w_args[z] == REG_CODE)
-                                    instruct->encodin += REG_CODE << 6;
-                                if (instruct->w_args[z] == DIR_CODE)
-                                    instruct->encodin += DIR_CODE << 6;
-                                if (instruct->w_args[z] == IND_CODE)
-                                    instruct->encodin += IND_CODE << 6;
-                            }
-                            if (z == 4)
-                            {
-                                if (instruct->w_args[z] == REG_CODE)
-                                    instruct->encodin += REG_CODE << 4;
-                                if (instruct->w_args[z] == DIR_CODE)
-                                    instruct->encodin += DIR_CODE << 4;
-                                if (instruct->w_args[z] == IND_CODE)
-                                    instruct->encodin += IND_CODE << 4;
-                            }
-                            if (z == 5)
-                            {
-                                if (instruct->w_args[z] == REG_CODE)
-                                    instruct->encodin += REG_CODE << 2;
-                                if (instruct->w_args[z] == DIR_CODE)
-                                    instruct->encodin += DIR_CODE << 2;
-                                if (instruct->w_args[z] == IND_CODE)
-                                    instruct->encodin += IND_CODE << 2;
-                            }
-
-                        }
-                    }
 
 // ///////////////////////////////////////////////////////////
                     ft_printf ("\t\t\t--[%d]--\n", instruct->encodin);
-                    ft_printf ("\t\t\t--[%d]--\n", 1 << 2);
 
                     break ;
                 }
             }
+
+
             if (x == 17)
             {
                 ft_printf ("~2~~~~~~~~~~~Error~~~~~~~~~~\n");
@@ -221,13 +197,37 @@ int        pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)     
             }
             head->code_size += instruct->command_size;
 
+
             free (tmp);
         }
-
         instruct = instruct->next;
-            
     }
+
     return (1);
 }
 
 
+void    add_encodin_code(t_asmdata *sdata, t_node *instruct)
+{
+    sdata->x = 2;
+    while (++sdata->x < 6)
+    {
+        if (sdata->x == 3)
+            init_encodin_byte(instruct, sdata->x, 2 * sdata->x);
+        if (sdata->x == 5)
+            init_encodin_byte(instruct, sdata->x, sdata->x - 3);
+        if (sdata->x == 4)
+            init_encodin_byte(instruct, sdata->x, sdata->x);
+    }
+}
+
+
+void        init_encodin_byte(t_node *instr, int p, int shift)
+{
+    if (instr->w_args[p] == REG_CODE)
+        instr->encodin += REG_CODE << shift;
+    if (instr->w_args[p] == DIR_CODE)
+        instr->encodin += DIR_CODE << shift;
+    if (instr->w_args[p] == IND_CODE)
+        instr->encodin += IND_CODE << shift;
+}

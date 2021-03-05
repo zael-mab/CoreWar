@@ -12,7 +12,7 @@
 
 #include "asm.h"
 
-int     check_dir(char *line, int arg)
+int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
 {
     int x;
 
@@ -27,7 +27,10 @@ int     check_dir(char *line, int arg)
         if (!ft_isdigit(line[x]))
             return(0);
     }
-
+    instr->arg[data.y] = ft_atoi(line);
+    
+    // ft_printf ("\t\t!!!!dir=%d!!!!\n", instr->arg[data.y]);
+    
     return (1);
 }
 

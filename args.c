@@ -13,7 +13,6 @@
 #include "asm.h"
 
 
-int         check_reg(char *line, int arg);
 
 
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels)
@@ -25,51 +24,55 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
     j = -1;
     w = y;
     x = 0;
-    char **tab = ft_strsplit(sdata->x + instruction->data, ',');
+    sdata->op_args = ft_strsplit(sdata->x + instruction->data, ',');
     sdata->p_ex_code +=1;       //
     // ft_printf ("-_-_-_-_-_-_-_-_-_-%s-_-_-_-_-_-_-_-_-./_-%d\n", instruction->data, sdata->error);    /////
-    while (tab[++j])
+    while (sdata->op_args[++j])
     {
-        if (ft_strlen(ft_strtrim(tab[j])) == 0)
+        if (ft_strlen(ft_strtrim(sdata->op_args[j])) == 0)
         {
             ft_printf ("~7~~~~~Error~~~~~~~~arg num %d is empty at line[%s]\n", j, instruction->data);
+            ft_memdel((void**)sdata->op_args);
             return (0);
         }
 /////////////////////////////
 
         x = -1;
-        while (tab[j][++x])
+        while (sdata->op_args[j][++x])
         {
             
-            if (tab[j][x] == 'r' && ft_isdigit(tab[j][x + 1]))
+            if (sdata->op_args[j][x] == 'r' && ft_isdigit(sdata->op_args[j][x + 1]))
             {
-                if (ft_atoi(x + 1 + tab[j]) < 1 || ft_atoi(x + 1 + tab[j]) > REG_NUMBER)
+                if (ft_atoi(x + 1 + sdata->op_args[j]) < 1 || ft_atoi(x + 1 + sdata->op_args[j]) > REG_NUMBER)
                 {
-                    ft_printf ("~~3~~~~~Error!~~~~~~~~~~%d \n", ft_atoi(x + 1 + tab[j]));   /////
+                    ft_printf ("~~3~~~~~Error!~~~~~~~~~~%d \n", ft_atoi(x + 1 + sdata->op_args[j]));   /////
                     return (0);
                 }
                 ft_putstr ("R= ");   //////
-                if (!check_reg(tab[j], g_op_tab[y].args[j]))
+                sdata->y = j;
+                if (!check_reg(sdata->op_args[j], g_op_tab[y].args[j], instruction,  *sdata))
                     return (0);
                 instruction->command_size += 1;
                 instruction->w_args[j] = T_REG;
+                instruction->w_args[j + 6] = REG_SIZE;
                 instruction->w_args[j + 3] = REG_CODE;
                 break ;
             }
 // //////////////////////
 
-            if (tab[j][x] == 'r' && !ft_isdigit(tab[j][x + 1]))
+            if (sdata->op_args[j][x] == 'r' && !ft_isdigit(sdata->op_args[j][x + 1]))
             {
                 ft_printf("~~4~~~~~~~~Error~~~~~~~~~\n");   ///////
                 return (0);
             }
-            else if (tab[j][x] == '%' && tab[j][x + 1] == ':')
+            else if (sdata->op_args[j][x] == '%' && sdata->op_args[j][x + 1] == ':')
             {
                 if (labels.first == NULL)
                     return (0);
                 ft_printf ("D_Lebel= ");
-                if (!check_dir_lebel(x + 2 + tab[j], g_op_tab[y].args[j], labels))
+                if (!check_dir_lebel(x + 2 + sdata->op_args[j], g_op_tab[y].args[j], labels))
                     return (0);
+                instruction->w_args[j + 6] = (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
                 instruction->command_size += (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
                 instruction->w_args[j] = T_LAB + T_DIR;
                 instruction->w_args[j + 3] = DIR_CODE;
@@ -77,23 +80,24 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
             }
 // ////////////////////
 
-            else if (tab[j][x] == '%')                          //DIRECT_CHAR (%) and a number or label (LABEL_CHAR (:) in front of it)
+            else if (sdata->op_args[j][x] == '%')                          //DIRECT_CHAR (%) and a number or label (LABEL_CHAR (:) in front of it)
             {
                 ft_putstr ("D= ");
-                if (!check_dir(x + 1 + tab[j], g_op_tab[y].args[j]))
+                if (!check_dir(x + 1 + sdata->op_args[j], g_op_tab[y].args[j], instruction, *sdata))
                     return (0);
                 instruction->command_size += (g_op_tab[y].dir_size == 0 ? 4 : 2);
+                instruction->w_args[j + 6] = (g_op_tab[y].dir_size == 0 ? 4 : 2);
                 instruction->w_args[j] = T_DIR;
                 instruction->w_args[j + 3] = DIR_CODE;
                 break ;
             }
-            else if (ft_isdigit(tab[j][x]) || tab[j][x] == ':')
+            else if (ft_isdigit(sdata->op_args[j][x]) || sdata->op_args[j][x] == ':')
             {
                 ft_putchar ('I');
-                if (ft_atoi(x + tab[j]) < -1)
-                    ft_printf ("= %d\n", ft_atoi(x + tab[j]));
-                if (tab[j][x] == ':')
-                    if (!check_ind(x + 1 + tab[j], g_op_tab[y].args[j], labels))
+                if (ft_atoi(x + sdata->op_args[j]) < -1)
+                    ft_printf ("= %d\n", ft_atoi(x + sdata->op_args[j]));
+                if (sdata->op_args[j][x] == ':')
+                    if (!check_ind(x + 1 + sdata->op_args[j], g_op_tab[y].args[j], labels))
                         return (0);
                 instruction->command_size += IND_SIZE;
                 instruction->w_args[j] = T_IND;
@@ -101,7 +105,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                 break ;
             }
         }
-        ft_printf("-%s-\n", tab[j]);
+        ft_printf("-%s-\n", sdata->op_args[j]);
     }    
     if (j != g_op_tab[y].args_numb)
     {
@@ -114,7 +118,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
 
 
 /////////////////////////////////////////
-int         check_reg(char *line, int arg)
+int         check_reg(char *line, int arg, t_node *instru, t_asmdata data)
 {
     char *tmp = ft_strtrim(line);
     int i;
@@ -122,8 +126,11 @@ int         check_reg(char *line, int arg)
     i = -1;
     while (tmp[++i])
     {
-        int x = ft_atoi (1 + tmp);
-        if (tmp[i] == 'r' && x > 0)
+        instru->arg[data.y] = ft_atoi (1 + tmp);
+        
+        // ft_printf ("\t\t!!!!reg=%d!!!!\n", instru->arg[data.y]);
+        
+        if (tmp[i] == 'r' && instru->arg[data.y] > 0)
         {
             if (!(arg & T_REG))
             {
@@ -145,6 +152,7 @@ int         check_reg(char *line, int arg)
 }
 
 ///////////////////////////////////////
+
 int                check_dir_lebel(char *line, int arg, t_head labels)
 {
     char *tmp = ft_strtrim (line);

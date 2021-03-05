@@ -28,12 +28,16 @@ typedef struct      s_node
     char            *data;
     size_t          position;
     size_t          code;
+    
+    int             arg_num;
     int             encodin_code;
     int             encodin;
+    
     int             operation_num;          //labels -pointes operation-. (need to calculate the number of bytes btween the arg_label and the instruction tha label pointed to)
     int             op_code;                //num of operater.
-    int             w_args[6];                // what arg.
-    // char            op_args[3];            //split the args[number of args]!!
+    int             w_args[9];                // what arg.
+    
+    int             arg[3];             
     size_t          command_size;
     struct s_node   *next;
 }                   t_node;
@@ -68,8 +72,10 @@ typedef struct      s_asmdata
     int             s;
     int             e;
     int             error;
+    char            **op_args;            //split the args[arg_num]!!
     int             p_ex_code;
     int             x;
+    int             y;
 }                   t_asmdata;
 
 t_op            g_op_tab[17];
@@ -94,9 +100,10 @@ void        operations(char **operat, int i);
 
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels);
 int         check_dir_lebel(char *line, int arg, t_head labels);
-int         check_dir(char *line, int arg);
+int         check_dir(char *line, int arg, t_node *instr, t_asmdata data);
 int         check_ind(char *line, int arg, t_head labels);
 
+int         check_reg(char *line, int arg, t_node *instru, t_asmdata data);
 
 
 
@@ -105,4 +112,6 @@ void        list_del_all (t_head *head);
 size_t      reverse_endian (size_t i);  // CHANGE it !!!
 
 void        decode(t_asmdata *data, t_head *cmmnd, int fd);
+void        add_encodin_code(t_asmdata *sdata, t_node *instruct);
+void        init_encodin_byte(t_node *instr, int p, int shift);
 # endif
