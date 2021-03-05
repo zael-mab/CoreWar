@@ -41,6 +41,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
         while (sdata->op_args[j][++x])
         {
             
+            sdata->y = j;
             if (sdata->op_args[j][x] == 'r' && ft_isdigit(sdata->op_args[j][x + 1]))
             {
                 if (ft_atoi(x + 1 + sdata->op_args[j]) < 1 || ft_atoi(x + 1 + sdata->op_args[j]) > REG_NUMBER)
@@ -49,12 +50,11 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
                     return (0);
                 }
                 ft_putstr ("R= ");   //////
-                sdata->y = j;
                 if (!check_reg(sdata->op_args[j], g_op_tab[y].args[j], instruction,  *sdata))
                     return (0);
                 instruction->command_size += 1;
                 instruction->w_args[j] = T_REG;
-                instruction->w_args[j + 6] = REG_SIZE;
+                instruction->w_args[j + 6] = 1;
                 instruction->w_args[j + 3] = REG_CODE;
                 break ;
             }
@@ -67,15 +67,18 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
             }
             else if (sdata->op_args[j][x] == '%' && sdata->op_args[j][x + 1] == ':')
             {
+                t_node *l;
                 if (labels.first == NULL)
                     return (0);
                 ft_printf ("D_Lebel= ");
-                if (!check_dir_lebel(x + 2 + sdata->op_args[j], g_op_tab[y].args[j], labels))
+                l = check_dir_lebel(x + 2 + sdata->op_args[j], g_op_tab[y].args[j], labels);
+                if (!l)
                     return (0);
                 instruction->w_args[j + 6] = (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
                 instruction->command_size += (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
                 instruction->w_args[j] = T_LAB + T_DIR;
                 instruction->w_args[j + 3] = DIR_CODE;
+                // instruction->arg[j] = l->size_ind;
                 break;
             }
 // ////////////////////
@@ -128,7 +131,6 @@ int         check_reg(char *line, int arg, t_node *instru, t_asmdata data)
     {
         instru->arg[data.y] = ft_atoi (1 + tmp);
         
-        // ft_printf ("\t\t!!!!reg=%d!!!!\n", instru->arg[data.y]);
         
         if (tmp[i] == 'r' && instru->arg[data.y] > 0)
         {
@@ -153,23 +155,23 @@ int         check_reg(char *line, int arg, t_node *instru, t_asmdata data)
 
 ///////////////////////////////////////
 
-int                check_dir_lebel(char *line, int arg, t_head labels)
+t_node      *check_dir_lebel(char *line, int arg, t_head labels)
 {
-    char *tmp = ft_strtrim (line);
-    t_node *l;
+    char    *tmp = ft_strtrim (line);
+    t_node  *l;
 
     ft_printf("%s\n", line);
-    l  = search(labels.first, tmp);
+    l  = search_by_name(labels.first, tmp);
 
     if (!(arg & T_DIR))
     {
         ft_printf ("!!!Error at arg num[%s]\n", line);
-        return (0);
+        return (NULL);
     }
     if (l)
     {
         // ft_printf ("\t \tlable === %s\n", l->data);
-        return (1);
+        return (l);
     }
-    return (0);
+    return (NULL);
 }

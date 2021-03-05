@@ -67,17 +67,31 @@ t_node     *insert_node(t_head *head, void    *data, int pos)
     return (new_node->position + 1 == head->l_size ? new_node : NULL);
 }
 
-
-t_node  *search(t_node *l, char* x)
+///////////////////////////
+t_node  *search_by_name(t_node *l, char* x)
 {
     if (l == NULL)
         return NULL;
     if (!ft_strcmp(l->data, x))
         return (l);
     else
-        return (search(l->next, x));
+        return (search_by_name(l->next, x));
 
 }
+
+/////////////////////////////
+
+t_node  *search_by_pos(t_node *l, int x)
+{
+    if (l == NULL)
+        return NULL;
+    if (l->operation_num == x)
+        return (l);
+    else
+        return (search_by_pos(l->next, x));
+
+}
+///////////////////////
 
 
 void        display_nodes(t_head *head)
@@ -89,9 +103,9 @@ void        display_nodes(t_head *head)
     while (l)
     {
         head->code_size += l->command_size;
-        ft_printf("_|%.2d|\t[%s]\t",  l->code, l->data);
+        ft_printf("_|%.2d|\t[%s]\t",  l->position, l->data);
         if (l->operation_num > -1)
-            ft_printf ("-%d-", l->operation_num);
+            ft_printf ("-%d-", l->size_ind);
         if (l->code > 0)
         {
             ft_printf("******");

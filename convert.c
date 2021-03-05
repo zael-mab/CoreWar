@@ -46,13 +46,14 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
             ft_printf("\t\t====%s=====\n", cmd->data);
 
             write (fd, &cmd->code, 1);
-            write (fd, &cmd->encodin,1);
+            if (cmd->encodin_code > 0)
+                write (fd, &cmd->encodin,1);
             data->x = -1;
             while (++data->x < cmd->arg_num)
             {
                 // if (cmd->arg[data->x] & T_REG)
                 // {
-                    ft_printf ("-%d-\n",cmd->arg[data->x]);
+                    ft_printf ("####%d- %d-####\n", cmd->arg[data->x], cmd->w_args[data->x + 6]);
                     write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
 
                 // }
@@ -65,3 +66,7 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
     ft_printf ("%d\n", data->error);
 }
 
+
+
+// // 0b68 0100 0700 0101 0000 0000 0290 0000
+// 0000 0209 ffed

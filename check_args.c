@@ -27,9 +27,18 @@ int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
         if (!ft_isdigit(line[x]))
             return(0);
     }
-    instr->arg[data.y] = ft_atoi(line);
-    
-    // ft_printf ("\t\t!!!!dir=%d!!!!\n", instr->arg[data.y]);
+    if (x == 0)
+        return (0);
+    x = (ft_atoi(line));
+    // if (x > 0)
+        instr->arg[data.y] = reverse_endian (x);
+    // else
+    // {
+        // instr->arg[data.y] = x;
+        // instr->arg[data.y] = reverse_endian (instr->arg[data.y]);
+    // }
+    // write (1, &instr->arg[data.y], 4);
+    ft_printf ("\t\t!!!!dir*%d*=[%d]!!!!\n",data.y , instr->arg[data.y]);
     
     return (1);
 }
@@ -42,7 +51,7 @@ int                check_ind(char *line, int arg, t_head labels)
     t_node *l;
 
     ft_printf("= %s\n", tmp);
-    l  = search(labels.first, tmp);
+    l  = search_by_name(labels.first, tmp);
 
     if (!(arg & T_IND))
     {
@@ -61,5 +70,3 @@ int                check_ind(char *line, int arg, t_head labels)
     }
     return (0);
 }
-
-             

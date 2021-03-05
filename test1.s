@@ -8,6 +8,6 @@ loop:
 
 
 live:
-        live %0
+        live %33
         ld %0, r2
-        zjmp %-22
+        zjmp %:loop

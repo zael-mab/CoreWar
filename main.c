@@ -138,6 +138,13 @@ int main(int ac, char **av)
 		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
 
+
+		ft_printf ("\t----------\n");
+		display_nodes (&labels);
+		ft_printf ("\t----------\n");
+		display_nodes (&head);
+		ft_printf ("\t-----*----\n\n");
+	
 		close (fd);
 		close (fp);
 	}
@@ -150,17 +157,27 @@ int main(int ac, char **av)
 
 
 
-size_t reverse_endian (size_t i)
+int 				reverse_endian (int i)
 {
-    unsigned char c1, c2, c3, c4;
+    unsigned char	c1;
+	unsigned char	c2;
+	unsigned char	c3;
+	unsigned char	c4;
 
-	c1 = i & 255;
-	c2 = (i >> 8) & 255;
-	c3 = (i >> 16) & 255;
-	c4 = (i >> 24) & 255;
-
-	return ((size_t)c1 << 24) + ((size_t)c2 << 16) + ((size_t)c3 << 8) + c4;
+	c1 = i;
+	c2 = i >> 8;
+	c3 = i >> 16;
+	c4 = i >> 24;
+	return ((int)c1 << 24) + ((int)c2 << 16) + ((int)c3 << 8) + c4;
 }
+
+// int					reverse_2endian(int i)
+// {
+// 	unsigned char c1;
+// 	unsigned char c2;
+
+// 	c1 = i >> 
+// }
 
 
 

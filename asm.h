@@ -34,6 +34,8 @@ typedef struct      s_node
     int             encodin;
     
     int             operation_num;          //labels -pointes operation-. (need to calculate the number of bytes btween the arg_label and the instruction tha label pointed to)
+    int             size_ind;
+    
     int             op_code;                //num of operater.
     int             w_args[9];                // what arg.
     
@@ -76,6 +78,7 @@ typedef struct      s_asmdata
     int             p_ex_code;
     int             x;
     int             y;
+    int             lb;
 }                   t_asmdata;
 
 t_op            g_op_tab[17];
@@ -89,7 +92,9 @@ void        init_head(t_head *head);            //DELETE
 char 	    *avoid_comment (char *line);
 boolean     check_champion (char *line, t_asmdata *sdata);
 boolean     join (char *line, t_asmdata *sdata, char **cmd, int v);
-t_node      *search(t_node *l, char* x);
+// t_node      *search(t_node *l, char* x);
+t_node      *search_by_pos(t_node *l, int x);
+t_node      *search_by_name(t_node *l, char* x);
 
 
 t_node      *save_labels(t_head *labels, char *lin, t_head *head);
@@ -99,7 +104,7 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata);
 void        operations(char **operat, int i);
 
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels);
-int         check_dir_lebel(char *line, int arg, t_head labels);
+t_node      *check_dir_lebel(char *line, int arg, t_head labels);
 int         check_dir(char *line, int arg, t_node *instr, t_asmdata data);
 int         check_ind(char *line, int arg, t_head labels);
 
@@ -109,7 +114,8 @@ int         check_reg(char *line, int arg, t_node *instru, t_asmdata data);
 
 void        *list_get(t_head *head);
 void        list_del_all (t_head *head);
-size_t      reverse_endian (size_t i);  // CHANGE it !!!
+// size_t      reverse_endian (size_t i);  // CHANGE it !!! i did
+int         reverse_endian (int i);
 
 void        decode(t_asmdata *data, t_head *cmmnd, int fd);
 void        add_encodin_code(t_asmdata *sdata, t_node *instruct);
