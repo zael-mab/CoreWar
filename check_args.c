@@ -76,7 +76,6 @@ int         set_label_args(t_head *head, t_head labels, t_asmdata *data)
     counter = 0;
     while (instru)
     {
-        counter += instru->command_size;
         if (instru->lb > 0)
         {
 
@@ -91,14 +90,30 @@ int         set_label_args(t_head *head, t_head labels, t_asmdata *data)
             {
                 if ((instru->lb & jumper + 1 && jumper != 2) || (instru->lb & 4 && jumper == 2))
                 {
-                    if ((l = search_by_name(labels.first, 1 + ft_strchr(instru->arg_tab[jumper], LABEL_CHAR))))
+                    if ((l = search_by_name(labels.first, ft_strtrim(1 + ft_strchr(instru->arg_tab[jumper], LABEL_CHAR)))))
                     {
+                        ft_printf("[[[[[[[[[[%s]]]]]]]]]]]]]]]], \n", 1 + ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
                         if (l->size_ind == counter)
-                            ft_printf ("\t\t\t!!!!! %d == %d, %s\n", l->size_ind , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+                        {
+                            instru->arg[jumper] = reverse_endian((counter));
+                            // instru->arg[jumper] = counter;
+                            ft_printf ("\t\t\t!!!!! %d == %d, %s\n", instru->arg[jumper] , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+
+                        }
                         if (l->size_ind > counter)
-                            ft_printf ("\t\t\t!!!!! %d > %d, %s\n", l->size_ind , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+                        {
+                            instru->arg[jumper] = reverse_endian((l->size_ind - counter) << 16);
+                            // instru->arg[jumper] = l->size_ind - counter;
+                            ft_printf ("\t\t\t!!!!! %d ||> %d, %s\n", l->size_ind - counter , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+
+                        }
                         if (l->size_ind < counter)
-                            ft_printf ("\t\t\t!!!!! %d < %d, %s\n", l->size_ind , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+                        {
+                            // instr->arg[data.y] = x << 16;
+                            // instr->arg[data.y] = (reverse_endian (instr->arg[data.y]));
+                            instru->arg[jumper] = reverse_endian((l->size_ind - counter) << 16);
+                            ft_printf ("\t\t\t!!!!! %d ||< %d, %s\n",l->size_ind - counter , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+                        }
 
                     }
 
@@ -106,8 +121,9 @@ int         set_label_args(t_head *head, t_head labels, t_asmdata *data)
 
                 }
             }
-            // ft_memdel((void**) data->op_args);
         }
+        counter += instru->command_size;
+        ft_memdel((void**) instru->arg_tab);
         data->y = 0;
         instru = instru->next;
     }

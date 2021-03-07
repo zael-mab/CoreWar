@@ -106,21 +106,24 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
 
             else if (ft_isdigit(sdata->op_args[j][x]) || sdata->op_args[j][x] == ':')
             {
-                ft_putchar ('I');
+                // ft_putchar ('I');
                 if (ft_atoi(x + sdata->op_args[j]) > -1 && !(ft_isalpha(sdata->op_args[j][x + 1]))) // !!!
                 {
                     instruction->arg[j] = ft_atoi(x + sdata->op_args[j]);
+                    instruction->w_args[j + 6] = 2;
                     instruction->command_size += IND_SIZE;
                     instruction->w_args[j] = T_IND;
                     instruction->w_args[j + 3] = IND_CODE;
                     break ;
                 }
-                /////////
+////////////////////////////////////////
                 if (sdata->op_args[j][x] == ':')
                     if (!check_ind(x + 1 + sdata->op_args[j], g_op_tab[y].args[j], labels))
                         return (0);
+                ft_printf ("\t\t^^^^^^^^^^^^^^^^^^%s^^^^^^^^^^^^^^^^\n", sdata->op_args[j]);
                 instruction->command_size += IND_SIZE;
-                instruction->w_args[j] = T_IND;
+                instruction->w_args[j + 6] = 2;
+                instruction->w_args[j] = T_IND + T_LAB;
                 instruction->w_args[j + 3] = IND_CODE;
                 instruction->lb += (j == 2 ? 4 : j + 1);
                 break ;
@@ -156,7 +159,7 @@ int         check_reg(char *line, int arg, t_node *instru, t_asmdata data)
             if (!(arg & T_REG))
             {
                 ft_printf ("Error at arg num[%s]\n", tmp);
-                break ;
+                return(0);
             }
             else
                 break;
@@ -164,7 +167,7 @@ int         check_reg(char *line, int arg, t_node *instru, t_asmdata data)
         else
         {
             ft_printf ("~6~~~~~~~~~~Error [%s]~~~~~~~~\n", tmp);
-            break ;
+            return(0);
         }
     }
     free(tmp);
@@ -178,7 +181,7 @@ int         check_dir_lebel(char *line, int arg, t_head labels)        // int !!
     char    *tmp = ft_strtrim (line);
     t_node  *l;
 
-    ft_printf("%s\n", line);
+    //ft_printf("%s\n", line);
     l  = search_by_name(labels.first, tmp);
 
     if (!(arg & T_DIR))
@@ -187,9 +190,9 @@ int         check_dir_lebel(char *line, int arg, t_head labels)        // int !!
         return (0);
     }
     if (l)
-    {
-        // ft_printf ("\t \tlable === %s\n", l->data);
         return (1);
-    }
+    // {
+        // ft_printf ("\t \tlable === %s\n", l->data);
+    // }
     return (0);
 }
