@@ -43,7 +43,7 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
     {
         if (cmd->code > 0)
         {
-            ft_printf("\t\t====%s=====\n", cmd->data);
+            // ft_printf("\t\t====%s=====\n", cmd->data);
 
             write (fd, &cmd->code, 1);
             if (cmd->encodin_code > 0)
@@ -53,7 +53,7 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
             {
                 // if (cmd->arg[data->x] & T_REG)
                 // {
-                ft_printf ("####%d- %d-####\n", cmd->arg[data->x], cmd->w_args[data->x + 6]);
+                // ft_printf ("####%d- %d-####\n", cmd->arg[data->x], cmd->w_args[data->x + 6]);
                 write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
 
                 // }

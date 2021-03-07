@@ -37,36 +37,79 @@ int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
         instr->arg[data.y] = x << 16;
         instr->arg[data.y] = (reverse_endian (instr->arg[data.y]));
     }
-    ft_printf ("\t\t!!!!dir*%d*=[%d]!!!!\n",data.y , instr->arg[data.y]);
+    // ft_printf ("\t\t!!!!dir*%d*=[%d]!!!!\n",data.y , instr->arg[data.y]);
     
     return (1);
 }
 
 
 
-int                check_ind(char *line, int arg, t_head labels, t_asmdata *data)
+int                check_ind(char *line, int arg, t_head labels)
 {
     char *tmp = ft_strtrim (line);
     t_node *l;
 
-    ft_printf("= %s\n", tmp);
+    // ft_printf("\t\t\t\t\t\t\t= %s\n", tmp);
     l  = search_by_name(labels.first, tmp);
 
-    if (!(arg & T_IND))
+    if ((arg & T_IND) && l)
     {
-        ft_printf ("!!!Error at arg num[%s]\n", line);
-        return (0);
-    }
-    if (l)
-    {
-        data->lb = l->position;
-        // ft_printf ("\t \tlable === %s\n", l->data);
+        // ft_printf ("!!!Error at arg num[%s]\n", line);
         return (1);
     }
-    else
-    {
-        ft_printf ("label not fond [%s]\n", tmp);
-        return (0);
-    }
+    // if (l)
+        // return (1);
+    ft_printf ("label not fond [%s]\n", tmp);
     return (0);
+}
+
+int         set_label_args(t_head *head, t_head labels, t_asmdata *data)
+{
+    t_node  *l;
+    t_node  *instru;
+    int     jumper;
+    int     counter;
+
+
+    instru = head->first;
+    l = labels.first;
+    counter = 0;
+    while (instru)
+    {
+        counter += instru->command_size;
+        if (instru->lb > 0)
+        {
+
+            // jumper = -1;
+            // while (instru->data[++jumper])
+                // if (instru->data[jumper] == ' ')
+                    // break ;
+            // ft_printf("\t@@@@@%d [[%s\n", ' ' , ft_strrchr(instru->data, 32));
+            // data->op_args = ft_strsplit( ft_strrchr(instru->data, 32), SEPARATOR_CHAR);
+            jumper = -1;
+            while (++jumper < instru->arg_num)
+            {
+                if ((instru->lb & jumper + 1 && jumper != 2) || (instru->lb & 4 && jumper == 2))
+                {
+                    if ((l = search_by_name(labels.first, 1 + ft_strchr(instru->arg_tab[jumper], LABEL_CHAR))))
+                    {
+                        if (l->size_ind == counter)
+                            ft_printf ("\t\t\t!!!!! %d == %d, %s\n", l->size_ind , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+                        if (l->size_ind > counter)
+                            ft_printf ("\t\t\t!!!!! %d > %d, %s\n", l->size_ind , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+                        if (l->size_ind < counter)
+                            ft_printf ("\t\t\t!!!!! %d < %d, %s\n", l->size_ind , counter, ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+
+                    }
+
+                    // ft_printf ("!******%s**%s**** ==>%d\n", data->op_args[jumper], 1+ft_strchr(data->op_args[jumper], LABEL_CHAR),head->code_size + instru->command_size);
+
+                }
+            }
+            // ft_memdel((void**) data->op_args);
+        }
+        data->y = 0;
+        instru = instru->next;
+    }
+    return (1);
 }

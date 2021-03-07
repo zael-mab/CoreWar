@@ -105,7 +105,7 @@ void        display_nodes(t_head *head)
         head->code_size += l->command_size;
         ft_printf("_|%.2d|\t[%s]\t",  l->position, l->data);
         if (l->operation_num > -1)
-            ft_printf ("-%d-", l->operation_num);
+            ft_printf ("-%d-", l->size_ind);
         if (l->code > 0)
         {
             ft_printf("******");
@@ -158,7 +158,6 @@ t_node    *save_labels(t_head *labels, char *line, t_head *head)
             }
             else
                 insert_node(labels, tmp, tmp_post);
-            free (tmp);
             return (NULL);
         }
         free (tmp);

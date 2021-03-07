@@ -146,6 +146,7 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
         while (instruct->data[++sdata->x])
             if (instruct->data[sdata->x] < 'a' || instruct->data[sdata->x] > 'z')
                 break;
+        ft_printf("{{{%s [%d]}}}\n", instruct->data,  sdata->x);
         if (sdata->x == 0 && ft_strlen (instruct->data) > 0)
         {
             ft_printf("wrang command [%s]\n", instruct->data);
@@ -158,21 +159,20 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
         if (sdata->x > 0)
         {
             tmp = ft_strncpy(ft_strnew(5), instruct->data, sdata->x);       //CHANGE that just point to it, no need to allocate I think !.
-            ft_printf ("\t<%s>\n", tmp);
+            // ft_printf ("\t<%s>\n", tmp);
             x = -1;
             while (++x < 17)
             {
                 if (!ft_strcmp(tmp, g_op_tab[x].name))
                 {
 /////////////////////////////////////
-
-
-                    l = search_by_pos(labels.first, instruct->position);
-                    if (l)
+                    if ((l = search_by_pos(labels.first, instruct->position)))
                     {
                         l->size_ind = instruct->command_size + head->code_size;
-                        ft_printf ("\nlabel===%s | %d\n", l->data, l->operation_num);
+                        ft_printf ("\t\t\t****!!!!!-%d-%s\n", l->size_ind, l->data);
                     }
+
+
 //////////////////////////////////
 
                     if (!pars_args(instruct, sdata, x, labels))
@@ -184,10 +184,6 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
                     instruct->command_size += 1;
                     instruct->code = (x == 17 ? -1 : g_op_tab[x].op_code);
                     instruct->arg_num = g_op_tab[x].args_numb;
-///////////////////////////////////
-                    
-
-
             
 // ////////////////////////////////
                     instruct->encodin_code = g_op_tab[x].encoding_code;

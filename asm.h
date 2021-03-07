@@ -38,8 +38,10 @@ typedef struct      s_node
     
     int             op_code;                //num of operater.
     int             w_args[9];                // what arg.
+    int             lb;
     
-    int             arg[3];             
+    int             arg[3];  
+    char            **arg_tab;           
     size_t          command_size;
     struct s_node   *next;
 }                   t_node;
@@ -78,7 +80,6 @@ typedef struct      s_asmdata
     int             p_ex_code;
     int             x;
     int             y;
-    int             lb;
 }                   t_asmdata;
 
 t_op            g_op_tab[17];
@@ -105,9 +106,9 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata);
 void        operations(char **operat, int i);
 
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels);
-t_node      *check_dir_lebel(char *line, int arg, t_head labels);
+int         check_dir_lebel(char *line, int arg, t_head labels);
 int         check_dir(char *line, int arg, t_node *instr, t_asmdata data);
-int         check_ind(char *line, int arg, t_head labels, t_asmdata *data);
+int         check_ind(char *line, int arg, t_head labels);
 
 int         check_reg(char *line, int arg, t_node *instru, t_asmdata data);
 
@@ -121,5 +122,8 @@ int         reverse_endian (int i);
 void        decode(t_asmdata *data, t_head *cmmnd, int fd);
 void        add_encodin_code(t_asmdata *sdata, t_node *instruct);
 void        init_encodin_byte(t_node *instr, int p, int shift);
+
+int     set_label_args(t_head *head, t_head labels, t_asmdata *data);
+
 
 # endif

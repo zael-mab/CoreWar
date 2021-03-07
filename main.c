@@ -97,43 +97,49 @@ int main(int ac, char **av)
 		// ft_printf ("\t-----*----\n\n");
 /////////////***********///////////
 
-		// if (!pars_instructions(&head, labels, &sdata))
-		// {
-		// 	list_del_all(&head);
-		// 	list_del_all(&labels);
-		// 	exit (0);
-		// }
+		if (!pars_instructions(&head, labels, &sdata))
+		{
+			list_del_all(&head);
+			list_del_all(&labels);
+			exit (0);
+		}
 
+		if (!set_label_args(&head, labels, &sdata))
+		{
+			list_del_all(&head);
+			list_del_all(&labels);
+			exit (0);
+		}
 		// display_nodes (&head);
-		// int fp;
-		// int jumper;
-		// int c;
+		int fp;
+		int jumper;
+		int c;
 
-		// fp = open ("test.cor", O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
-		// jumper = -1;
+		fp = open ("test.cor", O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
+		jumper = -1;
 		
 		
-		// // hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
-		// int y = reverse_endian(COREWAR_EXEC_MAGIC);
-		// write (fp, &y, 4);												// revers the magic_code and print it as a hex
+		// hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
+		int y = reverse_endian(COREWAR_EXEC_MAGIC);
+		write (fp, &y, 4);												// revers the magic_code and print it as a hex
 
-		// jumper = -1;
-		// while (sdata.name[++jumper] && write (fp, &sdata.name[jumper], 1));	// print the name
+		jumper = -1;
+		while (sdata.name[++jumper] && write (fp, &sdata.name[jumper], 1));	// print the name
 
-		// c = PROG_NAME_LENGTH - ft_strlen(sdata.name) + 4;
-		// lseek(fp, c * sizeof (char), SEEK_END);
+		c = PROG_NAME_LENGTH - ft_strlen(sdata.name) + 4;
+		lseek(fp, c * sizeof (char), SEEK_END);
 
-		// y = reverse_endian(head.code_size);							// revers the code_size and print it.
-		// write(fp, &y, 4);
+		y = reverse_endian(head.code_size);							// revers the code_size and print it.
+		write(fp, &y, 4);
 
 	
-		// jumper = -1;
-		// while (sdata.comment[++jumper] && write (fp, &sdata.comment[jumper], 1));	// print the comment
-		// c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
-		// lseek(fp, c * sizeof (char), SEEK_END);
+		jumper = -1;
+		while (sdata.comment[++jumper] && write (fp, &sdata.comment[jumper], 1));	// print the comment
+		c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
+		lseek(fp, c * sizeof (char), SEEK_END);
 		
 
-		// decode(&sdata, &head, fp);
+		decode(&sdata, &head, fp);
 
 		// ft_printf ("Writing output program to %s\n", corfile);
 /////////////////////////////////////////////////////
@@ -146,7 +152,7 @@ int main(int ac, char **av)
 		// ft_printf ("\t-----*----\n\n");
 	
 		close (fd);
-		// close (fp);
+		close (fp);
 	}
 	
 	if (ac == 1)
@@ -170,15 +176,6 @@ int 				reverse_endian (int i)
 	c4 = i >> 24;
 	return ((int)c1 << 24) + ((int)c2 << 16) + ((int)c3 << 8) + c4;
 }
-
-// int					reverse_2endian(int i)
-// {
-// 	unsigned char c1;
-// 	unsigned char c2;
-
-// 	c1 = i >> 
-// }
-
 
 
 char 	*avoid_comment (char *line)				// deal with the comments  !!!
