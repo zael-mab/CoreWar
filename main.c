@@ -18,148 +18,30 @@
 // lookup the binary code for each field.
 // combine these code into a single machine language command.
 // output this machine language command.
+void 	xxx(t_head *head, t_asmdata *data, t_head *labels, int ln); // CHANGE THE NAME
 
-int main(int ac, char **av)
+
+
+int 				main(int ac, char **av)
 {
 	if (ac == 2)
 	{
-		char 		*line;
 		int 		fd;
-		int 		ln;
 		t_head 		head;
-		t_head		labels;
 		t_asmdata	sdata;
 
 		ft_bzero (&head, sizeof (t_head)); 
-		ft_bzero (&labels, sizeof (t_head));
 		ft_bzero (&sdata, sizeof (t_asmdata));
-
-// ////////////////////////			CHECK THE .s extend
 		fd = open(av[1], O_RDONLY);
 		sdata.error = -1;
-
-		
-		ln = 0;
-		while (get_next_line(fd, &line) > 0)
+		if (!check_extention(av[1], &sdata))
 		{
-			// tmp = ft_strtrim(line);
-			// free (line);
-			// line = tmp;
-
-			if (sdata.n == -1 && sdata.c == -1)
-				line = avoid_comment(line);							// avoid comment 
-			
-
-			if (sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
-					save_labels(&labels, ft_strtrim(line), &head);		//	labels and instrucions
-
-			int n = 0;
-			while (line[++n] && line[n] != '.');
-			if (n == ft_strlen(line))
-				n = 0;
-			// else
-				// n++;
-			if (!check_champion(n + line, &sdata))								// check and save the name & the comment
-			{
-				perror("incorect file\n");			// don't forget to free;
-				exit(1);
-			}
-
-			free (line);
-			ln++;									// I'll need ya later.
-		}
-
-		ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
-// ////////////////////////////////////////
-		if (ln == 0)
-		{
-			list_del_all(&head);
-			list_del_all(&labels);
-			ft_printf ("empty file\n");
-			exit (1);
-		}
-		ft_printf("-------%s\n", line);
-		// if (ft_strlen(sdata.name) > PROG_NAME_LENGTH || ft_strlen(sdata.comment) > COMMENT_LENGTH)
-		// {
-		// 	list_del_all(&head);
-		// 	list_del_all(&labels);
-		// 	ft_printf ("~0*~~~~~~~~Error length~~~~~~~~|%d|%d|\n", ft_strlen(sdata.name), ft_strlen(sdata.comment));
-		// 	exit (0);
-		// }
-		if (sdata.n != -1 || sdata.c != -1)
-		{
-			list_del_all(&head);
-			list_del_all(&labels);
+			ft_printf("Error -file extention-\n");
 			exit (0);
 		}
-
-
-///////////////***********///////////
-		// ft_printf ("\t----------\n");
-		// display_nodes (&labels);
-		// ft_printf ("\t----------\n");
-		// display_nodes (&head);
-		// ft_printf ("\t-----*----\n\n");
-/////////////***********///////////
-
-		if (!pars_instructions(&head, labels, &sdata))
-		{
-			list_del_all(&head);
-			list_del_all(&labels);
-			exit (0);
-		}
-
-		if (!set_label_args(&head, labels, &sdata))
-		{
-			list_del_all(&head);
-			list_del_all(&labels);
-			exit (0);
-		}
-		// display_nodes (&head);
-		int fp;
-		int jumper;
-		int c;
-
-		fp = open ("test.cor", O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
-		jumper = -1;
-		
-		
-		// hold = (char *)reverse_endian(COREWAR_EXEC_MAGIC);
-		int y = reverse_endian(COREWAR_EXEC_MAGIC);
-		write (fp, &y, 4);												// revers the magic_code and print it as a hex
-
-		jumper = -1;
-		while (sdata.name[++jumper] && write (fp, &sdata.name[jumper], 1));	// print the name
-
-		c = PROG_NAME_LENGTH - ft_strlen(sdata.name) + 4;
-		lseek(fp, c * sizeof (char), SEEK_END);
-
-		y = reverse_endian(head.code_size);							// revers the code_size and print it.
-		write(fp, &y, 4);
-
-	
-		jumper = -1;
-		while (sdata.comment[++jumper] && write (fp, &sdata.comment[jumper], 1));	// print the comment
-		c = COMMENT_LENGTH - ft_strlen(sdata.comment) + 4;
-		lseek(fp, c * sizeof (char), SEEK_END);
-		
-
-		decode(&sdata, &head, fp);
-
-		// ft_printf ("Writing output program to %s\n", corfile);
-/////////////////////////////////////////////////////
-
-
-		// ft_printf ("\t----------\n");
-		// display_nodes (&labels);
-		// ft_printf ("\t----------\n");
-		// display_nodes (&head);
-		// ft_printf ("\t-----*----\n\n");
-	
+		f_assembler(&head, &sdata, fd);
 		close (fd);
-		close (fp);
 	}
-	
 	if (ac == 1)
 		ft_printf ("Syntax error at token [TOKEN][001:001] END (null)!\n");
 	if (ac > 2)
@@ -167,6 +49,73 @@ int main(int ac, char **av)
 }
 
 
+//norme
+void			f_assembler (t_head *head, t_asmdata *data, int fd)
+{
+	t_head		labels;
+	char 		*line;
+	int 		ln;
+	int 		n;
+
+	ft_bzero (&labels, sizeof (t_head));
+	ln = 0;
+	while (get_next_line(fd, &line) > 0 && ++ln)
+	{
+		if (data->n == -1 && data->c == -1)
+			line = avoid_comment(line);							// avoid comment 
+		if (data->n == -1 && data->c == -1)		//	avoid empty lines
+			save_labels(&labels, ft_strtrim(line), head);		//	labels and instrucions
+		n = -1;
+
+		while (line[++n] && line[n] != '.' && (data->n != -1 || data->c != -1));
+		if (n == ft_strlen(line))
+			n = 0;
+		if (!check_champion(n + line, data))								// check and save the name & the comment
+		{
+			perror("incorect file\n");			// don't forget to free;
+			exit(1);
+		}
+		free (line);
+	}
+	xxx (head, data, &labels, ln - 1);
+}
+
+
+//norme
+void 	xxx(t_head *head, t_asmdata *data, t_head *labels, int ln) // CHANGE THE NAME
+{
+	if (ln == 0)
+	{
+		list_del_all(head);
+		list_del_all(labels);
+		ft_printf ("empty file\n");
+		exit (1);
+	}
+	if (data->n != -1 || data->c != -1)
+	{
+		ft_printf("data->n/c\n");
+		list_del_all(head);
+		list_del_all(labels);
+		exit (0);
+	}
+	if (!pars_instructions(head, *labels, data))
+	{
+		ft_printf("pars_ins\n");
+		list_del_all(head);
+		list_del_all(labels);
+		exit (0);
+	}
+	if (!set_label_args(head, *labels, data))
+	{
+		ft_printf("labels\n");
+		list_del_all(head);
+		list_del_all(labels);
+		exit (0);
+	}
+	to_byte_code(head, data);
+	list_del_all(head);
+	list_del_all(labels);
+}
 
 int 				reverse_endian (int i)
 {
@@ -183,10 +132,10 @@ int 				reverse_endian (int i)
 }
 
 
-char 	*avoid_comment (char *line)				// deal with the comments  !!!
+char 		*avoid_comment (char *line)				// deal with the comments  !!!
 {
-	int i;
-	char *str;
+	int 	i;
+	char 	*str;
 
 	i = -1;
 	while (line[++i])
@@ -199,4 +148,23 @@ char 	*avoid_comment (char *line)				// deal with the comments  !!!
 		}
 	}
 	return (line);
+}
+
+int			check_extention(char *line, t_asmdata *data)
+{
+	int 	j;
+
+	j = ft_strlen(line);
+	while (--j >= 0)
+		if (line[j] == '.')
+		{
+			if (line[j + 1] == 's' && line[j + 2] == '\0')
+			{
+				data->file_name = ft_strjoin(ft_strscpy(ft_strnew(j), line, 0, j + 1) , ".cor");
+				return (1);
+			}
+			else
+				return (0);
+		}
+	return (0);
 }

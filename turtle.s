@@ -1,5 +1,8 @@
-.name 		"turtle"
-.comment	"TURTLE FFS U LAMA"
+.name 		"tur
+tle"
+.comment	"TURTLE 
+FFS 
+U LAMA"
 
 entry:
 	sti			r1, %:zork, %1

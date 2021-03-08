@@ -132,20 +132,17 @@ void        display_nodes(t_head *head)
 }
 
 
-
-t_node    *save_labels(t_head *labels, char *line, t_head *head)
+//norme
+t_node      *save_labels(t_head *labels, char *line, t_head *head)
 {
-    int j;
-    char *tmp;
-    static int tmp_post;
-    t_node p;                       //[  marker: 
+    int     j;
+    char    *tmp;
+    static  int tmp_post;
+    t_node  p;                       //[  marker: 
 
-    ft_bzero(&p, sizeof (t_node));
     j = -1;
-    while (line[++j])
-        if (line[j] == LABEL_CHAR)
-            break ;
-
+    ft_bzero(&p, sizeof (t_node));
+    while (line[++j] && line[j] != LABEL_CHAR);
     if (ft_strlen(line) > j)
     {
         tmp = ft_strncpy(ft_strnew(j), line, j);

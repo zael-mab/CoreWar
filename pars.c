@@ -42,27 +42,18 @@
 
 
 
-boolean     check_champion (char *line, t_asmdata *sdata)
+int         check_champion (char *line, t_asmdata *sdata)
 {
-    int j;
+    int     j;
 
-    j = 0;
-    // while (line[++j] && line[j] != '.');
-    // j++;
-    if (ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0)
-        sdata->n = 1;
-    if (ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 8) == 0)
-        sdata->c = 1;
-
-    ft_printf ("%s\n", line);
-    if (ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0 || ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 8) == 0)
+    sdata->n = (ft_strscmp(NAME_CMD_STRING, line, 0, 5) == 0) ? 1 : sdata->n;
+    sdata->c = (ft_strscmp(COMMENT_CMD_STRING, line, 0, 8) == 0) ? 1 : sdata->c;
+    if (ft_strscmp(NAME_CMD_STRING, line, 0, 5) == 0 || ft_strscmp(COMMENT_CMD_STRING, line, 0, 8) == 0)
     {
         sdata->error = -1;
         sdata->e = 0;
-        sdata->s = 0;       //fixed this s = -1 & e = -1
+        sdata->s = 0;       //FIX THIS s = -1 & e = -1
     }
-
-/////////////////////
     j = -1;
     while (line[++j])
     {
@@ -71,17 +62,23 @@ boolean     check_champion (char *line, t_asmdata *sdata)
         if (line[j] == '"' && !sdata->s)
             sdata->s = j + 1;
     }
+    if (!(pars_chmp_nm_cm(sdata, line)))
+    {
 
-//      ///////////////////////
-    // check the restof line "something"x
-    if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(line)) - sdata->e)
+        return (0);
+    }
+
+    return (1);
+}
+
+
+int         pars_chmp_nm_cm(t_asmdata *sdata, char *line)
+{
+    if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(line)) - sdata->e) // check the restof line "something"x
     {
         ft_printf("#Error in the line[%s] \n", line);
         return (0);
     }
-
-//      /////////////////////
-    
     if (sdata->n == 1 && sdata->s && sdata->e && sdata->error == -1)
         if ((sdata->name = ft_strscpy(ft_strnew(PROG_NAME_LENGTH), line, sdata->s, sdata->e)))
             sdata->n = -1;
@@ -89,12 +86,8 @@ boolean     check_champion (char *line, t_asmdata *sdata)
     if (sdata->c == 1 && sdata->s && sdata->e && sdata->error == -1)
         if((sdata->comment = ft_strscpy(ft_strnew(COMMENT_LENGTH), line, sdata->s, sdata->e)))
             sdata->c = -1;
-
-//      /////////////////////
-    
     if (sdata->s && (sdata->c == 1 || sdata->n == 1))
     {
-
         sdata->error++;
         if (sdata->n == 1)
             join(line, sdata, &sdata->name, PROG_NAME_LENGTH);
@@ -102,14 +95,13 @@ boolean     check_champion (char *line, t_asmdata *sdata)
             join (line, sdata, &sdata->comment, COMMENT_LENGTH);
         return (1);
     }
-
-    return (1);
+    return(1);
 }
 
 
-boolean         join (char *line, t_asmdata *sdata, char **cmd, int v)
+int         join (char *line, t_asmdata *sdata, char **cmd, int v)
 {
-    char *tmp;
+    char    *tmp;
 
     tmp = ft_strnew(ft_strlen(line));
     if (sdata->error == 0)
@@ -138,7 +130,6 @@ boolean         join (char *line, t_asmdata *sdata, char **cmd, int v)
 int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)       //REG_NUMBER
 {
     t_node  *instruct;
-    char    *tmp;
     int     x;
 
     instruct = NULL;
@@ -150,75 +141,58 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
         while (instruct->data[++sdata->x])
             if (instruct->data[sdata->x] < 'a' || instruct->data[sdata->x] > 'z')
                 break;
-        ft_printf("{{{%s [%d]}}}\n", instruct->data,  sdata->x);
         if (sdata->x == 0 && ft_strlen (instruct->data) > 0)
         {
             ft_printf("wrang command [%s]\n", instruct->data);
             return (0);
         }
-
-///////////////////////////    ///////////////
-
-        t_node *l;
         if (sdata->x > 0)
         {
-            tmp = ft_strncpy(ft_strnew(5), instruct->data, sdata->x);       //CHANGE that just point to it, no need to allocate I think !.
-            // ft_printf ("\t<%s>\n", tmp);
-            x = -1;
-            while (++x < 17)
-            {
-                if (!ft_strcmp(tmp, g_op_tab[x].name))
-                {
-/////////////////////////////////////
-                    if ((l = search_by_pos(labels.first, instruct->position)))
-                    {
-                        l->size_ind = instruct->command_size + head->code_size;
-                        ft_printf ("\t\t\t****!!!!!-%d-%s\n", l->size_ind, l->data);
-                    }
-
-
-//////////////////////////////////
-
-                    if (!pars_args(instruct, sdata, x, labels))
-                    {
-                        ft_printf("~1~~~~~~Error~~~~~~~~\n");
-                        ft_memdel((void**) sdata->op_args);
-                        return (0);
-                    }
-                    instruct->command_size += 1;
-                    instruct->code = (x == 17 ? -1 : g_op_tab[x].op_code);
-                    instruct->arg_num = g_op_tab[x].args_numb;
-            
-// ////////////////////////////////
-                    instruct->encodin_code = g_op_tab[x].encoding_code;
-                    ft_printf (" ^%d^\n", instruct->encodin_code);
-                    if (instruct->encodin_code > 0)
-                        add_encodin_code(sdata, instruct);
-
-
-// ///////////////////////////////////////////////////////////
-                    ft_printf ("\t\t\t--[%d]--\n", instruct->encodin);
-
-                    break ;
-                }
-            }
-
-
-            if (x == 17)
+            x = check_oper(instruct, labels, head, sdata);
+            if (x == 17 || x == -1)
             {
                 ft_printf ("~2~~~~~~~~~~~Error~~~~~~~~~~\n");
                 return (0);
             }
             head->code_size += instruct->command_size;
-            if (l)
-                ft_printf("\t\t...%d....\n", l->size_ind - head->code_size);
-
-            free (tmp);
         }
         instruct = instruct->next;
     }
-
     return (1);
+}
+
+int             check_oper(t_node *instruct, t_head labels, t_head *head, t_asmdata *data)
+{
+    int         x;
+    char        *tmp;
+    t_node      *l;
+
+    tmp = ft_strncpy(ft_strnew(5), instruct->data, data->x);       //CHANGE that just point to it, no need to allocate I think !.
+    x = -1;
+    while (++x < 17)
+    {
+        if (!ft_strcmp(tmp, g_op_tab[x].name))
+        {
+            if ((l = search_by_pos(labels.first, instruct->position)))
+                l->size_ind = instruct->command_size + head->code_size;
+            if (!pars_args(instruct, data, x, labels))
+            {
+                ft_printf("~1~~~~~~Error~~~~~~~~\n");
+                ft_memdel((void**) data->op_args);
+                free (tmp);
+                return (-1);
+            }
+            instruct->command_size += 1;
+            instruct->code = (x == 17 ? -1 : g_op_tab[x].op_code);
+            instruct->arg_num = g_op_tab[x].args_numb;
+            instruct->encodin_code = g_op_tab[x].encoding_code;
+            if (instruct->encodin_code > 0)
+                add_encodin_code(data, instruct);
+            break ;
+        }
+    }
+    free (tmp);
+    return(x);
 }
 
 

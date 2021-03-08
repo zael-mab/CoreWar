@@ -71,6 +71,7 @@ typedef struct      s_asmdata
 {
     char            *name;
     char            *comment;
+    char            *file_name;
     int             n;
     int             c;
     int             s;
@@ -87,25 +88,31 @@ t_op            g_op_tab[17];
 
 
 
-t_node      *insert_node(t_head *head, void    *data, int pos);
 void        display_nodes(t_head *head);       // DELETE 
 void        init_head(t_head *head);            //DELETE
+
 char 	    *avoid_comment (char *line);
-boolean     check_champion (char *line, t_asmdata *sdata);
-boolean     join (char *line, t_asmdata *sdata, char **cmd, int v);
-// t_node      *search(t_node *l, char* x);
+int			check_extention(char *line, t_asmdata *data);
+int         pars_chmp_nm_cm(t_asmdata *sdata, char *line);
+int         check_champion (char *line, t_asmdata *sdata);
+int         join (char *line, t_asmdata *sdata, char **cmd, int v);
+
+t_node      *insert_node(t_head *head, void    *data, int pos);
+t_node      *save_labels(t_head *labels, char *lin, t_head *head);
+
 t_node      *search_by_pos(t_node *l, int x);
 t_node      *search_by_name(t_node *l, char* x);
 
 
-t_node      *save_labels(t_head *labels, char *lin, t_head *head);
-int         check_isdigit(char *tmp, int j);
+
 
 int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata);
 
 void        operations(char **operat, int i);
 
+int         check_isdigit(char *tmp, int j);
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels);
+int         check_oper(t_node *instruct, t_head labels, t_head *head, t_asmdata *data);
 int         check_dir_lebel(char *line, int arg, t_head labels);
 int         check_dir(char *line, int arg, t_node *instr, t_asmdata data);
 int         check_ind(char *line, int arg, t_head labels);
@@ -113,17 +120,23 @@ int         check_ind(char *line, int arg, t_head labels);
 int         check_reg(char *line, int arg, t_node *instru, t_asmdata data);
 
 
-
 void        *list_get(t_head *head);
 void        list_del_all (t_head *head);
-// size_t      reverse_endian (size_t i);  // CHANGE it !!! i did
-int         reverse_endian (int i);
 
+void        to_byte_code(t_head *head, t_asmdata *data);
+
+int         reverse_endian (int i);
 void        decode(t_asmdata *data, t_head *cmmnd, int fd);
 void        add_encodin_code(t_asmdata *sdata, t_node *instruct);
 void        init_encodin_byte(t_node *instr, int p, int shift);
 
-int     set_label_args(t_head *head, t_head labels, t_asmdata *data);
+void        writ_args(t_asmdata *data, t_node *cmd, int fd);
+int         set_label_args(t_head *head, t_head labels, t_asmdata *data);
+
+void        get_labels_value(t_node *l, t_node *instru, t_node *first, int counter);
+void			f_assembler (t_head *head, t_asmdata *data, int fd);
+
+
 
 
 # endif

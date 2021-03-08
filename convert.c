@@ -32,86 +32,90 @@
 //            +dit ==> 
 
 
+
+
+
+
+
+void    to_byte_code(t_head *head, t_asmdata *data)
+{		
+    int fp;
+    int jumper;
+    long int c;
+
+    fp = open (data->file_name, O_CREAT | O_RDWR, 0600);					//CHANGE THE NAME OF THE FILE !!!
+    jumper = -1;
+    
+    int y = reverse_endian(COREWAR_EXEC_MAGIC);
+    write (fp, &y, 4);												// revers the magic_code and print it as a hex
+
+    jumper = -1;
+    while (data->name[++jumper] && write (fp, &data->name[jumper], 1));	// print the name
+
+    c = PROG_NAME_LENGTH - ft_strlen(data->name) + 4;
+    lseek(fp, c * sizeof (char), SEEK_END);
+
+    y = reverse_endian(head->code_size);							// revers the code_size and print it.
+    write(fp, &y, 4);
+
+    jumper = -1;
+    while (data->comment[++jumper] && write (fp, &data->comment[jumper], 1));	// print the comment
+    c = COMMENT_LENGTH - ft_strlen(data->comment) + 4;
+    lseek(fp, c * sizeof (char), SEEK_END);
+    
+    if (head->first == NULL || fp < 0)
+        exit(0);
+    
+    decode(data, head, fp);
+    ft_printf("Succes Writing output program to %s\n", data->file_name);        // be sure to free the structers !!!
+    free (data->file_name);
+    close (fp);
+}
+
+
+
 void        decode(t_asmdata *data, t_head *cmmnd, int fd)
 {
     t_node  *cmd;
 
-    if (cmmnd->first == NULL || fd < 0)
-        exit(0);
     cmd = cmmnd->first;
     while (cmd)
     {
         if (cmd->code > 0)
         {
-            ft_printf("\t\t====%s=====\n", cmd->data);
-
             write (fd, &cmd->code, 1);
             if (cmd->encodin_code > 0)
-                write (fd, &cmd->encodin,1);
-            data->x = -1;
-            while (++data->x < cmd->arg_num)
-            {
-                // if (cmd->arg[data->x] & T_REG)
-                // {
-                ft_printf ("####%d- %d-####\n<<", cmd->arg[data->x], cmd->w_args[data->x + 6]);
-                // int j = ;
-                // write (1, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-                ft_printf(">>\n");
-                if (!(cmd->w_args[data->x] & T_LAB))
-                {
-                    // if (cmd->w_args[data->x] & T_IND)
-                    // {
-                        // cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
-                    // }
-                    // if (cmd->w_args[data->x + 6] == 2)
-                    // {
-                    //     // cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 8);
-                    //     write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-                    // }
-                    //     // write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-
-                    // if (cmd->w_args[data->x + 6] == 4)
-                    // {
-                    //     // cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] >> 8);
-                    //     // cmd->arg[data->x] = (cmd->arg[data->x] << 16);
-                    //     write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-                    // }
-                    if (cmd->w_args[data->x + 6] == 2)
-                    {
-                        cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
-                        // cmd->arg[data->x] = (cmd->arg[data->x] << 8);
-                        write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-
-                    }
-                    else if (cmd->w_args[data->x + 6] == 4)
-                    {
-                        cmd->arg[data->x] = reverse_endian(cmd->arg[data->x]);
-                        write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-
-                    }
-                    else
-                        write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-
-
-
-                }
-                else
-                {
-                    write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-                }
-
-                
-                // }
-
-            }
-            // lseek(fd, sizeof (char), SEEK_END);
+                write (fd, &cmd->encodin, 1);
+            writ_args(data, cmd, fd);
         }
         cmd = cmd->next;
     }
-    ft_printf ("%d\n", data->error);
+    // ft_printf ("%d\n", data->error);
 }
 
 
+void        writ_args(t_asmdata *data, t_node *cmd, int fd)
 
-// // 0b68 0100 0700 0101 0000 0000 0290 0000
-// 0000 0209 ffed
+{
+    data->x = -1;
+    while (++data->x < cmd->arg_num)
+    {
+        if (!(cmd->w_args[data->x] & T_LAB))
+        {
+            if (cmd->w_args[data->x + 6] == 2)
+            {
+                cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+            }
+            else if (cmd->w_args[data->x + 6] == 4)
+            {
+                cmd->arg[data->x] = reverse_endian(cmd->arg[data->x]);
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+            }
+            else
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+        }
+        else
+            write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+    }
+}
