@@ -46,12 +46,16 @@ boolean     check_champion (char *line, t_asmdata *sdata)
 {
     int j;
 
-    if (ft_strscmp(NAME_CMD_STRING, line, 0, 5) == 0)
+    j = 0;
+    // while (line[++j] && line[j] != '.');
+    // j++;
+    if (ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0)
         sdata->n = 1;
-    if (ft_strscmp(COMMENT_CMD_STRING, line, 0, 8) == 0)
+    if (ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 8) == 0)
         sdata->c = 1;
 
-    if (ft_strscmp(NAME_CMD_STRING, line, 0, 5) == 0 || ft_strscmp(COMMENT_CMD_STRING, line, 0, 8) == 0)
+    ft_printf ("%s\n", line);
+    if (ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0 || ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 8) == 0)
     {
         sdata->error = -1;
         sdata->e = 0;
@@ -72,7 +76,7 @@ boolean     check_champion (char *line, t_asmdata *sdata)
     // check the restof line "something"x
     if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(line)) - sdata->e)
     {
-        ft_printf("#Errorin the line[%s] \n", line);
+        ft_printf("#Error in the line[%s] \n", line);
         return (0);
     }
 

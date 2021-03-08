@@ -104,12 +104,15 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head label
             }
 // ///////////////////////////////////////
 
-            else if (ft_isdigit(sdata->op_args[j][x]) || sdata->op_args[j][x] == ':')
+            else if (sdata->op_args[j][x] == '+' || ft_isdigit(sdata->op_args[j][x]) || sdata->op_args[j][x] == ':')
             {
                 // ft_putchar ('I');
-                if (ft_atoi(x + sdata->op_args[j]) > -1 && !(ft_isalpha(sdata->op_args[j][x + 1]))) // !!!
+                ft_printf ("IIIIIII\t %s, %d\n",  sdata->op_args[j], ft_atoi(x + sdata->op_args[j]));
+                if (sdata->op_args[j][x] == '+')
+                    return (0);
+                if (ft_atoi(sdata->op_args[j]) && !(ft_isalpha(sdata->op_args[j][x + 1]))) // !!!
                 {
-                    instruction->arg[j] = ft_atoi(x + sdata->op_args[j]);
+                    instruction->arg[j] = ft_atoi(sdata->op_args[j]);
                     instruction->w_args[j + 6] = 2;
                     instruction->command_size += IND_SIZE;
                     instruction->w_args[j] = T_IND;

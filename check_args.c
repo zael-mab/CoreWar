@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "asm.h"
-
+//  MAX INT FIX IT !!!!
 int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
 {
     int x;
@@ -30,13 +30,15 @@ int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
     if (x == 0)
         return (0);
     x = ft_atoi(line);
-    if (x > -1)
-        instr->arg[data.y] = (ft_atoi(line)) << 8;
-    else
-    {
-        instr->arg[data.y] = x << 16;
-        instr->arg[data.y] = (reverse_endian (instr->arg[data.y]));
-    }
+    ft_printf("DIIIR  x=%d\n",x);
+    // if (x > -1)
+    instr->arg[data.y] = (ft_atoi(line));
+        // instr->arg[data.y] = (ft_atoi(line)) << 8;
+    // else
+    // {
+    //     instr->arg[data.y] = x << 16;
+    //     instr->arg[data.y] = (reverse_endian (instr->arg[data.y]));
+    // }
     // ft_printf ("\t\t!!!!dir*%d*=[%d]!!!!\n",data.y , instr->arg[data.y]);
     
     return (1);

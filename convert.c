@@ -59,15 +59,41 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
                 ft_printf(">>\n");
                 if (!(cmd->w_args[data->x] & T_LAB))
                 {
-                    if (cmd->w_args[data->x + 6] == 4)
+                    // if (cmd->w_args[data->x] & T_IND)
+                    // {
+                        // cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
+                    // }
+                    // if (cmd->w_args[data->x + 6] == 2)
+                    // {
+                    //     // cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 8);
+                    //     write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+                    // }
+                    //     // write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+
+                    // if (cmd->w_args[data->x + 6] == 4)
+                    // {
+                    //     // cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] >> 8);
+                    //     // cmd->arg[data->x] = (cmd->arg[data->x] << 16);
+                    //     write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+                    // }
+                    if (cmd->w_args[data->x + 6] == 2)
                     {
-                        // cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] >> 16);
+                        cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
+                        // cmd->arg[data->x] = (cmd->arg[data->x] << 8);
                         write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+
                     }
-                    if (cmd->w_args[data->x] & T_IND )
-                        cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] >> 16);
+                    else if (cmd->w_args[data->x + 6] == 4)
+                    {
+                        cmd->arg[data->x] = reverse_endian(cmd->arg[data->x]);
+                        write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+
+                    }
                     else
                         write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+
+
+
                 }
                 else
                 {

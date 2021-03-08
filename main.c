@@ -49,14 +49,19 @@ int main(int ac, char **av)
 			if (sdata.n == -1 && sdata.c == -1)
 				line = avoid_comment(line);							// avoid comment 
 			
-			// ft_printf("-------%s\n", line);
 
 			if (sdata.n == -1 && sdata.c == -1)		//	avoid empty lines
 					save_labels(&labels, ft_strtrim(line), &head);		//	labels and instrucions
 
-			if (!check_champion(line, &sdata))								// check and save the name & the comment
+			int n = 0;
+			while (line[++n] && line[n] != '.');
+			if (n == ft_strlen(line))
+				n = 0;
+			// else
+				// n++;
+			if (!check_champion(n + line, &sdata))								// check and save the name & the comment
 			{
-				// perror("incorect file\n");			// don't forget to free;
+				perror("incorect file\n");			// don't forget to free;
 				exit(1);
 			}
 
@@ -64,6 +69,7 @@ int main(int ac, char **av)
 			ln++;									// I'll need ya later.
 		}
 
+		ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
 // ////////////////////////////////////////
 		if (ln == 0)
 		{
@@ -72,24 +78,23 @@ int main(int ac, char **av)
 			ft_printf ("empty file\n");
 			exit (1);
 		}
-		if (ft_strlen(sdata.name) > PROG_NAME_LENGTH || ft_strlen(sdata.comment) > COMMENT_LENGTH)
-		{
-			list_del_all(&head);
-			list_del_all(&labels);
-			ft_printf ("~0*~~~~~~~~Error length~~~~~~~~|%d|%d|\n", ft_strlen(sdata.name), ft_strlen(sdata.comment));
-			exit (0);
-		}
+		ft_printf("-------%s\n", line);
+		// if (ft_strlen(sdata.name) > PROG_NAME_LENGTH || ft_strlen(sdata.comment) > COMMENT_LENGTH)
+		// {
+		// 	list_del_all(&head);
+		// 	list_del_all(&labels);
+		// 	ft_printf ("~0*~~~~~~~~Error length~~~~~~~~|%d|%d|\n", ft_strlen(sdata.name), ft_strlen(sdata.comment));
+		// 	exit (0);
+		// }
 		if (sdata.n != -1 || sdata.c != -1)
 		{
 			list_del_all(&head);
 			list_del_all(&labels);
-			ft_printf ("~0~~~~~~~~Error~~~~~~~~|%d|%d|\n", sdata.c, sdata.n);
 			exit (0);
 		}
 
 
 ///////////////***********///////////
-		// ft_printf ("\t[%s] | [%s]\t %d\n", sdata.name, sdata.comment, sdata.p_ex_code);
 		// ft_printf ("\t----------\n");
 		// display_nodes (&labels);
 		// ft_printf ("\t----------\n");
