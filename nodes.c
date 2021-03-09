@@ -31,6 +31,8 @@ t_node  *search(t_node *l, void* x)
 
 }
 
+
+// NORME
 t_node  *push_list (t_head *head, void * data)
 {
     t_node *new_node;

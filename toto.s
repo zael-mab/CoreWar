@@ -2,15 +2,15 @@
 .comment	"Jour 
 J
 "
-		ld   %0,r13		
+		ld  		
 
 label:zjmp %:avantdebt
 		zjmp %0				# pour eviter ecrasement
 						# de l'instruction suivante
 titi:
 toto:
-code:live 42			# 5
-		sti  r15,%0,r14			# 6
+code:live %42			# 5
+		sti  r15,%0,r1			# 6
 		zjmp %-200			# 3
 		live %42			# 5
 		sti  r15,%0,r14			# 6

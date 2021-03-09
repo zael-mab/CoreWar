@@ -34,7 +34,7 @@ int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
 }
 
 
-
+///////////////////////////////////////
 int                check_ind(char *line, int arg, t_head labels)
 {
     char *tmp;
@@ -48,6 +48,7 @@ int                check_ind(char *line, int arg, t_head labels)
     return (0);
 }
 
+//////////////////////////////////////////
 int         set_label_args(t_head *head, t_head labels, t_asmdata *data)
 {
     t_node  *l;
@@ -69,8 +70,8 @@ int         set_label_args(t_head *head, t_head labels, t_asmdata *data)
     return (1);
 }
 
+/////////////////////////////////////////////////////
 /*get the value ready to print  (location counter) */
-
 void        get_labels_value(t_node *l, t_node *instru, t_node *first, int counter)
 {
     int jumper;

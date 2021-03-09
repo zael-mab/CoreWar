@@ -93,7 +93,7 @@ t_node  *search_by_pos(t_node *l, int x)
 }
 ///////////////////////
 
-
+////////////////////////////********//////////////////
 void        display_nodes(t_head *head)
 {
     t_node *l;
@@ -128,8 +128,8 @@ void        display_nodes(t_head *head)
         l = l->next;
     }
     ft_printf ("command size = %d\n", head->code_size);
-
 }
+////////////////////////////********//
 
 
 //norme
@@ -164,8 +164,8 @@ t_node      *save_labels(t_head *labels, char *line, t_head *head)
     return (NULL);
 }
 
-//////////////////////////////////
 
+//////////////////////////////////
 int     check_isdigit(char *tmp,  int j)
 {
     int i;

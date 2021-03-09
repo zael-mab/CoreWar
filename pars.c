@@ -41,7 +41,7 @@
 
 
 
-
+//////////////////////////////////////
 int         check_champion (char *line, t_asmdata *sdata)
 {
     int     j;
@@ -63,15 +63,11 @@ int         check_champion (char *line, t_asmdata *sdata)
             sdata->s = j + 1;
     }
     if (!(pars_chmp_nm_cm(sdata, line)))
-    {
-
         return (0);
-    }
-
     return (1);
 }
 
-
+//////////////////////////////////////
 int         pars_chmp_nm_cm(t_asmdata *sdata, char *line)
 {
     if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(line)) - sdata->e) // check the restof line "something"x
@@ -82,10 +78,10 @@ int         pars_chmp_nm_cm(t_asmdata *sdata, char *line)
     if (sdata->n == 1 && sdata->s && sdata->e && sdata->error == -1)
         if ((sdata->name = ft_strscpy(ft_strnew(PROG_NAME_LENGTH), line, sdata->s, sdata->e)))
             sdata->n = -1;
- 
     if (sdata->c == 1 && sdata->s && sdata->e && sdata->error == -1)
         if((sdata->comment = ft_strscpy(ft_strnew(COMMENT_LENGTH), line, sdata->s, sdata->e)))
             sdata->c = -1;
+
     if (sdata->s && (sdata->c == 1 || sdata->n == 1))
     {
         sdata->error++;
@@ -99,6 +95,8 @@ int         pars_chmp_nm_cm(t_asmdata *sdata, char *line)
 }
 
 
+
+///////////////////////////////////////
 int         join (char *line, t_asmdata *sdata, char **cmd, int v)
 {
     char    *tmp;
@@ -124,9 +122,11 @@ int         join (char *line, t_asmdata *sdata, char **cmd, int v)
     return (1);
 }
 
+
+
+
+
 //////////////////////////////////////////////////
-
-
 int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)       //REG_NUMBER
 {
     t_node  *instruct;
@@ -134,7 +134,7 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
 
     instruct = NULL;
     instruct = head->first;
-
+    sdata->error = -1;
     while (instruct != NULL)
     {
         sdata->x = -1;
@@ -144,6 +144,7 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
         if (sdata->x == 0 && ft_strlen (instruct->data) > 0)
         {
             ft_printf("wrang command [%s]\n", instruct->data);
+            sdata->error = 1;
             return (0);
         }
         if (sdata->x > 0)
@@ -151,7 +152,7 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
             x = check_oper(instruct, labels, head, sdata);
             if (x == 17 || x == -1)
             {
-                ft_printf ("~2~~~~~~~~~~~Error~~~~~~~~~~\n");
+                sdata->error = 1;
                 return (0);
             }
             head->code_size += instruct->command_size;
@@ -177,7 +178,13 @@ int             check_oper(t_node *instruct, t_head labels, t_head *head, t_asmd
                 l->size_ind = instruct->command_size + head->code_size;
             if (!pars_args(instruct, data, x, labels))
             {
-                ft_printf("~1~~~~~~Error~~~~~~~~\n");
+                data->error += 4;
+                if (data->error & 8)
+                    ft_printf ("Error: number of arguments ,line '%10s'\n", instruct->data);
+                if (data->error & 2)
+                    ft_printf ("Error: argument [%d] is empty  ,line '%10s'\n", data->y + 1, instruct->data);
+                if (data->error & 4)
+                    ft_printf ("Error: argument [%d] is wrrong ,line '%10s'\n", data->y + 1, instruct->data);
                 ft_memdel((void**) data->op_args);
                 free (tmp);
                 return (-1);
@@ -195,7 +202,7 @@ int             check_oper(t_node *instruct, t_head labels, t_head *head, t_asmd
     return(x);
 }
 
-
+///////////////////////////////////////////////
 void    add_encodin_code(t_asmdata *sdata, t_node *instruct)
 {
     sdata->x = 2;
@@ -210,7 +217,7 @@ void    add_encodin_code(t_asmdata *sdata, t_node *instruct)
     }
 }
 
-
+/////////////////////////////////////////////////
 void        init_encodin_byte(t_node *instr, int p, int shift)
 {
     if (instr->w_args[p] == REG_CODE)

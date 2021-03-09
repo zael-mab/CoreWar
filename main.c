@@ -21,7 +21,7 @@
 void 	xxx(t_head *head, t_asmdata *data, t_head *labels, int ln); // CHANGE THE NAME
 
 
-
+/////////////////////////////////////////////////
 int 				main(int ac, char **av)
 {
 	if (ac == 2)
@@ -93,14 +93,12 @@ void 	xxx(t_head *head, t_asmdata *data, t_head *labels, int ln) // CHANGE THE N
 	}
 	if (data->n != -1 || data->c != -1)
 	{
-		ft_printf("data->n/c\n");
 		list_del_all(head);
 		list_del_all(labels);
 		exit (0);
 	}
 	if (!pars_instructions(head, *labels, data))
 	{
-		ft_printf("pars_ins\n");
 		list_del_all(head);
 		list_del_all(labels);
 		exit (0);
@@ -117,6 +115,7 @@ void 	xxx(t_head *head, t_asmdata *data, t_head *labels, int ln) // CHANGE THE N
 	list_del_all(labels);
 }
 
+///////////////////////////////////////////
 int 				reverse_endian (int i)
 {
     unsigned char	c1;
@@ -131,7 +130,7 @@ int 				reverse_endian (int i)
 	return ((int)c1 << 24) + ((int)c2 << 16) + ((int)c3 << 8) + c4;
 }
 
-
+///////////////////////////////////////////
 char 		*avoid_comment (char *line)				// deal with the comments  !!!
 {
 	int 	i;
@@ -150,6 +149,7 @@ char 		*avoid_comment (char *line)				// deal with the comments  !!!
 	return (line);
 }
 
+///////////////////////////////////////////
 int			check_extention(char *line, t_asmdata *data)
 {
 	int 	j;

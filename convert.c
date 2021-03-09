@@ -36,7 +36,7 @@
 
 
 
-
+// norme
 void    to_byte_code(t_head *head, t_asmdata *data)
 {		
     int fp;
@@ -73,7 +73,7 @@ void    to_byte_code(t_head *head, t_asmdata *data)
 }
 
 
-
+//////////////////////////////////////////////////
 void        decode(t_asmdata *data, t_head *cmmnd, int fd)
 {
     t_node  *cmd;
@@ -90,12 +90,10 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
         }
         cmd = cmd->next;
     }
-    // ft_printf ("%d\n", data->error);
 }
 
-
+////////////////////////////////////////////////////
 void        writ_args(t_asmdata *data, t_node *cmd, int fd)
-
 {
     data->x = -1;
     while (++data->x < cmd->arg_num)

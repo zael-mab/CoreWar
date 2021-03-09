@@ -112,6 +112,13 @@ void        operations(char **operat, int i);
 
 int         check_isdigit(char *tmp, int j);
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head labels);
+
+int         reg_lexical_analysis (t_asmdata *data, t_node *instruction, int y);
+int         dirl_lexical_analysis (t_asmdata *data, t_node *instruction,t_head labels, int y, int x);
+int         dir_lexical_analysis (t_asmdata *data, t_node *instruction, int y, int x);
+int         ind_lexical_analysis (t_asmdata *data, t_node *instruction,t_head labels, int y, int x);
+
+
 int         check_oper(t_node *instruct, t_head labels, t_head *head, t_asmdata *data);
 int         check_dir_lebel(char *line, int arg, t_head labels);
 int         check_dir(char *line, int arg, t_node *instr, t_asmdata data);
