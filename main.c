@@ -18,7 +18,7 @@
 // lookup the binary code for each field.
 // combine these code into a single machine language command.
 // output this machine language command.
-void 	xxx(t_head *head, t_asmdata *data, t_head *labels, int ln); // CHANGE THE NAME
+void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head *labels, int ln); // CHANGE THE NAME
 
 
 /////////////////////////////////////////////////
@@ -55,7 +55,6 @@ void			f_assembler (t_head *head, t_asmdata *data, int fd)
 	t_head		labels;
 	char 		*line;
 	int 		ln;
-	int 		n;
 
 	ft_bzero (&labels, sizeof (t_head));
 	ln = 0;
@@ -65,26 +64,28 @@ void			f_assembler (t_head *head, t_asmdata *data, int fd)
 			line = avoid_comment(line);							// avoid comment 
 		if (data->n == -1 && data->c == -1)		//	avoid empty lines
 			save_labels(&labels, ft_strtrim(line), head);		//	labels and instrucions
-		n = -1;
 
-		while (line[++n] && line[n] != '.' && (data->n != -1 || data->c != -1));
-		if (n == ft_strlen(line))
-			n = 0;
-		if (!check_champion(n + line, data))								// check and save the name & the comment
+		if (!check_champion(line, data))								// check and save the name & the comment
 		{
 			perror("incorect file\n");			// don't forget to free;
 			exit(1);
 		}
 		free (line);
 	}
-	xxx (head, data, &labels, ln - 1);
+	ft_printf ("%s|    |%s\n", data->name, data->comment);
+	// display_nodes(head);
+	// ft_printf ("---------------------\n");
+	// ft_printf ("---------------------\n");
+	assembly_to_bytecode (head, data, &labels, ln - 1);
+	// display_nodes(&labels);
+
 }
 
 
-//norme
-void 	xxx(t_head *head, t_asmdata *data, t_head *labels, int ln) // CHANGE THE NAME
+//norme	assembly_to_bytecode();
+void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head *labels, int ln) // CHANGE THE NAME
 {
-	if (ln == 0)
+	if (ln == -1)
 	{
 		list_del_all(head);
 		list_del_all(labels);

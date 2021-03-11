@@ -1,7 +1,7 @@
 .name"one 
 #two 
 three"
-.comment"Ha, Ha, Ha, 
+.comment"Ha. Ha,, Ha, 
 stayiiiiin' 
 aliiiiiiiiiiiive"
 					

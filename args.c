@@ -131,13 +131,29 @@ int     dir_lexical_analysis (t_asmdata *data, t_node *instruction, int y, int x
     instruction->w_args[data->y + 3] = DIR_CODE;
     return (1);
 }
+///////////////////////////////////////
+int     check_digit(char *line)
+{
+    int x;
+
+    x = -1;
+    while (line[++x])
+    {
+        if (x == 0 && line[x] == '-')
+            x++;
+        if (!ft_isdigit(line[x]))
+            return (0);
+    }
+    return (1);
+}
+
 
 ///////////////////////////////////////
 int     ind_lexical_analysis (t_asmdata *data, t_node *instruction,t_head labels, int y, int x)
 {
     if (data->op_args[data->y][x] == '+' || !(T_IND & g_op_tab[y].args[data->y]))
         return (0);
-    if (ft_atoi(data->op_args[data->y]) && !(ft_isalpha(data->op_args[data->y][x + 1]))) // !!!
+    if (check_digit(data->op_args[data->y]) && !(ft_isalpha(data->op_args[data->y][x + 1]))) // !!!
     {
         instruction->arg[data->y] = ft_atoi(data->op_args[data->y]);
         instruction->w_args[data->y + 6] = 2;
@@ -147,13 +163,15 @@ int     ind_lexical_analysis (t_asmdata *data, t_node *instruction,t_head labels
         return (1);
     }
     if (data->op_args[data->y][x] == ':')
+    {
         if (!check_ind(x + 1 + data->op_args[data->y], g_op_tab[y].args[data->y], labels))
             return (0);
-    instruction->command_size += IND_SIZE;
-    instruction->w_args[data->y + 6] = 2;
-    instruction->w_args[data->y] = T_IND + T_LAB;
-    instruction->w_args[data->y + 3] = IND_CODE;
-    instruction->lb += (data->y == 2 ? 4 : data->y + 1);
+        instruction->command_size += IND_SIZE;
+        instruction->w_args[data->y + 6] = 2;
+        instruction->w_args[data->y] = T_IND + T_LAB;
+        instruction->w_args[data->y + 3] = IND_CODE;
+        instruction->lb += (data->y == 2 ? 4 : data->y + 1);
+    }
     return (1);
 }
 

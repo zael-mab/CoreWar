@@ -38,6 +38,22 @@
 //      Each redcode instruction contains 3 parts : Opcode itself, the source address A-field 
 //          and the destination address B-field.
 
+int         search_for_exention(char *line, t_asmdata *data)
+{
+    int j;
+
+    j = -1;
+    while (line[++j])
+        if (line[j] == '.' && ((ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0)
+        || ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 5) == 0))
+        {
+            data->e = 0;
+            data->s = 0;
+            data->error = -1;
+            return (j);
+        }
+    return (-1);
+}
 
 
 
@@ -46,14 +62,9 @@ int         check_champion (char *line, t_asmdata *sdata)
 {
     int     j;
 
-    sdata->n = (ft_strscmp(NAME_CMD_STRING, line, 0, 5) == 0) ? 1 : sdata->n;
-    sdata->c = (ft_strscmp(COMMENT_CMD_STRING, line, 0, 8) == 0) ? 1 : sdata->c;
-    if (ft_strscmp(NAME_CMD_STRING, line, 0, 5) == 0 || ft_strscmp(COMMENT_CMD_STRING, line, 0, 8) == 0)
-    {
-        sdata->error = -1;
-        sdata->e = 0;
-        sdata->s = 0;       //FIX THIS s = -1 & e = -1
-    }
+    j = search_for_exention(line, sdata);
+    sdata->n = (ft_strscmp(NAME_CMD_STRING,j + line, 0, 5) == 0) ? 1 : sdata->n;
+    sdata->c = (ft_strscmp(COMMENT_CMD_STRING,j + line, 0, 8) == 0) ? 1 : sdata->c;
     j = -1;
     while (line[++j])
     {
@@ -70,7 +81,7 @@ int         check_champion (char *line, t_asmdata *sdata)
 //////////////////////////////////////
 int         pars_chmp_nm_cm(t_asmdata *sdata, char *line)
 {
-    if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(line)) - sdata->e) // check the restof line "something"x
+    if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(sdata->e + line)) != 0) // check the restof line "something"x
     {
         ft_printf("#Error in the line[%s] \n", line);
         return (0);
@@ -115,6 +126,7 @@ int         join (char *line, t_asmdata *sdata, char **cmd, int v)
     if (sdata->error > 0 && sdata->e)
     {
         *cmd = ft_strjoin(*cmd, ft_strscpy(tmp, line, 0, sdata->e));
+        sdata->error = -1;
         sdata->c = (sdata->c == 1 ? -1 : sdata->c);
         sdata->n = (sdata->n == 1 ? -1 : sdata->n);
     }

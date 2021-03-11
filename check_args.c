@@ -76,6 +76,7 @@ void        get_labels_value(t_node *l, t_node *instru, t_node *first, int count
 {
     int jumper;
 
+    l = NULL;
     jumper = -1;
     while (++jumper < instru->arg_num)
         if ((instru->lb & jumper + 1 && jumper != 2) || (instru->lb & 4 && jumper == 2))
