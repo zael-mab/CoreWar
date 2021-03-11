@@ -96,6 +96,7 @@ int			check_extention(char *line, t_asmdata *data);
 int         pars_chmp_nm_cm(t_asmdata *sdata, char *line);
 int         check_champion (char *line, t_asmdata *sdata);
 int         join (char *line, t_asmdata *sdata, char **cmd, int v);
+int         check_digit(char *line);
 
 t_node      *insert_node(t_head *head, void    *data, int pos);
 t_node      *save_labels(t_head *labels, char *lin, t_head *head);

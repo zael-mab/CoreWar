@@ -62,6 +62,17 @@ void			f_assembler (t_head *head, t_asmdata *data, int fd)
 	while (get_next_line(fd, &line) > 0 && ++ln)
 	{
 		if (data->n == -1 && data->c == -1)
+		{
+			if (ft_strlen(data->comment) >= COMMENT_LENGTH || ft_strlen(data->name) >= PROG_NAME_LENGTH)
+			{
+				free (data->comment);
+				free (data->name);
+				ft_printf("Error\n");
+				exit (0);
+			}
+
+		}
+		if (data->n == -1 && data->c == -1)
 			line = avoid_comment(line);							// avoid comment 
 		if (data->n == -1 && data->c == -1)		//	avoid empty lines
 			save_labels(&labels, ft_strtrim(line), head);		//	labels and instrucions

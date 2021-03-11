@@ -177,3 +177,18 @@ int     check_isdigit(char *tmp,  int j)
             break ;
     return (i);
 }
+
+int     check_digit(char *line)
+{
+    int i;
+
+    i = -1;
+    while (line[++i])
+    {
+        if (i == 0 && line[i] == '-')
+            i++;
+        if (!(ft_isdigit(line[i])))
+            return(0);
+    }
+    return (1);
+}
