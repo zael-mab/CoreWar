@@ -42,10 +42,34 @@ void    list_del_all (t_head *head)
 ///////////////////////////////////
 
 
-t_node     *insert_node(t_head *head, void    *data, int pos)
+t_node     *insert_node(t_head *head, void    *data)
 {
     t_node  *new_node;
     t_node  *p;
+
+    new_node = ft_memalloc (sizeof (t_node));
+    new_node->data = data;
+    new_node->next = NULL;
+    if (head->first == NULL)
+    {
+        head->first = new_node;
+        new_node->position = head->l_size++;
+    }
+    else
+    {
+        p = head->first;
+        while (p->next != NULL)
+            p = p->next;
+        p->next = new_node;
+        new_node->position = head->l_size++;
+    }
+    return (new_node->position + 1 == head->l_size ? new_node : NULL);
+}
+//////////////////////////////////////////
+t_label     *insert_label(t_head_lb *head, void    *data, int pos)
+{
+    t_label  *new_node;
+    t_label  *p;
 
     new_node = ft_memalloc (sizeof (t_node));
     new_node->data = data;
@@ -67,8 +91,9 @@ t_node     *insert_node(t_head *head, void    *data, int pos)
     return (new_node->position + 1 == head->l_size ? new_node : NULL);
 }
 
+
 ///////////////////////////
-t_node  *search_by_name(t_node *l, char* x)
+t_label  *search_by_name(t_label *l, char* x)
 {
     if (l == NULL)
         return NULL;
@@ -81,7 +106,7 @@ t_node  *search_by_name(t_node *l, char* x)
 
 /////////////////////////////
 
-t_node  *search_by_pos(t_node *l, int x)
+t_label  *search_by_pos(t_label *l, int x)
 {
     if (l == NULL)
         return NULL;
@@ -104,8 +129,8 @@ void        display_nodes(t_head *head)
     {
         head->code_size += l->command_size;
         ft_printf("_|%.2d|\t[%s]\t",  l->position, l->data);
-        if (l->operation_num > -1)
-            ft_printf ("-%d-", l->size_ind);
+        // if (l->operation_num > -1)
+            // ft_printf ("-%d-", l->size_ind);
         if (l->code > 0)
         {
             ft_printf("******");
@@ -133,7 +158,7 @@ void        display_nodes(t_head *head)
 
 
 //norme
-t_node      *save_labels(t_head *labels, char *line, t_head *head)
+t_node      *save_labels_and_commands(t_head_lb *labels, char *line, t_head *head)
 {
     int     j;
     char    *tmp;
@@ -150,16 +175,16 @@ t_node      *save_labels(t_head *labels, char *line, t_head *head)
         {
             if (ft_strlen(line) > j + 1)
             {
-                p = *insert_node (head, ft_strtrim (j + 1 +line), -1);					//	insert eash line 
-                insert_node(labels, tmp, p.position);
+                p = *insert_node (head, ft_strtrim (j + 1 +line));					//	insert eash line 
+                insert_label(labels, tmp, p.position);
             }
             else
-                insert_node(labels, tmp, tmp_post);
+                insert_label(labels, tmp, tmp_post);
             return (NULL);
         }
         free (tmp);
     }
-    p = *insert_node (head, line, -1); 
+    p = *insert_node (head, line); 
     tmp_post = p.position + 1;	 
     return (NULL);
 }
@@ -178,17 +203,3 @@ int     check_isdigit(char *tmp,  int j)
     return (i);
 }
 
-int     check_digit(char *line)
-{
-    int i;
-
-    i = -1;
-    while (line[++i])
-    {
-        if (i == 0 && line[i] == '-')
-            i++;
-        if (!(ft_isdigit(line[i])))
-            return(0);
-    }
-    return (1);
-}

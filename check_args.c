@@ -35,10 +35,10 @@ int     check_dir(char *line, int arg, t_node *instr, t_asmdata data)
 
 
 ///////////////////////////////////////
-int                check_ind(char *line, int arg, t_head labels)
+int                check_ind(char *line, int arg, t_head_lb labels)
 {
     char *tmp;
-    t_node *l;
+    t_label *l;
 
     tmp = ft_strtrim (line);
     l  = search_by_name(labels.first, tmp);
@@ -49,9 +49,9 @@ int                check_ind(char *line, int arg, t_head labels)
 }
 
 //////////////////////////////////////////
-int         set_label_args(t_head *head, t_head labels, t_asmdata *data)
+int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data)
 {
-    t_node  *l;
+    t_label  *l;
     t_node  *instru;
     int     counter;
 
@@ -72,10 +72,11 @@ int         set_label_args(t_head *head, t_head labels, t_asmdata *data)
 
 /////////////////////////////////////////////////////
 /*get the value ready to print  (location counter) */
-void        get_labels_value(t_node *l, t_node *instru, t_node *first, int counter)
+void        get_labels_value(t_label *l, t_node *instru, t_label *first, int counter)
 {
     int jumper;
 
+    l = NULL;
     jumper = -1;
     while (++jumper < instru->arg_num)
         if ((instru->lb & jumper + 1 && jumper != 2) || (instru->lb & 4 && jumper == 2))

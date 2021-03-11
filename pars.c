@@ -38,22 +38,33 @@
 //      Each redcode instruction contains 3 parts : Opcode itself, the source address A-field 
 //          and the destination address B-field.
 
+int         search_for_exention(char *line, t_asmdata *data)
+{
+    int j;
+
+    j = -1;
+    while (line[++j])
+        if (line[j] == '.' && ((ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0)
+        || ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 5) == 0))
+        {
+            data->e = 0;
+            data->s = 0;
+            data->error = -1;
+            return (j);
+        }
+    return (-1);
+}
 
 
 
 //////////////////////////////////////
 int         check_champion (char *line, t_asmdata *sdata)
 {
-    int     j;
+    int     j = 0;
 
-    sdata->n = (ft_strscmp(NAME_CMD_STRING, line, 0, 5) == 0) ? 1 : sdata->n;
-    sdata->c = (ft_strscmp(COMMENT_CMD_STRING, line, 0, 8) == 0) ? 1 : sdata->c;
-    if (ft_strscmp(NAME_CMD_STRING, line, 0, 5) == 0 || ft_strscmp(COMMENT_CMD_STRING, line, 0, 8) == 0)
-    {
-        sdata->error = -1;
-        sdata->e = 0;
-        sdata->s = 0;       //FIX THIS s = -1 & e = -1
-    }
+    j = search_for_exention(line, sdata);
+    sdata->n = (ft_strscmp(NAME_CMD_STRING,j + line, 0, 5) == 0) ? 1 : sdata->n;
+    sdata->c = (ft_strscmp(COMMENT_CMD_STRING,j + line, 0, 8) == 0) ? 1 : sdata->c;
     j = -1;
     while (line[++j])
     {
@@ -74,7 +85,7 @@ int         check_champion (char *line, t_asmdata *sdata)
 //////////////////////////////////////
 int         pars_chmp_nm_cm(t_asmdata *sdata, char *line)
 {
-    if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(line)) - sdata->e) // check the restof line "something"x
+    if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(sdata->e + line)) != 0) // check the restof line "something"x
     {
         ft_printf("#Error in the line[%s] \n", line);
         return (0);
@@ -104,7 +115,6 @@ int         join (char *line, t_asmdata *sdata, char **cmd, int v)
 {
     char    *tmp;
 
-    ft_printf  ("%s\n", line);
     tmp = ft_strnew(ft_strlen(line));
     if (sdata->error == 0)
     {
@@ -119,12 +129,7 @@ int         join (char *line, t_asmdata *sdata, char **cmd, int v)
     if (sdata->error > 0 && sdata->e)
     {
         *cmd = ft_strjoin(*cmd, ft_strscpy(tmp, line, 0, sdata->e));
-        if (ft_strlen (*cmd) > v)
-        {
-            ft_printf ("to long comment/name\n");
-            free (tmp);
-            exit(0);
-        }
+        sdata->error = -1;
         sdata->c = (sdata->c == 1 ? -1 : sdata->c);
         sdata->n = (sdata->n == 1 ? -1 : sdata->n);
     }
@@ -134,10 +139,8 @@ int         join (char *line, t_asmdata *sdata, char **cmd, int v)
 
 
 
-
-
 //////////////////////////////////////////////////
-int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)       //REG_NUMBER
+int         pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata)       //REG_NUMBER
 {
     t_node  *instruct;
     int     x;
@@ -151,6 +154,7 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
         while (instruct->data[++sdata->x])
             if (instruct->data[sdata->x] < 'a' || instruct->data[sdata->x] > 'z')
                 break;
+
         if (sdata->x == 0 && ft_strlen (instruct->data) > 0)
         {
             ft_printf("wrang command [%s]\n", instruct->data);
@@ -172,11 +176,11 @@ int         pars_instructions(t_head *head, t_head labels, t_asmdata *sdata)    
     return (1);
 }
 
-int             check_oper(t_node *instruct, t_head labels, t_head *head, t_asmdata *data)
+int             check_oper(t_node *instruct, t_head_lb labels, t_head *head, t_asmdata *data)
 {
     int         x;
     char        *tmp;
-    t_node      *l;
+    t_label      *l;
 
     tmp = ft_strncpy(ft_strnew(5), instruct->data, data->x);       //CHANGE that just point to it, no need to allocate I think !.
     x = -1;
@@ -188,12 +192,12 @@ int             check_oper(t_node *instruct, t_head labels, t_head *head, t_asmd
                 l->size_ind = instruct->command_size + head->code_size;
             if (!pars_args(instruct, data, x, labels))
             {
-                // data->error += 4;
-                // if (data->error & 8)
-                    // ft_printf ("Error: number of arguments ,line '%10s'\n", instruct->data);
-                // if (data->error & 2)
-                //     ft_printf ("Error: argument [%d] is empty  ,line '%10s'\n", data->y + 1, instruct->data);
-                // if (data->error & 4)
+                data->error += 4;
+                if (data->error & 8)
+                    ft_printf ("Error: number of arguments ,line '%10s'\n", instruct->data);
+                if (data->error & 2)
+                    ft_printf ("Error: argument [%d] is empty  ,line '%10s'\n", data->y + 1, instruct->data);
+                if (data->error & 4)
                     ft_printf ("Error at line '%10s'\n", instruct->data);
                 ft_memdel((void**) data->op_args);
                 free (tmp);
