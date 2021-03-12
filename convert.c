@@ -11,30 +11,69 @@
 /* ************************************************************************** */
 
 #include "asm.h"
+/*
+first 4 bytes COREWAR_EXEC_MAGIC 0xea83f3
+Each character is written to the file as it's ASCII value
+ the name take 128  PROG_NAME_LENGTH eache convert each caracter (dec)to(hexa)
+4 bytes for NULL 
+champion exic code size 4 bytes.
+champion comment 2048 bytes COMMENT_LENGTH
+4 bytes for NULL
+the last part of the file is executaple code (no trailling zeros in this part)
+to convert we will need 
+         *the size of T_DIR (2 or 4)
 
-// first 4 bytes COREWAR_EXEC_MAGIC 0xea83f3
-// Each character is written to the file as it's ASCII value
-//  the name take 128  PROG_NAME_LENGTH eache convert each caracter (dec)to(hexa)
-// 4 bytes for NULL 
-// champion exic code size 4 bytes.
-// champion comment 2048 bytes COMMENT_LENGTH
-// 4 bytes for NULL
-// the last part of the file is executaple code (no trailling zeros in this part)
-// to convert we will need 
-//          *the size of T_DIR (2 or 4)
+Operation:
+1 byte[Operation code]  | 1 byte[encodinng byte]*  | 1 byte [arg_1]  | 2 bytes[arg_2]  |  2 bytes[arg_3]
+     **The code for each operation can be found in the operations table 0-16.
+     ***the encoding byte
+            -reg[01] , dir[10], ind[11] =>[01101000]
+           +reg ==> convert the number x (rx)    [r1]=>[0x01].
+           +dit ==> 
+*/
 
-// Operation:
-// 1 byte[Operation code]  | 1 byte[encodinng byte]*  | 1 byte [arg_1]  | 2 bytes[arg_2]  |  2 bytes[arg_3]
-//      **The code for each operation can be found in the operations table 0-16.
-//      ***the encoding byte
-//             -reg[01] , dir[10], ind[11] =>[01101000]
-//            +reg ==> convert the number x (rx)    [r1]=>[0x01].
-//            +dit ==> 
+void        writ_args(t_asmdata *data, t_node *cmd, int fd)
+{
+    data->x = -1;
+    while (++data->x < cmd->arg_num)
+    {
+        if (!(cmd->w_args[data->x] & T_LAB))
+        {
+            if (cmd->w_args[data->x + 6] == 2)
+            {
+                cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+            }
+            else if (cmd->w_args[data->x + 6] == 4)
+            {
+                cmd->arg[data->x] = reverse_endian(cmd->arg[data->x]);
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+            }
+            else
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+        }
+        else
+            write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+    }
+}
 
+void        decode(t_asmdata *data, t_head *cmmnd, int fd)
+{
+    t_node  *cmd;
 
-
-
-
+    cmd = cmmnd->first;
+    while (cmd)
+    {
+        if (cmd->code > 0)
+        {
+            write (fd, &cmd->code, 1);
+            if (cmd->encodin_code > 0)
+                write (fd, &cmd->encodin, 1);
+            writ_args(data, cmd, fd);
+        }
+        cmd = cmd->next;
+    }
+}
 
 // norme
 void    to_byte_code(t_head *head, t_asmdata *data)
@@ -73,47 +112,5 @@ void    to_byte_code(t_head *head, t_asmdata *data)
 }
 
 
-//////////////////////////////////////////////////
-void        decode(t_asmdata *data, t_head *cmmnd, int fd)
-{
-    t_node  *cmd;
-
-    cmd = cmmnd->first;
-    while (cmd)
-    {
-        if (cmd->code > 0)
-        {
-            write (fd, &cmd->code, 1);
-            if (cmd->encodin_code > 0)
-                write (fd, &cmd->encodin, 1);
-            writ_args(data, cmd, fd);
-        }
-        cmd = cmd->next;
-    }
-}
 
 ////////////////////////////////////////////////////
-void        writ_args(t_asmdata *data, t_node *cmd, int fd)
-{
-    data->x = -1;
-    while (++data->x < cmd->arg_num)
-    {
-        if (!(cmd->w_args[data->x] & T_LAB))
-        {
-            if (cmd->w_args[data->x + 6] == 2)
-            {
-                cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
-                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-            }
-            else if (cmd->w_args[data->x + 6] == 4)
-            {
-                cmd->arg[data->x] = reverse_endian(cmd->arg[data->x]);
-                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-            }
-            else
-                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-        }
-        else
-            write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
-    }
-}

@@ -50,21 +50,19 @@ t_node     *insert_node(t_head *head, void    *data)
     new_node = ft_memalloc (sizeof (t_node));
     new_node->data = data;
     new_node->next = NULL;
+    new_node->position = head->l_size++;
     if (head->first == NULL)
-    {
         head->first = new_node;
-        new_node->position = head->l_size++;
-    }
     else
     {
         p = head->first;
         while (p->next != NULL)
             p = p->next;
         p->next = new_node;
-        new_node->position = head->l_size++;
     }
     return (new_node->position + 1 == head->l_size ? new_node : NULL);
 }
+
 //////////////////////////////////////////
 t_label     *insert_label(t_head_lb *head, void    *data, int pos)
 {
@@ -75,22 +73,18 @@ t_label     *insert_label(t_head_lb *head, void    *data, int pos)
     new_node->data = data;
     new_node->operation_num = pos > -1 ? pos : -1;
     new_node->next = NULL;
+    new_node->position = head->l_size++;
     if (head->first == NULL)
-    {
         head->first = new_node;
-        new_node->position = head->l_size++;
-    }
     else
     {
         p = head->first;
         while (p->next != NULL)
             p = p->next;
         p->next = new_node;
-        new_node->position = head->l_size++;
     }
     return (new_node->position + 1 == head->l_size ? new_node : NULL);
 }
-
 
 ///////////////////////////
 t_label  *search_by_name(t_label *l, char* x)
@@ -118,76 +112,7 @@ t_label  *search_by_pos(t_label *l, int x)
 }
 ///////////////////////
 
-////////////////////////////********//////////////////
-void        display_nodes(t_head *head)
-{
-    t_node *l;
-
-    int i;
-    l = head->first;
-    while (l)
-    {
-        head->code_size += l->command_size;
-        ft_printf("_|%.2d|\t[%s]\t",  l->position, l->data);
-        // if (l->operation_num > -1)
-            // ft_printf ("-%d-", l->size_ind);
-        if (l->code > 0)
-        {
-            ft_printf("******");
-            i = -1;
-            while (++i < 3)
-            {
-                if (l->w_args[i] & T_DIR)
-                    ft_printf ("arg%d = DIR\n", i);
-                if (l->w_args[i] & T_REG)
-                    ft_printf ("arg%d = REG\n", i);
-                if (l->w_args[i] & T_IND)
-                    ft_printf ("arg%d = IND\n", i);
-                if (l->w_args[i] & T_LAB)
-                    ft_printf ("arg%d = LIB\n", i );
-                ft_printf ("command size = %d | command num = %d\n", l->command_size, l->op_code);
-            }
-        }
-        
-        ft_putchar ('\n');
-        l = l->next;
-    }
-    ft_printf ("command size = %d\n", head->code_size);
-}
-////////////////////////////********//
-
-
 //norme
-t_node      *save_labels_and_commands(t_head_lb *labels, char *line, t_head *head)
-{
-    int     j;
-    char    *tmp;
-    static  int tmp_post;
-    t_node  p;                       //[  marker: 
-
-    j = -1;
-    ft_bzero(&p, sizeof (t_node));
-    while (line[++j] && line[j] != LABEL_CHAR);
-    if (ft_strlen(line) > j)
-    {
-        tmp = ft_strncpy(ft_strnew(j), line, j);
-        if (j == check_isdigit(tmp, j))
-        {
-            if (ft_strlen(line) > j + 1)
-            {
-                p = *insert_node (head, ft_strtrim (j + 1 +line));					//	insert eash line 
-                insert_label(labels, tmp, p.position);
-            }
-            else
-                insert_label(labels, tmp, tmp_post);
-            return (NULL);
-        }
-        free (tmp);
-    }
-    p = *insert_node (head, line); 
-    tmp_post = p.position + 1;	 
-    return (NULL);
-}
 
 
 //////////////////////////////////
@@ -203,3 +128,42 @@ int     check_isdigit(char *tmp,  int j)
     return (i);
 }
 
+
+
+////////////////////////////********//////////////////
+// void        display_nodes(t_head *head)
+// {
+//     t_node *l;
+
+//     int i;
+//     l = head->first;
+//     while (l)
+//     {
+//         head->code_size += l->command_size;
+//         ft_printf("_|%.2d|\t[%s]\t",  l->position, l->data);
+//         // if (l->operation_num > -1)
+//             // ft_printf ("-%d-", l->size_ind);
+//         if (l->code > 0)
+//         {
+//             ft_printf("******");
+//             i = -1;
+//             while (++i < 3)
+//             {
+//                 if (l->w_args[i] & T_DIR)
+//                     ft_printf ("arg%d = DIR\n", i);
+//                 if (l->w_args[i] & T_REG)
+//                     ft_printf ("arg%d = REG\n", i);
+//                 if (l->w_args[i] & T_IND)
+//                     ft_printf ("arg%d = IND\n", i);
+//                 if (l->w_args[i] & T_LAB)
+//                     ft_printf ("arg%d = LIB\n", i );
+//                 ft_printf ("command size = %d | command num = %d\n", l->command_size, l->op_code);
+//             }
+//         }
+        
+//         ft_putchar ('\n');
+//         l = l->next;
+//     }
+//     ft_printf ("command size = %d\n", head->code_size);
+// }
+////////////////////////////********//

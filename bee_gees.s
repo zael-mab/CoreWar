@@ -1,9 +1,7 @@
 .name"one 
 #two 
 three"
-.comment"Ha. Ha,, Ha, 
-stayiiiiin' 
-aliiiiiiiiiiiive"
+.comment ""
 					
 	sti	r1, ,%1 			;change live by the right value
 
