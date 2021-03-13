@@ -84,9 +84,10 @@ int         join (char *line, t_asmdata *sdata, char **cmd, int v)
 
 int         pars_chmp_nm_cm(t_asmdata *sdata, char *line)
 {
+    // free ------------------------------------------------->strtrim
     if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && ft_strlen(ft_strtrim(sdata->e + line)) != 0) // check the restof line "something"x
     {
-        ft_printf("#Error in the line[%s] \n", line);
+        ft_printf("#Error :>>>>>> Line[%s] \n", line);
         return (0);
     }
     if (sdata->n == 1 && sdata->s && sdata->e && sdata->error == -1)
@@ -95,7 +96,6 @@ int         pars_chmp_nm_cm(t_asmdata *sdata, char *line)
     if (sdata->c == 1 && sdata->s && sdata->e && sdata->error == -1)
         if((sdata->comment = ft_strscpy(ft_strnew(COMMENT_LENGTH), line, sdata->s, sdata->e)))
             sdata->c = -1;
-
     if (sdata->s && (sdata->c == 1 || sdata->n == 1))
     {
         sdata->error++;
@@ -113,15 +113,39 @@ int         search_for_exention(char *line, t_asmdata *data)
     int j;
 
     j = -1;
+
     while (line[++j])
-        if (line[j] == '.' && ((ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0)
-        || ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 5) == 0))
+        if (line[j] != ' ')
+            break;
+    if (line[j] == '.')
+    {
+        if (ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0 || ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 8) == 0)
         {
+            if (data->s && !data->e)
+                return (-2);
             data->e = 0;
             data->s = 0;
             data->error = -1;
+            data->n = (ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0) ? 1 : data->n;
+            data->c = (ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 8) == 0) ? 1 : data->c;
+            j = (data->n == 1 ? j + 4 : j);
+            j = (data->c == 1 ? j + 7 : j);
             return (j);
         }
+        else
+            ft_printf("Error!!!%s\n", line);
+    }
+
+    // while (line[++j])
+    //     if (line[j] == '.' && ((ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0)
+    //     || ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 5) == 0))
+    //     {
+    //         ft_printf("|%s| | |%d|\n", j + line, j);
+    //         data->e = 0;
+    //         data->s = 0;
+    //         data->error = -1;
+    //         return (j);
+    //     }
     return (-1);
 }
 
@@ -130,16 +154,35 @@ int         check_champion (char *line, t_asmdata *sdata)
     int     j = 0;
 
     j = search_for_exention(line, sdata);
-    sdata->n = (ft_strscmp(NAME_CMD_STRING,j + line, 0, 5) == 0) ? 1 : sdata->n;
-    sdata->c = (ft_strscmp(COMMENT_CMD_STRING,j + line, 0, 8) == 0) ? 1 : sdata->c;
-    j = -1;
+    // sdata->n = (ft_strscmp(NAME_CMD_STRING, j + line, 0, 5) == 0) ? 1 : sdata->n;
+    // sdata->c = (ft_strscmp(COMMENT_CMD_STRING, j + line, 0, 8) == 0) ? 1 : sdata->c;
+	// ft_printf("\t|%d|-- | --|%d|\n", sdata->n, sdata->c);
+    if (sdata->n != 1 && sdata->c != 1)
+        return (1);
+    // j = (sdata->n == 1 ? j + 4 : j);
+    // j = (sdata->c == 1 ? j + 7 : j);
+    // while (line[++j] && sdata->error == -1)
+    // {
+    //     if (line[j] != ' ' && line[j] != '"')
+    //         return (0);
+    //     if (line[j] == '"')
+    //         break ;
+    // }
+    // j--;
+    
+    // ft_printf("|%s| | |%d|\n", line+ j, sdata->error);
     while (line[++j])
     {
+        if (line[j] != ' ' && line[j] != '"' && sdata->error == -1 && !sdata->s)
+            return (0);
         if (line[j] == '"' && sdata->s && !sdata->e)
             sdata->e = j + 1;
         if (line[j] == '"' && !sdata->s)
             sdata->s = j + 1;
     }
+
+    if (sdata->e && sdata->s && sdata->e > sdata->s && ((sdata->e - sdata->s) > COMMENT_LENGTH))
+        return (0);
     if (!(pars_chmp_nm_cm(sdata, line)))
         return (0);
     return (1);

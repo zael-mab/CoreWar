@@ -13,17 +13,19 @@
 #include "asm.h"
  
 
-
-
-
-
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb labels)
 {
     int j;
+    int c;
 
-    j = -1;
+    c = 0;
+    j = sdata->x;
     instruction->arg_tab = ft_strsplit(sdata->x + instruction->data, SEPARATOR_CHAR);   // CHANGE THAT SHIT 2 TABLES ARE YOU FUCKING ****
     sdata->op_args = ft_strsplit(sdata->x + instruction->data, SEPARATOR_CHAR);
+    while (instruction->data[++j])
+        if (instruction->data[j] == ',')
+            c++;
+    j = -1;
     while (sdata->op_args[++j])
     {
         sdata->y = j;
@@ -31,7 +33,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb la
         if (!trt_arg(sdata, instruction, labels, j, y))
             return (0);
     }
-    if (j != g_op_tab[y].args_numb)
+    if (j != g_op_tab[y].args_numb || c + 1 != g_op_tab[y].args_numb)
     {
         sdata->error = 8;
         return (0);

@@ -104,6 +104,7 @@ t_node      *save_labels_and_commands(t_head_lb *labels, char *line, t_head *hea
     char    *tmp;
     static  int tmp_post;
     t_node  marker;
+    t_label  l;
 
     j = -1;
     while (line[++j] && line[j] != LABEL_CHAR);
@@ -115,15 +116,22 @@ t_node      *save_labels_and_commands(t_head_lb *labels, char *line, t_head *hea
             if (ft_strlen(line) > j + 1)
             {
                 marker = *insert_node (head, ft_strtrim (j + 1 +line));					//	insert eash line 
-                insert_label(labels, tmp, marker.position);
+                ft_printf ("---------------[%s]_[%d]\n", marker.data, marker.position);
+                l = *insert_label(labels, tmp, tmp_post);
+                ft_printf ("1*************[%s]_[%d]\n", l.data, l.operation_num);
+                tmp_post = marker.position + 1;
             }
             else
-                insert_label(labels, tmp, tmp_post);
+            {
+                l = *insert_label(labels, tmp, tmp_post);
+                ft_printf (">>>>>>>>>>>>>>>[%s]_[%d]\n", l.data, l.operation_num);
+            }
             return (NULL);
         }
         free (tmp);
     }
     marker = *insert_node (head, line);
-    tmp_post = marker.position + 1;	 
+    tmp_post = marker.position + 1;
+    ft_printf ("________________[%s]_[%d]\n", marker.data, marker.position);
     return (NULL);
 }
