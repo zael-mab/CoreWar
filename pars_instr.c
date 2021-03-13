@@ -40,7 +40,15 @@ int             check_oper(t_node *instruct, t_head_lb labels, t_head *head, t_a
         if (!ft_strcmp(tmp, g_op_tab[x].name))
         {
             if ((l = search_by_pos(labels.first, instruct->position)))
-                l->size_ind = instruct->command_size + head->code_size;
+                l->size_ind = ((l->size_ind == -1) ? instruct->command_size + head->code_size : l->size_ind);
+            if (l && l->next != NULL)
+                while (l)
+                {
+                    if (l->operation_num == instruct->position)
+                        l->size_ind = ((l->size_ind == -1) ? instruct->command_size + head->code_size : l->size_ind);
+                    l = l->next;
+                }
+            
             if (!pars_args(instruct, data, x, labels))
             {
                 // data->error += 4;
@@ -54,8 +62,7 @@ int             check_oper(t_node *instruct, t_head_lb labels, t_head *head, t_a
                 free (tmp);
                 return (-1);
             }
-            if (l)
-                ft_printf("tmp[%s]--->[%d]\n", instruct->data,l->size_ind);
+            ft_memdel((void**) data->op_args);
             instruct->command_size += 1;
             instruct->code = (x == 17 ? -1 : g_op_tab[x].op_code);
             instruct->arg_num = g_op_tab[x].args_numb;

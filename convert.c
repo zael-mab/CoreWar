@@ -37,18 +37,15 @@ void        writ_args(t_asmdata *data, t_node *cmd, int fd)
     data->x = -1;
     while (++data->x < cmd->arg_num)
     {
-        // ft_printf ("\t\t-------%d--------\n", cmd->w_args[data->x]);
         if (!(cmd->w_args[data->x] & T_LAB))
         {
             if (cmd->w_args[data->x + 6] == 2)
             {
-                // ft_printf ("2*************%d\n", cmd->w_args[data->x]);
                 cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
                 write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
             }
             else if (cmd->w_args[data->x + 6] == 4)
             {
-                // ft_printf ("4*************%d\n", cmd->w_args[data->x]);
                 cmd->arg[data->x] = reverse_endian(cmd->arg[data->x]);
                 write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
             }
@@ -67,18 +64,14 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
     cmd = cmmnd->first;
     while (cmd)
     {
-        // ft_printf ("[%s]\n", cmd->data);
-        // ft_printf ("__________%d\n", cmd->command_size);
         if (cmd->code > 0)
         {
             write (fd, &cmd->code, 1);
             if (cmd->encodin_code > 0)
-            {
-                // ft_printf ("------------%d\n", cmd->encodin);
                 write (fd, &cmd->encodin, 1);
-            }
             writ_args(data, cmd, fd);
         }
+        ft_memdel((void **)cmd->arg_tab);
         cmd = cmd->next;
     }
 }

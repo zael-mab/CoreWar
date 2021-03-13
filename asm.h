@@ -50,7 +50,7 @@ typedef struct      s_head
 typedef struct      s_label
 {
     char            *data;
-    int             operation_num;          //labels -pointes operation-. (need to calculate the number of bytes btween the arg_label and the instruction tha label pointed to)
+    size_t             operation_num;          //labels -pointes operation-. (need to calculate the number of bytes btween the arg_label and the instruction tha label pointed to)
     size_t          position;
     int             size_ind;
     struct s_label  *next;
@@ -116,7 +116,7 @@ int         join (char *line, t_asmdata *sdata, char **cmd, int v);
 void 	    assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels, int ln); // CHANGE THE NAME
 int         pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata);
 int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data);
-void        get_labels_value(t_label *l, t_node *instru, t_label *first, int counter);
+int         get_labels_value(t_label *l, t_node *instru, t_label *first, int counter);
 int         check_digit(char *line);
 /////////////////////////
 int         reverse_endian (int i);
@@ -146,7 +146,7 @@ int         check_isdigit(char *tmp, int j);
 ///////////////////
 t_label     *insert_label(t_head_lb *head, void    *data, int pos);
 t_node      *insert_node(t_head *head, void    *data);
-t_label      *search_by_pos(t_label *l, int x);
+t_label      *search_by_pos(t_label *l, size_t x);
 t_label      *search_by_name(t_label *l, char* x);
 ///////////////////
 
@@ -169,7 +169,8 @@ void        operations(char **operat, int i);
 void        *list_get(t_head *head);
 void        list_del_all (t_head *head);
 
-
+void    *list_get_lb(t_head_lb *head);
+void    list_del_all_lb (t_head_lb *head);
 
 
 

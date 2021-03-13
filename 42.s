@@ -1,5 +1,6 @@
 .name           "42"
-.comment        ""
+.comment        "looolololo
+sadasfa"
 
 entree:	live	%42		# entree
 	ld	%0,r5

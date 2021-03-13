@@ -42,6 +42,10 @@ int		read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 	if (data->n == -1 && data->c == -1  && !check_champion_name_comment (*data))
 	{
 		//free (be careful)
+		if (data->comment)
+			free (data->comment);
+		if (data->name)
+			free (data->name);
 		return (0);
 	}
 	if (data->n == -1 && data->c == -1)
@@ -50,6 +54,7 @@ int		read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 		save_labels_and_commands(labels, ft_strtrim(data->line), head);		//	labels and instrucions
 	if (!check_champion(data->line, data))								// check and save the name & the comment
 	{
+
 		perror("incorect file\n");			// don't forget to free;
 		return (0);
 	}
@@ -67,13 +72,14 @@ void				f_assembler (t_head *head, t_asmdata *data, int fd)
 	{
 		if (!(read_set_data(data, head, &labels)))
 		{
-			// free (data->line);
+			if(data->line)
+				free (data->line);
 			// 	//free 
 			exit(0);
 		}
 		free (data->line);
 	}
-	ft_printf("|%s|-- |\t --|%s|\n", data->name, data->comment);
+	// ft_printf("|%s|-- |\t --|%s|\n", data->name, data->comment);
 	// if (!data->name || !data->comment)
 	// {
 	// 	if (!data->name)

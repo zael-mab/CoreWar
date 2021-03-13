@@ -38,7 +38,8 @@ f7:	fork	%:f8
 f8:	fork	%:f9
 f9:	fork	%:f10
 f10:
-
+x:
+y:
 
 l1:	live	%1
 l2:	live	%1

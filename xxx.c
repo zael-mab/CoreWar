@@ -28,9 +28,9 @@ int 				reverse_endian (int i)
 
 
 /*get the value ready to print  (location counter) */
-void        get_labels_value(t_label *l, t_node *instru, t_label *first, int counter)
+int         get_labels_value(t_label *l, t_node *instru, t_label *first, int counter)
 {
-    int jumper;
+    int     jumper;
 
     l = NULL;
     jumper = -1;
@@ -38,6 +38,8 @@ void        get_labels_value(t_label *l, t_node *instru, t_label *first, int cou
         if ((instru->lb & jumper + 1 && jumper != 2) || (instru->lb & 4 && jumper == 2))
             if ((l = search_by_name(first, ft_strtrim(1 + ft_strchr(instru->arg_tab[jumper], LABEL_CHAR)))))
             {
+                if (l->size_ind == -1)
+                    return (0);
                 if (l->size_ind == counter)
                     instru->arg[jumper] = reverse_endian((counter));
                 if (l->size_ind > counter)
@@ -45,6 +47,7 @@ void        get_labels_value(t_label *l, t_node *instru, t_label *first, int cou
                 if (l->size_ind < counter)
                     instru->arg[jumper] = reverse_endian((l->size_ind - counter) << 16);
             }
+    return (1);
 }
 
 
@@ -59,10 +62,10 @@ int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data)
     counter = 0;
     while (instru)
     {
-        if (instru->lb > 0)
-            get_labels_value(l, instru, labels.first, counter);
+        if (instru->lb > 0 && !get_labels_value(l, instru, labels.first, counter))
+            return (0);
         counter += instru->command_size;
-        ft_memdel((void**) instru->arg_tab);
+        // ft_memdel((void**) instru->arg_tab);
         data->y = 0;
         instru = instru->next;
     }
@@ -75,7 +78,7 @@ void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels, int
 	if (ln == 0 || data->n != -1 || data->c != -1)
 	{
 		list_del_all(head);
-		// list_del_all(labels);
+		list_del_all_lb(labels);
 		ft_printf ("Error name/comment/empty_file\n");
 		exit (1);
 	}
@@ -83,7 +86,7 @@ void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels, int
 	{
 		ft_printf("pars/labels %d\n", data->error);
 		list_del_all(head);
-		// list_del_all(labels);
+		list_del_all_lb(labels);
 		exit (0);
 	}
 	if (head->code_size != 0)
@@ -93,8 +96,10 @@ void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels, int
 		ft_printf ("ERROR: Champ has no instructions\n");
 		exit(0);
 	}
-	list_del_all(head);
-	// list_del_all(labels);
+    free (data->name);
+    free (data->comment);
+	// list_del_all(head);
+    // list_del_all_lb(labels);
 }
 
 //norme
@@ -116,22 +121,20 @@ t_node      *save_labels_and_commands(t_head_lb *labels, char *line, t_head *hea
             if (ft_strlen(line) > j + 1)
             {
                 marker = *insert_node (head, ft_strtrim (j + 1 +line));					//	insert eash line 
-                ft_printf ("---------------[%s]_[%d]\n", marker.data, marker.position);
                 l = *insert_label(labels, tmp, tmp_post);
-                ft_printf ("1*************[%s]_[%d]\n", l.data, l.operation_num);
                 tmp_post = marker.position + 1;
             }
             else
             {
                 l = *insert_label(labels, tmp, tmp_post);
-                ft_printf (">>>>>>>>>>>>>>>[%s]_[%d]\n", l.data, l.operation_num);
             }
+            free (line);
             return (NULL);
         }
         free (tmp);
+        // free (line);
     }
     marker = *insert_node (head, line);
     tmp_post = marker.position + 1;
-    ft_printf ("________________[%s]_[%d]\n", marker.data, marker.position);
     return (NULL);
 }

@@ -39,7 +39,6 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb la
         return (0);
     }
     instruction->command_size += g_op_tab[y].encoding_code;
-    ft_memdel((void**) sdata->op_args);
     return (1);
 }
 
