@@ -54,6 +54,8 @@ int             check_oper(t_node *instruct, t_head_lb labels, t_head *head, t_a
                 free (tmp);
                 return (-1);
             }
+            if (l)
+                ft_printf("tmp[%s]--->[%d]\n", instruct->data,l->size_ind);
             instruct->command_size += 1;
             instruct->code = (x == 17 ? -1 : g_op_tab[x].op_code);
             instruct->arg_num = g_op_tab[x].args_numb;
