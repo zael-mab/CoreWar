@@ -81,6 +81,7 @@ typedef struct      s_asmdata
     char            *comment;
     char            *file_name;
     char            *line;
+    int             ln;
     int             n;
     int             c;
     int             s;
@@ -101,19 +102,19 @@ void        init_head(t_head *head);            //DELETE
 int			check_extention(char *line, t_asmdata *data);
 void		f_assembler (t_head *head, t_asmdata *data, int fd);
 int		    read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels);
-int			check_champion_name_comment(t_asmdata data);
+int			check_champion_name_comment(t_asmdata *data);
 //////////////////////
 
 /////////////////////
 char 	    *avoid_comment (char *line);
 t_node      *save_labels_and_commands(t_head_lb *labels, char *lin, t_head *head);
 /////////////////////
-int         check_champion (char *line, t_asmdata *sdata);
-int         search_for_exention(char *line, t_asmdata *data);
+int         check_champion (char *line, t_asmdata *data);
+int         search_for_exention(char *line, t_asmdata *data, int j);
 int         pars_chmp_nm_cm(t_asmdata *sdata, char *line);
 int         join (char *line, t_asmdata *sdata, char **cmd, int v);
 /////////////////////
-void 	    assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels, int ln); // CHANGE THE NAME
+void 	    assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels); // CHANGE THE NAME
 int         pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata);
 int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data);
 int         get_labels_value(t_label *l, t_node *instru, t_label *first, int counter);

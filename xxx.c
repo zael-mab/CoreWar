@@ -72,10 +72,10 @@ int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data)
     return (1);
 }
 
-void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels, int ln) // CHANGE THE NAME
+void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels) // CHANGE THE NAME
 {
 	// display_nodes(head);
-	if (ln == 0 || data->n != -1 || data->c != -1)
+	if (data->ln == 1 || data->n != -1 || data->c != -1)
 	{
 		list_del_all(head);
 		list_del_all_lb(labels);

@@ -22,16 +22,22 @@ output this machine language command.
 void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels, int ln); // CHANGE THE NAME
 */
 
-int			check_champion_name_comment(t_asmdata data)
+int			check_champion_name_comment(t_asmdata *data)
 {
-	if (data.comment && (ft_strlen(data.comment) > COMMENT_LENGTH))
+	if (data->comment && (ft_strlen(data->comment) > COMMENT_LENGTH))
 	{
-		ft_printf("Error: .comment too long (%d) > max len (%d)\n", ft_strlen(data.comment), COMMENT_LENGTH);
+		ft_printf("Error: .comment too long (%d) > max len (%d)\n", ft_strlen(data->comment), COMMENT_LENGTH);
+		free (data->comment);
+		if (data->name)
+			free (data->name);
 		return(0);
 	}
-	if (data.name && (ft_strlen(data.name) > PROG_NAME_LENGTH))
+	if (data->name && (ft_strlen(data->name) > PROG_NAME_LENGTH))
 	{
-		ft_printf("Error: .comment too long (%d) > max len (%d)\n", ft_strlen(data.name), PROG_NAME_LENGTH);
+		ft_printf("Error: .comment too long (%d) > max len (%d)\n", ft_strlen(data->name), PROG_NAME_LENGTH);
+		free (data->name);
+		if (data->comment)
+			free (data->comment);
 		return (0);
 	}
 	return (1);
@@ -39,23 +45,15 @@ int			check_champion_name_comment(t_asmdata data)
 
 int		read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 {
-	if (data->n == -1 && data->c == -1  && !check_champion_name_comment (*data))
-	{
-		//free (be careful)
-		if (data->comment)
-			free (data->comment);
-		if (data->name)
-			free (data->name);
+	if (data->n == -1 && data->c == -1  && !check_champion_name_comment(data))
 		return (0);
-	}
 	if (data->n == -1 && data->c == -1)
 		data->line = avoid_comment(data->line);							// avoid comment 
-	if (data->n == -1 && data->c == -1 && ft_strlen(data->line) > 0)		//	avoid empty data->lines
+	if (data->n == -1 && data->c == -1 && ft_strlen(data->line))		//	avoid empty data->lines
 		save_labels_and_commands(labels, ft_strtrim(data->line), head);		//	labels and instrucions
 	if (!check_champion(data->line, data))								// check and save the name & the comment
 	{
-
-		perror("incorect file\n");			// don't forget to free;
+		ft_printf ("Error: line %d_[%s]\n");// don't forget to free;
 		return (0);
 	}
 	return (1);
@@ -64,44 +62,42 @@ int		read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 void				f_assembler (t_head *head, t_asmdata *data, int fd)
 {
 	t_head_lb		labels;
-	int 			ln;
 
 	ft_bzero (&labels, sizeof (t_head));
-	ln = 0;
-	while (get_next_line(fd, &data->line) > 0 && ++ln)		//
+	data->ln = 0;
+	while (get_next_line(fd, &data->line) > 0 && ++data->ln)		//
 	{
 		if (!(read_set_data(data, head, &labels)))
 		{
 			if(data->line)
 				free (data->line);
-			// 	//free 
 			exit(0);
 		}
 		free (data->line);
 	}
-	// ft_printf("|%s|-- |\t --|%s|\n", data->name, data->comment);
-	// if (!data->name || !data->comment)
-	// {
-	// 	if (!data->name)
-	// 		ft_printf ("_Error: no name!\n");
-	// 	if (!data->comment)
-	// 		ft_printf ("_Error: no comment!\n");
-	// 	if (data->name)
-	// 		free(data->name);
-	// 	if (data->comment)
-	// 		free(data->comment);
-	// 	exit(0);
-	// }
 	if (head->first != NULL)
-		assembly_to_bytecode (head, data, &labels, ln - 1);
+		assembly_to_bytecode (head, data, &labels);
 	else
 	{
-		if (data->n != -1 || data->c != -1)
-			ft_printf ("**Error: champion name/comment is not set!\n");
+		if (data->n != -1)
+		{
+			free (data->comment);
+			ft_printf ("Error: no Name!\n");
+		}
+		else if (data->c != -1)
+		{
+			free (data->name);
+			ft_printf ("Error: no Comment\n");
+		}
 		else
-			ft_printf ("*ERROR: Champ has no instructions!\n");
-		// free (data->comment);
-		// free (data->name);
+		{
+			free (data->name);
+			free (data->comment);
+			ft_printf ("ERROR: Champ has no instructions!\n");
+		}
+		if (labels.first != NULL)
+			list_del_all_lb(&labels);
+		free (data->file_name);
 		exit (1);
 	}
 }

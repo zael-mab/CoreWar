@@ -1,5 +1,6 @@
- .name"Batman"
- .comment    "This city needs me"
+  .name   "Batman"
+ .comment    "This city 
+needs me"  #x
 
 loop:
         sti r1, %:live, %1
