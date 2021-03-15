@@ -58,11 +58,9 @@ int             check_oper(t_node *instruct, t_head_lb labels, t_head *head, t_a
                 //     ft_printf ("Error: argument [%d] is empty  ,line '%10s'\n", data->y + 1, instruct->data);
                 // if (data->error & 4)
                 //     ft_printf ("Error at line '%10s'\n", instruct->data);
-                ft_memdel((void**) data->op_args);
                 free (tmp);
                 return (-1);
             }
-            ft_memdel((void**) data->op_args);
             instruct->command_size += 1;
             instruct->code = (x == 17 ? -1 : g_op_tab[x].op_code);
             instruct->arg_num = g_op_tab[x].args_numb;

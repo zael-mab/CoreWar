@@ -42,7 +42,7 @@ int                check_ind(char *line, int arg, t_head_lb labels)
 
     tmp = ft_strtrim (line);
     l  = search_by_name(labels.first, tmp);
-    // free (tmp);
+    free (tmp);
     if ((arg & T_IND) && l)
         return (1);
     ft_printf ("Error at arg num[%s]\n", line);
@@ -66,7 +66,6 @@ int         check_reg(char *line, int arg, t_node *instru, t_asmdata data)
             return(1);
         }    
     }
-    ft_printf ("~6~~~~~~~~~~Error [%s]~~~~~~~~\n", tmp);
     free(tmp);
     return (0);
 }
@@ -79,11 +78,9 @@ int         check_dir_lebel(char *line, int arg, t_head_lb labels)        // int
     t_label  *l;
 
     l  = search_by_name(labels.first, tmp);
+    free (tmp);
     if ((arg & T_DIR) && l)
-    {
         return (1);
-    }
-    ft_printf ("!!!Error at arg num[%s]\n", line);
     return (0);
 }
 

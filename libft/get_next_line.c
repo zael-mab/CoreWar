@@ -5,58 +5,53 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/05 22:08:17 by zael-mab          #+#    #+#             */
-/*   Updated: 2020/10/17 18:27:26 by zael-mab         ###   ########.fr       */
+/*   Created: 2019/06/15 20:06:13 by zael-mab          #+#    #+#             */
+/*   Updated: 2021/03/15 15:26:00 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static	unsigned	int		ft_linelen(char *tab)
+char		*ft_checkfd(char *str, char **line)
 {
-	unsigned int			i;
+	int		i;
+	char	*temp;
 
 	i = 0;
-	while (tab[i] != '\n' && tab[i] != '\0')
+	while (str[i] && str[i] != '\n')
 		i++;
-	return (i);
+	*line = ft_strsub(str, 0, i);
+	if (str[i] == '\n')
+		temp = ft_strdup(&str[i] + 1);
+	if (str[i] == '\0')
+		temp = ft_strnew(0);
+	return (temp);
 }
 
-static char					*ft_line(char *tab)
+int			get_next_line(int fd, char **line)
 {
-	if (ft_strchr(tab, '\n'))
-	{
-		ft_strcpy(tab, ft_strchr(tab, '\n') + 1);
-		return (tab);
-	}
-	if (ft_linelen(tab) > 0)
-	{
-		ft_strcpy(tab, ft_strchr(tab, '\0'));
-		return (tab);
-	}
-	return (NULL);
-}
+	static char		*str[CON_ST];
+	char			*temp;
+	char			buff[BUFF_SIZE + 1];
+	int				rest;
 
-int							get_next_line(int const fd, char **line)
-{
-	char					*tmp;
-	char					buff[BUFF_SIZE + 1];
-	static	char			*tab[256];
-	int						ret;
-
-	if (fd < 0 || BUFF_SIZE < 1 || !line || read(fd, buff, 0) < 0)
+	if (fd < 0 || !line || fd > CON_ST || BUFF_SIZE < 1)
 		return (-1);
-	if (!(tab[fd]) && (tab[fd] = ft_strnew(0)) == NULL)
-		return (-1);
-	while (!(ft_strchr(tab[fd], '\n')) && (ret = read(fd, buff, BUFF_SIZE)) > 0)
+	if (!str[fd])
+		str[fd] = ft_strnew(0);
+	while (!ft_strchr(str[fd], '\n') && (rest = read(fd, buff, BUFF_SIZE)) > 0)
 	{
-		buff[ret] = '\0';
-		tmp = tab[fd];
-		tab[fd] = ft_strnjoin(tmp, buff, ret);
-		free(tmp);
+		buff[rest] = '\0';
+		temp = ft_strjoin(str[fd], buff);
+		free(str[fd]);
+		str[fd] = temp;
 	}
-	*line = ft_strsub(tab[fd], 0, ft_linelen(tab[fd]));
-	if (ft_line(tab[fd]) == NULL)
+	if (rest < 0)
+		return (-1);
+	if (rest == 0 && !ft_strlen(str[fd]))
 		return (0);
+	temp = ft_checkfd(str[fd], line);
+	free(str[fd]);
+	str[fd] = temp;
 	return (1);
 }

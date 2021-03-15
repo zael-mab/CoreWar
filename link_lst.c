@@ -24,13 +24,23 @@ void    *list_get(t_head *head)
 {
     t_node  *l;
     char    *data;
+    int     i;
+
     if (head->first == NULL)
         return (NULL);
     l = head->first;
     data = l->data;
     head->first = head->first->next;
     head->l_size--;
-    free (l);
+    i = -1;
+    if (l->arg_tab)
+    {
+        while (l->arg_tab[++i])
+            free(l->arg_tab[i]);
+        free(l->arg_tab);
+    }
+    free(l->data);
+    free(l);
     return (data);
 }
 
@@ -51,7 +61,8 @@ void    *list_get_lb(t_head_lb *head)
     data = l->data;
     head->first = head->first->next;
     head->l_size--;
-    free (l);
+    free (l->data);
+    free(l);
     return (data);
 }
 
@@ -69,7 +80,7 @@ t_node     *insert_node(t_head *head, void    *data)
     t_node  *p;
 
     new_node = ft_memalloc (sizeof (t_node));
-    new_node->data = data;
+    new_node->data = (data);
     new_node->next = NULL;
     new_node->position = head->l_size++;
     if (head->first == NULL)
@@ -91,7 +102,7 @@ t_label     *insert_label(t_head_lb *head, void    *data, int pos)
     t_label  *p;
 
     new_node = ft_memalloc (sizeof (t_label));
-    new_node->data = data;
+    new_node->data = ft_strdup(data);
     new_node->size_ind = -1;
     new_node->operation_num = pos > -1 ? pos : -1;
     new_node->next = NULL;

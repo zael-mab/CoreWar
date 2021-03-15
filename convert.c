@@ -71,7 +71,6 @@ void        decode(t_asmdata *data, t_head *cmmnd, int fd)
                 write (fd, &cmd->encodin, 1);
             writ_args(data, cmd, fd);
         }
-        ft_memdel((void **)cmd->arg_tab);
         cmd = cmd->next;
     }
 }
@@ -108,7 +107,6 @@ void    to_byte_code(t_head *head, t_asmdata *data)
     
     decode(data, head, fp);
     ft_printf("Succes Writing output program to %s\n", data->file_name);        // be sure to free the structers !!!
-    free (data->file_name);
     close (fp);
 }
 

@@ -12,7 +12,7 @@
 
 #include "asm.h"
 
-int 				reverse_endian (int i)
+int 				reverse_endian(int i)
 {
     unsigned char	c1;
 	unsigned char	c2;
@@ -26,18 +26,24 @@ int 				reverse_endian (int i)
 	return ((int)c1 << 24) + ((int)c2 << 16) + ((int)c3 << 8) + c4;
 }
 
+/*
+get the value ready to print  (location counter)
+*/
 
-/*get the value ready to print  (location counter) */
-int         get_labels_value(t_label *l, t_node *instru, t_label *first, int counter)
+int                 get_labels_value(t_label *l, t_node *instru, t_label *first, int counter)
 {
-    int     jumper;
+    int             jumper;
+    char            *tmp;
 
     l = NULL;
     jumper = -1;
     while (++jumper < instru->arg_num)
         if ((instru->lb & jumper + 1 && jumper != 2) || (instru->lb & 4 && jumper == 2))
-            if ((l = search_by_name(first, ft_strtrim(1 + ft_strchr(instru->arg_tab[jumper], LABEL_CHAR)))))
+        {
+            tmp = ft_strtrim(1 + ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
+            if ((l = search_by_name(first, tmp)))
             {
+                free (tmp);
                 if (l->size_ind == -1)
                     return (0);
                 if (l->size_ind == counter)
@@ -47,6 +53,7 @@ int         get_labels_value(t_label *l, t_node *instru, t_label *first, int cou
                 if (l->size_ind < counter)
                     instru->arg[jumper] = reverse_endian((l->size_ind - counter) << 16);
             }
+        }
     return (1);
 }
 
@@ -65,7 +72,6 @@ int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data)
         if (instru->lb > 0 && !get_labels_value(l, instru, labels.first, counter))
             return (0);
         counter += instru->command_size;
-        // ft_memdel((void**) instru->arg_tab);
         data->y = 0;
         instru = instru->next;
     }
@@ -74,32 +80,25 @@ int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data)
 
 void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels) // CHANGE THE NAME
 {
-	// display_nodes(head);
-	if (data->ln == 1 || data->n != -1 || data->c != -1)
+	if (data->ln == 1)
 	{
-		list_del_all(head);
-		list_del_all_lb(labels);
 		ft_printf ("Error name/comment/empty_file\n");
-		exit (1);
 	}
 	if (!pars_instructions(head, *labels, data) || !set_label_args(head, *labels, data))
 	{
 		ft_printf("pars/labels %d\n", data->error);
-		list_del_all(head);
-		list_del_all_lb(labels);
-		exit (0);
 	}
 	if (head->code_size != 0)
 		to_byte_code(head, data);
 	else
-	{
 		ft_printf ("ERROR: Champ has no instructions\n");
-		exit(0);
-	}
     free (data->name);
     free (data->comment);
-	// list_del_all(head);
-    // list_del_all_lb(labels);
+    free (data->file_name);
+    if (labels->first != NULL)
+        list_del_all_lb(labels);
+    if (head->first != NULL)
+        list_del_all(head);
 }
 
 //norme
@@ -109,31 +108,27 @@ t_node      *save_labels_and_commands(t_head_lb *labels, char *line, t_head *hea
     char    *tmp;
     static  int tmp_post;
     t_node  marker;
-    t_label  l;
+    t_label l;
 
     j = -1;
     while (line[++j] && line[j] != LABEL_CHAR);
+    tmp = ft_strncpy(ft_strnew(j), line, j);
     if (ft_strlen(line) > j)
-    {
-        tmp = ft_strncpy(ft_strnew(j), line, j);
         if (j == check_isdigit(tmp, j))
         {
             if (ft_strlen(line) > j + 1)
             {
-                marker = *insert_node (head, ft_strtrim (j + 1 +line));					//	insert eash line 
+                marker = *insert_node (head, ft_strtrim (j + 1 + line));					//	insert eash line 
                 l = *insert_label(labels, tmp, tmp_post);
                 tmp_post = marker.position + 1;
             }
             else
-            {
                 l = *insert_label(labels, tmp, tmp_post);
-            }
+            free (tmp);
             free (line);
             return (NULL);
         }
-        free (tmp);
-        // free (line);
-    }
+    free (tmp);
     marker = *insert_node (head, line);
     tmp_post = marker.position + 1;
     return (NULL);

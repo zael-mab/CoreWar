@@ -17,6 +17,7 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb la
 {
     int j;
     int c;
+    char *tmp;
 
     c = 0;
     j = sdata->x;
@@ -29,10 +30,17 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb la
     while (sdata->op_args[++j])
     {
         sdata->y = j;
-        sdata->op_args[j] = ft_strtrim(sdata->op_args[j]);        // FREE !!!
+        tmp = ft_strtrim(sdata->op_args[j]);        // FREE !!!
+        free (sdata->op_args[j]);
+        sdata->op_args[j] = tmp;
         if (!trt_arg(sdata, instruction, labels, j, y))
+        {
+            free (sdata->op_args[j]);
             return (0);
+        }
+        free (sdata->op_args[j]);
     }
+    free (sdata->op_args);
     if (j != g_op_tab[y].args_numb || c + 1 != g_op_tab[y].args_numb)
     {
         sdata->error = 8;

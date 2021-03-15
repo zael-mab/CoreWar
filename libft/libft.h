@@ -6,7 +6,7 @@
 /*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/29 22:22:07 by zael-mab          #+#    #+#             */
-/*   Updated: 2020/03/02 23:53:31 by zael-mab         ###   ########.fr       */
+/*   Updated: 2021/03/15 15:27:29 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@
 # define HASH			0b000000100
 # define SPACE			0b000001000
 # define ZERO			0b000010000
-# define BUFF_SIZE 		100
+# define BUFF_SIZE 		1000
+# define CON_ST			4846
 
 # define MNS(c)			(c - '0')
 # define PLS(c)			(c + '0')
