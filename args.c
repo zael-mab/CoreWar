@@ -13,6 +13,17 @@
 #include "asm.h"
  
 
+ int       printf_error (t_node instr, t_asmdata *data, int j, int lb)
+ {
+    data->error = 1;
+    ft_printf ("Error: instruction >>> %s\nArgument #%d >>> %s.\n", instr.data, j + 1, data->op_args[j]);
+    if (lb == 1)
+        ft_printf ("Label not found\n");
+    if (lb == 3)
+        ft_printf ("Error: Too much Argument\n");
+    return (0);
+ }
+
 int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb labels)
 {
     int j;
@@ -40,16 +51,15 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb la
         }
         free (sdata->op_args[j]);
     }
-    free (sdata->op_args);
     if (j != g_op_tab[y].args_numb || c + 1 != g_op_tab[y].args_numb)
     {
-        sdata->error = 8;
-        return (0);
+        ft_printf ("%d\n", j);
+        return (printf_error(*instruction, sdata, j, (c + 1 != g_op_tab[y].args_numb)));
     }
+    free (sdata->op_args);
     instruction->command_size += g_op_tab[y].encoding_code;
     return (1);
 }
-
 
 int         trt_arg(t_asmdata *data, t_node *instruction, t_head_lb labels, int j, int y)
 {
@@ -57,37 +67,31 @@ int         trt_arg(t_asmdata *data, t_node *instruction, t_head_lb labels, int 
 
     x = -1;
     if (ft_strlen(data->op_args[j]) == 0)
-    {
-        // data->error += 2;        // fucking fix it!
-        ft_memdel((void**)data->op_args);
-        return (0);
-    }
+        return (printf_error(*instruction, data, j, 0));
     while (data->op_args[j][++x])
     {
         if (data->op_args[j][x] == 'r' && ft_isdigit(data->op_args[j][x + 1]))
-            return (reg_lexical_analysis (data, instruction, y));     // data->error
+            return (reg_lexical_analysis (data, instruction, y));
         if (data->op_args[j][x] == 'r' && !ft_isdigit(data->op_args[j][x + 1]))
             return (0);
         else if (data->op_args[j][x] == '%' && data->op_args[j][x + 1] == ':')
             return (dirl_lexical_analysis(data, instruction, labels, y, x));
-        else if (data->op_args[j][x] == '%')                          //DIRECT_CHAR (%) and a number or label (LABEL_CHAR (:) in front of it)
+        else if (data->op_args[j][x] == '%')     
             return (dir_lexical_analysis(data, instruction, y, x));
-        else if (data->op_args[j][x] == '-' || data->op_args[j][x] == '+' || ft_isdigit(data->op_args[j][x]) || data->op_args[j][x] == ':')
+        else if (data->op_args[j][x] == '-' || data->op_args[j][x] == '+' ||
+        ft_isdigit(data->op_args[j][x]) || data->op_args[j][x] == ':')
             return (ind_lexical_analysis (data, instruction, labels, y, x));
         else 
-        {
-            data->error += 2;
-            return (0);
-        }
+            return (printf_error(*instruction, data, j, 0));
     }
     return (1);
 }
 
 
-int     reg_lexical_analysis (t_asmdata *data, t_node *instruction, int y)
+int     reg_lexical_analysis(t_asmdata *data, t_node *instruction, int y)
 {
     if (!check_reg(data->op_args[data->y], g_op_tab[y].args[data->y], instruction,  *data))
-        return (0);
+        return (printf_error(*instruction, data, data->y, 0));
     instruction->command_size += 1;
     instruction->w_args[data->y] = T_REG;
     instruction->w_args[data->y + 6] = 1;
@@ -96,12 +100,10 @@ int     reg_lexical_analysis (t_asmdata *data, t_node *instruction, int y)
 }
 
 
-int     dirl_lexical_analysis (t_asmdata *data, t_node *instruction,t_head_lb labels, int y, int x)
+int     dirl_lexical_analysis(t_asmdata *data, t_node *instruction,t_head_lb labels, int y, int x)
 {
-    if (labels.first == NULL)
-        return (0);
     if (!check_dir_lebel(x + 2 + data->op_args[data->y], g_op_tab[y].args[data->y], labels))
-        return (0);
+        return (printf_error(*instruction, data, data->y, ((g_op_tab[y].args[data->y]) & T_DIR)));
     instruction->w_args[data->y + 6] = (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
     instruction->w_args[data->y] = T_LAB + T_DIR;
     instruction->w_args[data->y + 3] = DIR_CODE;
@@ -113,7 +115,7 @@ int     dirl_lexical_analysis (t_asmdata *data, t_node *instruction,t_head_lb la
 int     dir_lexical_analysis (t_asmdata *data, t_node *instruction, int y, int x)
 {
     if (!check_dir(x + 1 + data->op_args[data->y], g_op_tab[y].args[data->y], instruction, *data))
-        return (0);
+        return (printf_error(*instruction, data, data->y, 0));
     instruction->command_size += (g_op_tab[y].dir_size == 0 ? 4 : 2);
     instruction->w_args[data->y + 6] = (g_op_tab[y].dir_size == 0 ? 4 : 2);
     instruction->w_args[data->y] = T_DIR;
@@ -124,7 +126,7 @@ int     dir_lexical_analysis (t_asmdata *data, t_node *instruction, int y, int x
 int     ind_lexical_analysis (t_asmdata *data, t_node *instruction,t_head_lb labels, int y, int x)
 {
     if (data->op_args[data->y][x] == '+' || !(T_IND & g_op_tab[y].args[data->y]))
-        return (0);
+        return (printf_error(*instruction, data, data->y, 0));
     if (check_digit(data->op_args[data->y]) && !(ft_isalpha(data->op_args[data->y][x + 1]))) // !!!
     {
         instruction->arg[data->y] = ft_atoi(data->op_args[data->y]);
@@ -137,7 +139,7 @@ int     ind_lexical_analysis (t_asmdata *data, t_node *instruction,t_head_lb lab
     if (data->op_args[data->y][x] == ':')
     {
         if (!check_ind(x + 1 + data->op_args[data->y], g_op_tab[y].args[data->y], labels))
-            return (0);
+            return (printf_error(*instruction, data, data->y, ((g_op_tab[y].args[data->y]) & T_DIR)));
         instruction->w_args[data->y + 6] = 2;
         instruction->w_args[data->y] = T_IND + T_LAB;
         instruction->w_args[data->y + 3] = IND_CODE;

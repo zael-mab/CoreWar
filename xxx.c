@@ -80,18 +80,13 @@ int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data)
 
 void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels) // CHANGE THE NAME
 {
-	if (data->ln == 1)
-	{
-		ft_printf ("Error name/comment/empty_file\n");
-	}
+    data->error = 0;
 	if (!pars_instructions(head, *labels, data) || !set_label_args(head, *labels, data))
-	{
-		ft_printf("pars/labels %d\n", data->error);
-	}
-	if (head->code_size != 0)
+    {
+        ft_printf("x");
+    }
+	if (head->code_size != 0 && data->error == 0)
 		to_byte_code(head, data);
-	else
-		ft_printf ("ERROR: Champ has no instructions\n");
     free (data->name);
     free (data->comment);
     free (data->file_name);

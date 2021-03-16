@@ -54,10 +54,42 @@ int				read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 		save_labels_and_commands(labels, ft_strtrim(data->line), head);
 	if (!check_champion(data->line, data))
 	{
-		ft_printf("Error: line %d_[%s]\n");
+		ft_printf("Error: Line num %d >>>%s.\n", data->ln, data->line);
+		if (data->name)
+			free (data->name);
+		if (data->comment)
+			free (data->comment);
 		return (0);
 	}
 	return (1);
+}
+
+
+void			check_error(t_asmdata *data, t_head_lb labels, t_head *head)
+{
+	if (data->ln == 1)
+		ft_printf ("Empty file\n");
+	else if (data->n != -1)
+	{
+		free(data->comment);
+		ft_printf("Error: no Name!\n");
+	}
+	else if (data->c != -1)
+	{
+		free(data->name);
+		ft_printf("Error: no Comment\n");
+	}
+	else
+	{
+		free(data->name);
+		free(data->comment);
+		ft_printf("ERROR: Champ has no instructions!\n");
+	}
+	if (labels.first != NULL)
+		list_del_all_lb(&labels);
+	if (head->first != NULL)
+		list_del_all(head);
+	free(data->file_name);
 }
 
 void			f_assembler(t_head *head, t_asmdata *data, int fd)
@@ -79,29 +111,7 @@ void			f_assembler(t_head *head, t_asmdata *data, int fd)
 	if (head->first != NULL)
 		assembly_to_bytecode(head, data, &labels);
 	else
-	{
-		if (data->n != -1)
-		{
-			free(data->comment);
-			ft_printf("Error: no Name!\n");
-		}
-		else if (data->c != -1)
-		{
-			free(data->name);
-			ft_printf("Error: no Comment\n");
-		}
-		else
-		{
-			free(data->name);
-			free(data->comment);
-			ft_printf("ERROR: Champ has no instructions!\n");
-		}
-		if (labels.first != NULL)
-			list_del_all_lb(&labels);
-		if (head->first != NULL)
-			list_del_all(head);
-		free(data->file_name);
-	}
+		check_error(data, labels, head);
 }
 
 int				check_extention(char *line, t_asmdata *data)
@@ -112,7 +122,6 @@ int				check_extention(char *line, t_asmdata *data)
 	j = ft_strlen(line);
 	while (--j >= 0)
 		if (line[j] == '.')
-		{
 			if (line[j + 1] == 's' && line[j + 2] == '\0')
 			{
 				tmp = ft_strscpy(ft_strnew(j), line, 0, j + 1);
@@ -120,7 +129,6 @@ int				check_extention(char *line, t_asmdata *data)
 				free(tmp);
 				return (1);
 			}
-		}
 	return (0);
 }
 

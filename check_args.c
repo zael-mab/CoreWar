@@ -45,7 +45,6 @@ int                check_ind(char *line, int arg, t_head_lb labels)
     free (tmp);
     if ((arg & T_IND) && l)
         return (1);
-    ft_printf ("Error at arg num[%s]\n", line);
     return (0);
 }
 
@@ -60,7 +59,8 @@ int         check_reg(char *line, int arg, t_node *instru, t_asmdata data)
     while (tmp[++i])
     {
         instru->arg[data.y] = ft_atoi (1 + tmp);
-        if (tmp[i] == 'r' && instru->arg[data.y] > 0 && instru->arg[data.y] <= REG_NUMBER && (arg & T_REG))
+        if (tmp[i] == 'r' && instru->arg[data.y] > 0 &&
+        instru->arg[data.y] <= REG_NUMBER && (arg & T_REG))
         {
             free(tmp);
             return(1);

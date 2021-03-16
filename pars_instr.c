@@ -51,13 +51,6 @@ int             check_oper(t_node *instruct, t_head_lb labels, t_head *head, t_a
             
             if (!pars_args(instruct, data, x, labels))
             {
-                // data->error += 4;
-                // if (data->error & 8)
-                //     ft_printf ("Error: number of arguments ,line '%10s'\n", instruct->data);
-                // if (data->error & 2)
-                //     ft_printf ("Error: argument [%d] is empty  ,line '%10s'\n", data->y + 1, instruct->data);
-                // if (data->error & 4)
-                //     ft_printf ("Error at line '%10s'\n", instruct->data);
                 free (tmp);
                 return (-1);
             }
@@ -72,6 +65,13 @@ int             check_oper(t_node *instruct, t_head_lb labels, t_head *head, t_a
     }
     free (tmp);
     return(x);
+}
+
+int         print_errr1(char *line, t_asmdata *data)
+{
+    data->error = 1;
+    ft_printf ("Error: Line >>> %s. Operation not found.\n", line);
+    return (0);
 }
 
 ///////////////////////////////////////////////
@@ -90,19 +90,14 @@ int         pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata) 
             if (instruct->data[sdata->x] < 'a' || instruct->data[sdata->x] > 'z')
                 break;
         if (sdata->x == 0 && ft_strlen (instruct->data) > 0)
-        {
-            ft_printf("wrang command line [%s]\n", instruct->data);
-            sdata->error = 1;
-            return (0);
-        }
+            return (print_errr1(instruct->data, sdata));
         if (sdata->x > 0)
         {
             x = check_oper(instruct, labels, head, sdata);
-            if (x == 17 || x == -1)
-            {
-                sdata->error = 1;
+            if (x == 17)
+                return (print_errr1(instruct->data, sdata));
+            if (x == -1)
                 return (0);
-            }
             head->code_size += instruct->command_size;
         }
         instruct = instruct->next;

@@ -152,6 +152,8 @@ t_label      *search_by_name(t_label *l, char* x);
 ///////////////////
 
 
+int         print_errr1(char *line, t_asmdata *data);
+int         printf_error(t_node instr, t_asmdata *data, int j, int lb);
 
 
 
