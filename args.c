@@ -18,9 +18,11 @@
     data->error = 1;
     ft_printf ("Error: instruction >>> %s\nArgument #%d >>> %s.\n", instr.data, j + 1, data->op_args[j]);
     if (lb == 1)
-        ft_printf ("Label not found\n");
+        ft_printf ("*Label not found\n");
+    if (lb == 2)
+        ft_printf ("*Too few Arguments to operation call\n");
     if (lb == 3)
-        ft_printf ("Error: Too much Argument\n");
+        ft_printf ("*Too much Arguments to operation call\n");
     return (0);
  }
 
@@ -44,18 +46,22 @@ int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb la
         tmp = ft_strtrim(sdata->op_args[j]);        // FREE !!!
         free (sdata->op_args[j]);
         sdata->op_args[j] = tmp;
+        if (j == g_op_tab[y].args_numb && c + 1 > g_op_tab[y].args_numb)
+        {
+            free (sdata->op_args[j]);
+            free (sdata->op_args);
+            break;
+        }
         if (!trt_arg(sdata, instruction, labels, j, y))
         {
             free (sdata->op_args[j]);
+            free (sdata->op_args);
             return (0);
         }
         free (sdata->op_args[j]);
     }
     if (j != g_op_tab[y].args_numb || c + 1 != g_op_tab[y].args_numb)
-    {
-        ft_printf ("%d\n", j);
-        return (printf_error(*instruction, sdata, j, (c + 1 != g_op_tab[y].args_numb)));
-    }
+        return (printf_error(*instruction, sdata, j, 2 + (c + 1 > g_op_tab[y].args_numb)));
     free (sdata->op_args);
     instruction->command_size += g_op_tab[y].encoding_code;
     return (1);
@@ -116,8 +122,8 @@ int     dir_lexical_analysis (t_asmdata *data, t_node *instruction, int y, int x
 {
     if (!check_dir(x + 1 + data->op_args[data->y], g_op_tab[y].args[data->y], instruction, *data))
         return (printf_error(*instruction, data, data->y, 0));
-    instruction->command_size += (g_op_tab[y].dir_size == 0 ? 4 : 2);
-    instruction->w_args[data->y + 6] = (g_op_tab[y].dir_size == 0 ? 4 : 2);
+    instruction->command_size += (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
+    instruction->w_args[data->y + 6] = (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
     instruction->w_args[data->y] = T_DIR;
     instruction->w_args[data->y + 3] = DIR_CODE;
     return (1);

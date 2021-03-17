@@ -43,15 +43,23 @@ int                 get_labels_value(t_label *l, t_node *instru, t_label *first,
             tmp = ft_strtrim(1 + ft_strchr(instru->arg_tab[jumper], LABEL_CHAR));
             if ((l = search_by_name(first, tmp)))
             {
-                free (tmp);
+                // free (tmp);
                 if (l->size_ind == -1)
                     return (0);
-                if (l->size_ind == counter)
-                    instru->arg[jumper] = reverse_endian((counter));
-                if (l->size_ind > counter)
-                    instru->arg[jumper] = reverse_endian((l->size_ind - counter) << 16);
-                if (l->size_ind < counter)
-                    instru->arg[jumper] = reverse_endian((l->size_ind - counter) << 16);
+                // if (l->size_ind == counter)
+                //     instru->arg[jumper] = reverse_endian((counter));
+                // if (l->size_ind > counter)
+                //     instru->arg[jumper] = reverse_endian((l->size_ind - counter) << 16);
+                // if (l->size_ind < counter)
+                //     instru->arg[jumper] = reverse_endian((l->size_ind - counter) << 16);
+                ft_printf ("\t(%d ---%d)\n", l->size_ind, counter);
+                // if (l->size_ind == counter)
+                //     instru->arg[jumper] = ((counter));
+                // if (l->size_ind > counter)
+                //     instru->arg[jumper] = ((l->size_ind - counter));
+                // if (l->size_ind < counter)
+                    instru->arg[jumper] = ((l->size_ind - counter));
+                ft_printf (">>>%d ---%s\n", instru->arg[jumper], tmp);
             }
         }
     return (1);
@@ -80,10 +88,12 @@ int         set_label_args(t_head *head, t_head_lb labels, t_asmdata *data)
 
 void 	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels) // CHANGE THE NAME
 {
-    data->error = 0;
+    // data->error = 0;
+	// ft_printf ("data->line = %d\n " , data->ln);
+
 	if (!pars_instructions(head, *labels, data) || !set_label_args(head, *labels, data))
     {
-        ft_printf("x");
+        ft_printf("Error!%d\n", data->error);
     }
 	if (head->code_size != 0 && data->error == 0)
 		to_byte_code(head, data);

@@ -3,7 +3,7 @@
 needs me"  #x
 
 loop:
-        sti r1, %:live, r1 
+        sti r1, %:live, r1,  
 live:
         live %01
         ld %0, r1

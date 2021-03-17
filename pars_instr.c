@@ -82,7 +82,7 @@ int         pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata) 
 
     instruct = NULL;
     instruct = head->first;
-    sdata->error = -1;
+    sdata->error = 0;
     while (instruct != NULL)
     {
         sdata->x = -1;

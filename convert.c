@@ -52,8 +52,24 @@ void        writ_args(t_asmdata *data, t_node *cmd, int fd)
             else
                 write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
         }
-        else
-            write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+        if ((cmd->w_args[data->x] & T_LAB))
+        {
+            if (cmd->w_args[data->x + 6] == 2)
+            {
+                // cmd->arg[data->x] = cmd->arg[data->x];
+                ft_printf ("%d---->%d\n", cmd->arg[data->x], cmd->w_args[data->x + 6]);
+                cmd->arg[data->x] = reverse_endian(cmd->arg[data->x] << 16);
+                ft_printf ("%x~~~~>%d\n", cmd->arg[data->x], cmd->w_args[data->x + 6]);
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+            }
+            if (cmd->w_args[data->x + 6] == 4)
+            {
+                // cmd->arg[data->x] = cmd->arg[data->x] ;
+                cmd->arg[data->x] = reverse_endian(cmd->arg[data->x]);
+                ft_printf ("%x*****>%d\n", cmd->arg[data->x], cmd->w_args[data->x + 6]);
+                write (fd, &cmd->arg[data->x], cmd->w_args[data->x + 6]);
+            }
+        }
     }
 }
 

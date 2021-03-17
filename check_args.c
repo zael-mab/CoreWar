@@ -75,7 +75,7 @@ int         check_reg(char *line, int arg, t_node *instru, t_asmdata data)
 int         check_dir_lebel(char *line, int arg, t_head_lb labels)        // int !!!
 {
     char    *tmp = ft_strtrim (line);
-    t_label  *l;
+    t_label *l;
 
     l  = search_by_name(labels.first, tmp);
     free (tmp);
