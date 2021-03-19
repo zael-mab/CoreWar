@@ -87,7 +87,7 @@ typedef struct      s_asmdata
     int             s;
     int             e;
     int             error;
-    char            **op_args;            //split the args[arg_num]!!
+    char            **op_tb;            //split the args[arg_num]!!
     // int             p_ex_code;
     int             x;
     int             y;
@@ -106,8 +106,9 @@ int			check_champion_name_comment(t_asmdata *data);
 //////////////////////
 
 /////////////////////
+int         cmp_nm_cm(char *line);
 char 	    *avoid_comment (char *line);
-t_node      *save_labels_and_commands(t_head_lb *labels, char *lin, t_head *head);
+int         save_labels_and_commands(t_head_lb *labels, char *lin, t_head *head);
 /////////////////////
 int         check_champion (char *line, t_asmdata *data);
 int         search_for_exention(char *line, t_asmdata *data, int j);
@@ -125,9 +126,10 @@ void        to_byte_code(t_head *head, t_asmdata *data);
 void        decode(t_asmdata *data, t_head *cmmnd, int fd);
 void        writ_args(t_asmdata *data, t_node *cmd, int fd);
 //////////////////////////////////////
-int         check_oper(t_node *instruct, t_head_lb labels, t_head *head, t_asmdata *data);
-int         pars_args(t_node *instruction, t_asmdata *sdata, int y, t_head_lb labels);
-int         trt_arg(t_asmdata *data, t_node *instruction, t_head_lb labels, int j, int y);
+void        search_for_labels_init(t_head_lb labels, t_node *instr, t_head *head);
+int         check_oper(t_node *instr, t_head_lb labels, t_head *head, t_asmdata *data);
+int         pars_args(t_node *instruction, t_asmdata *data, int y, t_head_lb labels);
+int         trt_arg(t_asmdata *data, t_node *instr, t_head_lb labels, int y);
 void        add_encodin_code(t_asmdata *sdata, t_node *instruct);
 void        init_encodin_byte(t_node *instr, int p, int shift);
 ////////////////////////////
@@ -147,15 +149,14 @@ int         check_isdigit(char *tmp, int j);
 ///////////////////
 t_label     *insert_label(t_head_lb *head, void    *data, int pos);
 t_node      *insert_node(t_head *head, void    *data);
-t_label      *search_by_pos(t_label *l, size_t x);
-t_label      *search_by_name(t_label *l, char* x);
+t_label     *search_by_pos(t_label *l, size_t x);
+t_label     *search_by_name(t_label *l, char* x);
 ///////////////////
 
 
-int         print_errr1(char *line, t_asmdata *data);
-int         printf_error(t_node instr, t_asmdata *data, int j, int lb);
-
-
+int         print_oper_error(char *line, t_asmdata *data);
+int         print_arg_error(t_node instr, t_asmdata *data, int j, int lb);
+void		check_error(t_asmdata *data, t_head_lb labels, t_head *head);
 
 
 

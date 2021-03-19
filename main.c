@@ -6,22 +6,13 @@
 /*   By: zael-mab <zael-mab@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/28 10:48:04 by zael-mab          #+#    #+#             */
-/*   Updated: 2021/02/03 14:22:00 by zael-mab         ###   ########.fr       */
+/*   Updated: 2021/03/19 16:19:08 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "asm.h"
 
-/*
-repeat.
-read the next Assembly command
-break it into the different fields it is composed of .
-lookup the binary code for each field.
-combine these code into a single machine language command.
-output this machine language command.
-*/
-
-int				check_champion_name_comment(t_asmdata *data)
+int	check_champion_name_comment(t_asmdata *data)
 {
 	if (data->comment && (ft_strlen(data->comment) > COMMENT_LENGTH))
 	{
@@ -44,7 +35,7 @@ int				check_champion_name_comment(t_asmdata *data)
 	return (1);
 }
 
-int				read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
+int	read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 {
 	if (data->n == -1 && data->c == -1 && !check_champion_name_comment(data))
 		return (0);
@@ -56,43 +47,15 @@ int				read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 	{
 		ft_printf("Error: Line num %d >>>%s.\n", data->ln, data->line);
 		if (data->name)
-			free (data->name);
+			free(data->name);
 		if (data->comment)
-			free (data->comment);
+			free(data->comment);
 		return (0);
 	}
 	return (1);
 }
 
-
-void			check_error(t_asmdata *data, t_head_lb labels, t_head *head)
-{
-	if (data->ln == 1)
-		ft_printf ("Empty file\n");
-	else if (data->n != -1)
-	{
-		free(data->comment);
-		ft_printf("Error: no Name!\n");
-	}
-	else if (data->c != -1)
-	{
-		free(data->name);
-		ft_printf("Error: no Comment\n");
-	}
-	else
-	{
-		free(data->name);
-		free(data->comment);
-		ft_printf("ERROR: Champ has no instructions!\n");
-	}
-	if (labels.first != NULL)
-		list_del_all_lb(&labels);
-	if (head->first != NULL)
-		list_del_all(head);
-	free(data->file_name);
-}
-
-void			f_assembler(t_head *head, t_asmdata *data, int fd)
+void	f_assembler(t_head *head, t_asmdata *data, int fd)
 {
 	t_head_lb	labels;
 
@@ -104,7 +67,7 @@ void			f_assembler(t_head *head, t_asmdata *data, int fd)
 		{
 			if (data->line)
 				free(data->line);
-			exit(0);
+			exit(1);
 		}
 		free(data->line);
 	}
@@ -114,25 +77,26 @@ void			f_assembler(t_head *head, t_asmdata *data, int fd)
 		check_error(data, labels, head);
 }
 
-int				check_extention(char *line, t_asmdata *data)
+int	check_extention(char *line, t_asmdata *data)
 {
 	int			j;
 	char		*tmp;
 
 	j = ft_strlen(line);
 	while (--j >= 0)
-		if (line[j] == '.')
-			if (line[j + 1] == 's' && line[j + 2] == '\0')
-			{
-				tmp = ft_strscpy(ft_strnew(j), line, 0, j + 1);
-				data->file_name = ft_strjoin(tmp, ".cor");
-				free(tmp);
-				return (1);
-			}
+	{
+		if (line[j] == '.' && line[j + 1] == 's' && line[j + 2] == '\0')
+		{
+			tmp = ft_strscpy(ft_strnew(j), line, 0, j + 1);
+			data->file_name = ft_strjoin(tmp, ".cor");
+			free(tmp);
+			return (1);
+		}
+	}
 	return (0);
 }
 
-int				main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	int			fd;
 	t_head		head;
@@ -153,7 +117,7 @@ int				main(int ac, char **av)
 		close(fd);
 	}
 	if (ac == 1)
-		ft_printf("Syntax error at token [TOKEN][001:001] END (null)!\n");
+		ft_printf("usage: ./asm file_name\n");
 	if (ac > 2)
 		ft_printf("Too many files!\n");
 }

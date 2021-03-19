@@ -1,3 +1,0 @@
-.comment ""
-
-live	%1
