@@ -6,7 +6,7 @@
 /*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 18:34:15 by zael-mab          #+#    #+#             */
-/*   Updated: 2021/03/19 18:35:42 by zael-mab         ###   ########.fr       */
+/*   Updated: 2021/03/20 18:22:09 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	check_error(t_asmdata *data, t_head_lb labels, t_head *head)
 {
 	if (data->ln == 0)
 		ft_printf("Empty file\n");
-	if (data->n != -1)
+	else if (data->n != -1)
 		ft_printf("Error: no Name!\n");
 	else if (data->c != -1)
 		ft_printf("Error: no Comment\n");
@@ -62,4 +62,27 @@ int	cmp_nm_cm(char *line)
 		return (2);
 	else
 		return (0);
+}
+
+int	check_champion_name_comment(t_asmdata *data)
+{
+	if (data->comment && (ft_strlen(data->comment) > COMMENT_LENGTH))
+	{
+		ft_printf("Error: .comment too long (%d) > max len (%d)\n",
+		ft_strlen(data->comment), COMMENT_LENGTH);
+		free(data->comment);
+		if (data->name)
+			free(data->name);
+		return (0);
+	}
+	if (data->name && (ft_strlen(data->name) > PROG_NAME_LENGTH))
+	{
+		ft_printf("Error: .name too long (%d) > max len (%d)\n",
+		ft_strlen(data->name), PROG_NAME_LENGTH);
+		free(data->name);
+		if (data->comment)
+			free(data->comment);
+		return (0);
+	}
+	return (1);
 }

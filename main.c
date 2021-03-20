@@ -6,34 +6,11 @@
 /*   By: zael-mab <zael-mab@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/28 10:48:04 by zael-mab          #+#    #+#             */
-/*   Updated: 2021/03/19 16:19:08 by zael-mab         ###   ########.fr       */
+/*   Updated: 2021/03/20 18:01:56 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "asm.h"
-
-int	check_champion_name_comment(t_asmdata *data)
-{
-	if (data->comment && (ft_strlen(data->comment) > COMMENT_LENGTH))
-	{
-		ft_printf("Error: .comment too long (%d) > max len (%d)\n",
-		ft_strlen(data->comment), COMMENT_LENGTH);
-		free(data->comment);
-		if (data->name)
-			free(data->name);
-		return (0);
-	}
-	if (data->name && (ft_strlen(data->name) > PROG_NAME_LENGTH))
-	{
-		ft_printf("Error: .comment too long (%d) > max len (%d)\n",
-		ft_strlen(data->name), PROG_NAME_LENGTH);
-		free(data->name);
-		if (data->comment)
-			free(data->comment);
-		return (0);
-	}
-	return (1);
-}
 
 int	read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 {
@@ -57,24 +34,30 @@ int	read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 
 void	f_assembler(t_head *head, t_asmdata *data, int fd)
 {
-	t_head_lb	labels;
+	t_head_lb	*labels;
 
-	ft_bzero(&labels, sizeof(t_head));
+	labels = (t_head_lb *)malloc(sizeof(t_head_lb));
+	ft_bzero(labels, sizeof(t_head));
 	data->ln = 0;
 	while (get_next_line(fd, &data->line) > 0 && ++data->ln)
 	{
-		if (!(read_set_data(data, head, &labels)))
+		if (!(read_set_data(data, head, labels)))
 		{
 			if (data->line)
 				free(data->line);
-			exit(1);
+			free(data->file_name);
+			free(labels);
+			free(head);
+			free(data);
+			exit(0);
 		}
 		free(data->line);
 	}
 	if (head->first != NULL)
-		assembly_to_bytecode(head, data, &labels);
+		assembly_to_bytecode(head, data, labels);
 	else
-		check_error(data, labels, head);
+		check_error(data, *labels, head);
+	free(labels);
 }
 
 int	check_extention(char *line, t_asmdata *data)
@@ -99,21 +82,22 @@ int	check_extention(char *line, t_asmdata *data)
 int	main(int ac, char **av)
 {
 	int			fd;
-	t_head		head;
-	t_asmdata	sdata;
+	t_head		*head;
+	t_asmdata	*sdata;
 
 	if (ac == 2)
 	{
-		ft_bzero(&head, sizeof(t_head));
-		ft_bzero(&sdata, sizeof(t_asmdata));
+		head = (t_head *)malloc(sizeof(t_head));
+		ft_bzero(head, sizeof(t_head));
+		sdata = (t_asmdata *)malloc(sizeof(t_asmdata));
+		ft_bzero(sdata, sizeof(t_asmdata));
 		fd = open(av[1], O_RDONLY);
-		sdata.error = -1;
-		if (!check_extention(av[1], &sdata))
-		{
+		if (!check_extention(av[1], sdata))
 			ft_printf("Error -file extention-\n");
-			exit(0);
-		}
-		f_assembler(&head, &sdata, fd);
+		else
+			f_assembler(head, sdata, fd);
+		free(sdata);
+		free(head);
 		close(fd);
 	}
 	if (ac == 1)

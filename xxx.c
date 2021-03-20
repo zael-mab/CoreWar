@@ -84,7 +84,7 @@ void	assembly_to_bytecode(t_head *head, t_asmdata *data, t_head_lb *labels)
 		|| !set_label_args(head, *labels, data))
 	{
 		if (data->error & 16)
-			ft_printf ("Error\n");
+			ft_printf ("ERRORR\n");
 	}
 	if (head->code_size != 0 && data->error == 0)
 		to_byte_code(head, data);

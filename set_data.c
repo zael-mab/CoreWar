@@ -1,63 +1,113 @@
+/* ************************************************************************** */
+/*																			  */
+/*														  :::	   ::::::::   */
+/*	 set_data.c											:+:		 :+:	:+:   */
+/*													  +:+ +:+		  +:+	  */
+/*	 By: zael-mab <marvin@42.fr>					+#+  +:+	   +#+		  */
+/*												  +#+#+#+#+#+	+#+			  */
+/*	 Created: 2021/03/20 15:52:16 by zael-mab		   #+#	  #+#			  */
+/*	 Updated: 2021/03/20 15:52:19 by zael-mab		  ###	########.fr		  */
+/*																			  */
+/* ************************************************************************** */
 
 #include "asm.h"
 
-int     reg_lexical_analysis(t_asmdata *data, t_node *instruction, int y)
+int	reg_lexical_analysis(t_asmdata *data, t_node *instr, int y)
 {
-    if (!check_reg(data->op_tb[data->y], g_op_tab[y].args[data->y], instruction,  *data))
-        return (print_arg_error(*instruction, data, data->y, 0));
-    instruction->command_size += 1;
-    instruction->w_args[data->y] = T_REG;
-    instruction->w_args[data->y + 6] = 1;
-    instruction->w_args[data->y + 3] = REG_CODE;
-    return (1);
+	if (!check_reg(data->op_tb[data->y], g_op_tab[y].args[data->y], instr, *data))
+		return (print_arg_error(*instr, data, data->y, 0));
+	instr->command_size += 1;
+	instr->w_args[data->y] = T_REG;
+	instr->w_args[data->y + 6] = 1;
+	instr->w_args[data->y + 3] = REG_CODE;
+	return (1);
 }
 
-
-int     dirl_lexical_analysis(t_asmdata *data, t_node *instruction,t_head_lb labels, int y, int x)
+int	dirl_lexical_analysis(t_asmdata *data, t_node *instr,
+		t_head_lb labels, int y)
 {
-    if (!check_dir_lebel(x + 2 + data->op_tb[data->y], g_op_tab[y].args[data->y], labels))
-        return (print_arg_error(*instruction, data, data->y, ((g_op_tab[y].args[data->y]) & T_DIR) > 0));
-    instruction->w_args[data->y + 6] = (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
-    instruction->w_args[data->y] = T_LAB + T_DIR;
-    instruction->w_args[data->y + 3] = DIR_CODE;
-    instruction->command_size += (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
-    instruction->lb += (data->y == 2 ? 4 : data->y + 1);
-    return (1);
+	int		x;
+
+	x = data->z;
+	if (!check_dir_lebel(x + 2 + data->op_tb[data->y],
+			g_op_tab[y].args[data->y], labels))
+		return (print_arg_error(*instr, data, data->y,
+				((g_op_tab[y].args[data->y]) & T_DIR) > 0));
+	if (g_op_tab[y].dir_size == 0)
+	{
+		instr->command_size += DIR_SIZE;
+		instr->w_args[data->y + 6] = DIR_SIZE;
+	}
+	else
+	{
+		instr->command_size += IND_SIZE;
+		instr->w_args[data->y + 6] = IND_SIZE;
+	}
+	instr->w_args[data->y] = T_LAB + T_DIR;
+	instr->w_args[data->y + 3] = DIR_CODE;
+	if (data->y == 2)
+		instr->lb += 4;
+	else
+		instr->lb += data->y + 1;
+	return (1);
 }
 
-int     dir_lexical_analysis (t_asmdata *data, t_node *instruction, int y, int x)
+int	dir_lexical_analysis (t_asmdata *data, t_node *instr, int y)
 {
-    if (!check_dir(x + 1 + data->op_tb[data->y], g_op_tab[y].args[data->y], instruction, *data))
-        return (print_arg_error(*instruction, data, data->y, 0));
-    instruction->command_size += (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
-    instruction->w_args[data->y + 6] = (g_op_tab[y].dir_size == 0 ? DIR_SIZE : IND_SIZE);
-    instruction->w_args[data->y] = T_DIR;
-    instruction->w_args[data->y + 3] = DIR_CODE;
-    return (1);
+	int		x;
+
+	x = data->z;
+	if (!check_dir(x + 1 + data->op_tb[data->y],
+			g_op_tab[y].args[data->y], instr, *data))
+		return (print_arg_error(*instr, data, data->y, 0));
+	if (g_op_tab[y].dir_size == 0)
+	{
+		instr->command_size += DIR_SIZE;
+		instr->w_args[data->y + 6] = DIR_SIZE;
+	}
+	else
+	{
+		instr->command_size += IND_SIZE;
+		instr->w_args[data->y + 6] = IND_SIZE;
+	}
+	instr->w_args[data->y] = T_DIR;
+	instr->w_args[data->y + 3] = DIR_CODE;
+	return (1);
 }
 
-int     ind_lexical_analysis (t_asmdata *data, t_node *instruction,t_head_lb labels, int y, int x)
+int	ind_lexical_analysis(t_asmdata *data, t_node *instr,
+		t_head_lb labels, int y)
 {
-    if (data->op_tb[data->y][x] == '+' || !(T_IND & g_op_tab[y].args[data->y]))
-        return (print_arg_error(*instruction, data, data->y, 0));
-    if (check_digit(data->op_tb[data->y]) && !(ft_isalpha(data->op_tb[data->y][x + 1]))) // !!!
-    {
-        instruction->arg[data->y] = ft_atoi(data->op_tb[data->y]);
-        instruction->w_args[data->y + 6] = 2;
-        instruction->w_args[data->y] = T_IND;
-        instruction->w_args[data->y + 3] = IND_CODE;
-        instruction->command_size += IND_SIZE;
-        return (1);
-    }
-    if (data->op_tb[data->y][x] == ':')
-    {
-        if (!check_ind(x + 1 + data->op_tb[data->y], g_op_tab[y].args[data->y], labels))
-            return (print_arg_error(*instruction, data, data->y, ((g_op_tab[y].args[data->y]) & T_DIR)));
-        instruction->w_args[data->y + 6] = 2;
-        instruction->w_args[data->y] = T_IND + T_LAB;
-        instruction->w_args[data->y + 3] = IND_CODE;
-        instruction->lb += (data->y == 2 ? 4 : data->y + 1);
-        instruction->command_size += IND_SIZE;
-    }
-    return (1);
+	if (data->op_tb[data->y][data->z] == '+' || !(T_IND & g_op_tab[y].args[data->y]))
+		return (print_arg_error(*instr, data, data->y, 0));
+	if (check_digit(data->op_tb[data->y])
+		&& !(ft_isalpha(data->op_tb[data->y][data->z + 1])))
+	{
+		instr->arg[data->y] = ft_atoi(data->op_tb[data->y]);
+		instr->w_args[data->y + 6] = 2;
+		instr->w_args[data->y] = T_IND;
+		instr->w_args[data->y + 3] = IND_CODE;
+		instr->command_size += IND_SIZE;
+		return (1);
+	}
+	if (data->op_tb[data->y][data->z] == ':')
+		ind_lb(data, labels, instr, y);
+	return (1);
+}
+
+int	ind_lb(t_asmdata *data, t_head_lb labels, t_node *instr, int y)
+{
+	if (!check_ind(data->z + 1 + data->op_tb[data->y],
+			g_op_tab[y].args[data->y], labels))
+		return (print_arg_error(*instr, data, data->y,
+				((g_op_tab[y].args[data->y]) & T_DIR)));
+	instr->w_args[data->y + 6] = 2;
+	instr->w_args[data->y] = T_IND + T_LAB;
+	instr->w_args[data->y + 3] = IND_CODE;
+	if (data->y == 2)
+		instr->lb += 4;
+	else
+		instr->lb += data->y + 1;
+	instr->command_size += IND_SIZE;
+	return (1);
 }

@@ -78,13 +78,14 @@ int	pars_chmp_nm_cm(t_asmdata *data, char *line)
 	free(tmp);
 	if (data->n == 1 && data->s && data->e && data->x == -1)
 	{
-		data->name = ft_strscpy(ft_strnew(PROG_NAME_LENGTH), line, data->s, data->e);
+		data->name = ft_strscpy(ft_strnew(data->e - data->s + 1), line, data->s, data->e);
 		if (data->name)
 			data->n = -1;
 	}
 	if (data->c == 1 && data->s && data->e && data->x == -1)
 	{
-		data->comment = ft_strscpy(ft_strnew(COMMENT_LENGTH), line, data->s, data->e);
+		data->comment = ft_strscpy(ft_strnew(data->e - data->s + 1),
+				line, data->s, data->e);
 		if (data->comment)
 			data->c = -1;
 	}

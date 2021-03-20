@@ -24,7 +24,7 @@
 # define HASH			0b000000100
 # define SPACE			0b000001000
 # define ZERO			0b000010000
-# define BUFF_SIZE 		1000
+# define BUFF_SIZE 		50
 # define CON_ST			4846
 
 # define MNS(c)			(c - '0')

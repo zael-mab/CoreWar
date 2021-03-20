@@ -87,9 +87,9 @@ void	search_for_labels_init(t_head_lb labels, t_node *instr, t_head *head)
 	}
 }
 
-int			xxxx(t_asmdata *data, t_node *instruct, t_head_lb labels, t_head *head);
+int	trt_cnd(t_asmdata *data, t_node *instruct, t_head_lb labels, t_head *head);
 
-int			pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata)		  //REG_NUMBER
+int	pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata)
 {
 	t_node	*instruct;
 
@@ -101,16 +101,15 @@ int			pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata)		  //R
 		sdata->x = -1;
 		while (instruct->data[++sdata->x])
 			if (instruct->data[sdata->x] < 'a' || instruct->data[sdata->x] > 'z')
-				break;
-		if (!(xxxx(sdata, instruct, labels, head)))
+				break ;
+		if (!(trt_cnd(sdata, instruct, labels, head)))
 			return (0);
 		instruct = instruct->next;
 	}
 	return (1);
 }
 
-
-int			xxxx(t_asmdata *data, t_node *instruct, t_head_lb labels, t_head *head)
+int	trt_cnd(t_asmdata *data, t_node *instruct, t_head_lb labels, t_head *head)
 {
 	int		x;
 

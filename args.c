@@ -43,29 +43,63 @@ int	pars_args(t_node *instr, t_asmdata *data, int y, t_head_lb labels)
 
 int	trt_arg(t_asmdata *data, t_node *instr, t_head_lb labels, int y)
 {
-	int		x;
-
-	x = -1;
+	data->z = -1;
 	if (ft_strlen(data->op_tb[data->y]) == 0)
 		return (print_arg_error(*instr, data, data->y, 0));
-	while (data->op_tb[data->y][++x])
+	while (data->op_tb[data->y][++data->z])
 	{
-		if (data->op_tb[data->y][x] == 'r'
-			&& ft_isdigit(data->op_tb[data->y][x + 1]))
+		if (data->op_tb[data->y][data->z] == 'r'
+			&& ft_isdigit(data->op_tb[data->y][data->z + 1]))
 			return (reg_lexical_analysis(data, instr, y));
-		if (data->op_tb[data->y][x] == 'r'
-			&& !ft_isdigit(data->op_tb[data->y][x + 1]))
+		if (data->op_tb[data->y][data->z] == 'r'
+			&& !ft_isdigit(data->op_tb[data->y][data->z + 1]))
 			return (0);
-		else if (data->op_tb[data->y][x] == '%'
-			&& data->op_tb[data->y][x + 1] == ':')
-			return (dirl_lexical_analysis(data, instr, labels, y, x));
-		else if (data->op_tb[data->y][x] == '%')
-			return (dir_lexical_analysis(data, instr, y, x));
-		else if (data->op_tb[data->y][x] == '+'
-			|| check_digit(data->op_tb[data->y]) || data->op_tb[data->y][x] == ':')
-			return (ind_lexical_analysis(data, instr, labels, y, x));
+		else if (data->op_tb[data->y][data->z] == '%'
+			&& data->op_tb[data->y][data->z + 1] == ':')
+			return (dirl_lexical_analysis(data, instr, labels, y));
+		else if (data->op_tb[data->y][data->z] == '%')
+			return (dir_lexical_analysis(data, instr, y));
+		else if (data->op_tb[data->y][data->z] == '+'
+			|| check_digit(data->op_tb[data->y]) || data->op_tb[data->y][data->z] == ':')
+			return (ind_lexical_analysis(data, instr, labels, y));
 		else
 			return (print_arg_error(*instr, data, data->y, 0));
 	}
 	return (1);
+}
+
+int	check_isdigit(char *tmp, int j)
+{
+	int	i;
+
+	i = 0;
+	while (i <= j)
+	{
+		if (ft_isdigit(tmp[i]) || tmp[i] == 95
+			|| (tmp[i] >= 97 && tmp[i] <= 122))
+			i++;
+		else
+			break ;
+	}
+	return (i);
+}
+
+t_label	*search_by_name(t_label *l, char *x)
+{
+	if (l == NULL)
+		return (NULL);
+	if (!ft_strcmp(l->data, x))
+		return (l);
+	else
+		return (search_by_name(l->next, x));
+}
+
+t_label	*search_by_pos(t_label *l, size_t x)
+{
+	if (l == NULL)
+		return (NULL);
+	if (l->operation_num == x)
+		return (l);
+	else
+		return (search_by_pos(l->next, x));
 }

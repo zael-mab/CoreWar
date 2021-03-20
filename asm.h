@@ -88,9 +88,9 @@ typedef struct      s_asmdata
     int             e;
     int             error;
     char            **op_tb;            //split the args[arg_num]!!
-    // int             p_ex_code;
     int             x;
     int             y;
+    int             z;
 }                   t_asmdata;
 
 
@@ -133,10 +133,11 @@ int         trt_arg(t_asmdata *data, t_node *instr, t_head_lb labels, int y);
 void        add_encodin_code(t_asmdata *sdata, t_node *instruct);
 void        init_encodin_byte(t_node *instr, int p, int shift);
 ////////////////////////////
-int         reg_lexical_analysis (t_asmdata *data, t_node *instruction, int y);
-int         dirl_lexical_analysis (t_asmdata *data, t_node *instruction,t_head_lb labels, int y, int x);
-int         dir_lexical_analysis (t_asmdata *data, t_node *instruction, int y, int x);
-int         ind_lexical_analysis (t_asmdata *data, t_node *instruction,t_head_lb labels, int y, int x);
+int         reg_lexical_analysis (t_asmdata *data, t_node *instr, int y);
+int         dirl_lexical_analysis (t_asmdata *data, t_node *instr,t_head_lb labels, int y);
+int         dir_lexical_analysis (t_asmdata *data, t_node *instr, int y);
+int         ind_lexical_analysis (t_asmdata *data, t_node *instr,t_head_lb labels, int y);
+int    	    ind_lb(t_asmdata *data, t_head_lb labels, t_node *instr, int y);
 //////////////////////////////
 int         check_reg(char *line, int arg, t_node *instru, t_asmdata data);
 int         check_dir_lebel(char *line, int arg, t_head_lb labels);

@@ -111,39 +111,3 @@ t_label	*insert_label(t_head_lb *head, void *data, int pos)
 		return (new_node);
 	return (NULL);
 }
-
-t_label	*search_by_name(t_label *l, char *x)
-{
-	if (l == NULL)
-		return (NULL);
-	if (!ft_strcmp(l->data, x))
-		return (l);
-	else
-		return (search_by_name(l->next, x));
-}
-
-t_label	*search_by_pos(t_label *l, size_t x)
-{
-	if (l == NULL)
-		return (NULL);
-	if (l->operation_num == x)
-		return (l);
-	else
-		return (search_by_pos(l->next, x));
-}
-
-int	check_isdigit(char *tmp, int j)
-{
-	int	i;
-
-	i = 0;
-	while (i <= j)
-	{
-		if (ft_isdigit(tmp[i]) || tmp[i] == 95
-			|| (tmp[i] >= 97 && tmp[i] <= 122))
-			i++;
-		else
-			break ;
-	}
-	return (i);
-}
