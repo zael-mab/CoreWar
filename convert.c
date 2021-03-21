@@ -12,6 +12,20 @@
 
 #include "asm.h"
 
+int	reverse_endian(int i)
+{
+	unsigned char	c1;
+	unsigned char	c2;
+	unsigned char	c3;
+	unsigned char	c4;
+
+	c1 = i;
+	c2 = i >> 8;
+	c3 = i >> 16;
+	c4 = i >> 24;
+	return (((int)c1 << 24) + ((int)c2 << 16) + ((int)c3 << 8) + c4);
+}
+
 void	writ_args(t_asmdata *data, t_node *cmd, int fd)
 {
 	data->x = -1;

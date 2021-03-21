@@ -12,58 +12,6 @@
 
 #include "asm.h"
 
-void	*list_get(t_head *head)
-{
-	t_node	*l;
-	char	*data;
-	int		i;
-
-	if (head->first == NULL)
-		return (NULL);
-	l = head->first;
-	data = l->data;
-	head->first = head->first->next;
-	head->l_size--;
-	i = -1;
-	if (l->arg_tab)
-	{
-		while (l->arg_tab[++i])
-			free(l->arg_tab[i]);
-		free(l->arg_tab);
-	}
-	free(l->data);
-	free(l);
-	return (data);
-}
-
-void	list_del_all (t_head *head)
-{
-	while (head->first != NULL)
-		list_get(head);
-}
-
-void	*list_get_lb(t_head_lb *head)
-{
-	t_label		*l;
-	char		*data;
-
-	if (head->first == NULL)
-		return (NULL);
-	l = head->first;
-	data = l->data;
-	head->first = head->first->next;
-	head->l_size--;
-	free(l->data);
-	free(l);
-	return (data);
-}
-
-void	list_del_all_lb(t_head_lb *head)
-{
-	while (head->first != NULL)
-		list_get_lb(head);
-}
-
 t_node	*insert_node(t_head *head, void *data)
 {
 	t_node	*new_node;
@@ -110,4 +58,24 @@ t_label	*insert_label(t_head_lb *head, void *data, int pos)
 	if (new_node->position + 1 == head->l_size)
 		return (new_node);
 	return (NULL);
+}
+
+t_label	*search_by_name(t_label *l, char *x)
+{
+	if (l == NULL)
+		return (NULL);
+	if (!ft_strcmp(l->data, x))
+		return (l);
+	else
+		return (search_by_name(l->next, x));
+}
+
+t_label	*search_by_pos(t_label *l, size_t x)
+{
+	if (l == NULL)
+		return (NULL);
+	if (l->operation_num == x)
+		return (l);
+	else
+		return (search_by_pos(l->next, x));
 }

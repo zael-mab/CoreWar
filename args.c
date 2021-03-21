@@ -12,7 +12,7 @@
 
 #include "asm.h"
 
-int	pars_args(t_node *instr, t_asmdata *data, int y, t_head_lb labels)
+int			pars_args(t_node *instr, t_asmdata *data, int y, t_head_lb labels)
 {
 	int		c;
 	char	*tmp;
@@ -20,9 +20,7 @@ int	pars_args(t_node *instr, t_asmdata *data, int y, t_head_lb labels)
 	instr->arg_tab = ft_strsplit(data->x + instr->data, SEPARATOR_CHAR);
 	data->op_tb = instr->arg_tab;
 	c = 0;
-	while (instr->data[++data->x])
-		if (instr->data[data->x] == ',')
-			c++;
+	c = count_separator_char(instr->data, data);
 	data->y = -1;
 	while (data->op_tb[++data->y])
 	{
@@ -39,6 +37,17 @@ int	pars_args(t_node *instr, t_asmdata *data, int y, t_head_lb labels)
 				2 + (c + 1 > g_op_tab[y].args_numb)));
 	instr->command_size += g_op_tab[y].encoding_code;
 	return (1);
+}
+
+int		count_separator_char(char *line, t_asmdata *data)
+{
+	int 	c;
+
+	c = 0;
+	while (line[++data->x])
+		if (line[data->x] == SEPARATOR_CHAR)
+			c++;
+	return(c);
 }
 
 int	trt_arg(t_asmdata *data, t_node *instr, t_head_lb labels, int y)
@@ -82,24 +91,4 @@ int	check_isdigit(char *tmp, int j)
 			break ;
 	}
 	return (i);
-}
-
-t_label	*search_by_name(t_label *l, char *x)
-{
-	if (l == NULL)
-		return (NULL);
-	if (!ft_strcmp(l->data, x))
-		return (l);
-	else
-		return (search_by_name(l->next, x));
-}
-
-t_label	*search_by_pos(t_label *l, size_t x)
-{
-	if (l == NULL)
-		return (NULL);
-	if (l->operation_num == x)
-		return (l);
-	else
-		return (search_by_pos(l->next, x));
 }

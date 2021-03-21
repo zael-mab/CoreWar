@@ -12,7 +12,7 @@
 
 #include "asm.h"
 
-int	check_dir(char *line, int arg, t_node *instr, t_asmdata data)
+int			check_dir(char *line, int arg, t_node *instr, t_asmdata data)
 {
 	int		x;
 
@@ -25,7 +25,7 @@ int	check_dir(char *line, int arg, t_node *instr, t_asmdata data)
 	return (1);
 }
 
-int	check_ind(char *line, int arg, t_head_lb labels)
+int			check_ind(char *line, int arg, t_head_lb labels)
 {
 	char	*tmp;
 	t_label	*l;
@@ -38,7 +38,7 @@ int	check_ind(char *line, int arg, t_head_lb labels)
 	return (0);
 }
 
-int	check_reg(char *line, int arg, t_node *instru, t_asmdata data)
+int			check_reg(char *line, int arg, t_node *instru, t_asmdata data)
 {
 	char	*tmp;
 	int		i;
@@ -59,7 +59,7 @@ int	check_reg(char *line, int arg, t_node *instru, t_asmdata data)
 	return (0);
 }
 
-int	check_dir_lebel(char *line, int arg, t_head_lb labels)
+int			check_dir_lebel(char *line, int arg, t_head_lb labels)
 {
 	char	*tmp;
 	t_label	*l;
@@ -72,7 +72,7 @@ int	check_dir_lebel(char *line, int arg, t_head_lb labels)
 	return (0);
 }
 
-int	check_digit(char *line)
+int			check_digit(char *line)
 {
 	int		x;
 

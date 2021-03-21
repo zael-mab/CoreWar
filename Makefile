@@ -15,14 +15,16 @@ NAME = asm
 SRC = 	main.c\
 		link_lst.c\
 		op.c\
-		pars.c\
+		pars_name_com.c\
 		check_args.c\
 		args.c\
 		convert.c\
 		pars_instr.c\
-		xxx.c\
+		pars_args_lbl.c\
 		set_data.c\
-		m_error.c
+		m_error.c\
+		set_nc_encodin.c\
+		clean.c
 OBJ = $(SRC:.c=.o)
 
 HEADER = asm.h

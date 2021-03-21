@@ -91,7 +91,7 @@ int	ind_lexical_analysis(t_asmdata *data, t_node *instr,
 		return (1);
 	}
 	if (data->op_tb[data->y][data->z] == ':')
-		ind_lb(data, labels, instr, y);
+		return(ind_lb(data, labels, instr, y));
 	return (1);
 }
 
