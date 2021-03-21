@@ -6,13 +6,13 @@
 /*   By: zael-mab <zael-mab@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/28 10:48:04 by zael-mab          #+#    #+#             */
-/*   Updated: 2021/03/20 18:01:56 by zael-mab         ###   ########.fr       */
+/*   Updated: 2021/03/21 15:14:42 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "asm.h"
 
-int	main(int ac, char **av)
+int				main(int ac, char **av)
 {
 	int			fd;
 	t_head		*head;
@@ -39,26 +39,26 @@ int	main(int ac, char **av)
 		ft_printf("Too many files!\n");
 }
 
-int	check_extention(char *line, t_asmdata *data)
+int				check_extention(char *line, t_asmdata *data)
 {
 	int			j;
 	char		*tmp;
 
 	j = ft_strlen(line);
 	while (--j >= 0)
-	{
 		if (line[j] == '.' && line[j + 1] == 's' && line[j + 2] == '\0')
 		{
-			tmp = ft_strscpy(ft_strnew(j), line, 0, j + 1);
-			data->file_name = ft_strjoin(tmp, ".cor");
+			data->file_name = ft_strsub(line, 0, j);
+			tmp = ft_strjoin(data->file_name, ".cor");
+			free(data->file_name);
+			data->file_name = ft_strdup(tmp);
 			free(tmp);
 			return (1);
 		}
-	}
 	return (0);
 }
 
-void	f_assembler(t_head *head, t_asmdata *data, int fd)
+void			f_assembler(t_head *head, t_asmdata *data, int fd)
 {
 	t_head_lb	*labels;
 
@@ -78,7 +78,7 @@ void	f_assembler(t_head *head, t_asmdata *data, int fd)
 	free(labels);
 }
 
-int	read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
+int				read_set_data(t_asmdata *data, t_head *head, t_head_lb *labels)
 {
 	if (data->n == -1 && data->c == -1 && !check_champion_name_comment(data))
 		return (0);

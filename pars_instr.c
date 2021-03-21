@@ -1,18 +1,18 @@
 /* ************************************************************************** */
-/*																			  */
-/*														  :::	   ::::::::   */
-/*	 pars_instr.c										:+:		 :+:	:+:   */
-/*													  +:+ +:+		  +:+	  */
-/*	 By: zael-mab <marvin@42.fr>					+#+  +:+	   +#+		  */
-/*												  +#+#+#+#+#+	+#+			  */
-/*	 Created: 2021/03/19 18:54:50 by zael-mab		   #+#	  #+#			  */
-/*	 Updated: 2021/03/19 18:54:50 by zael-mab		  ###	########.fr		  */
-/*																			  */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pars_instr.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/03/21 15:37:34 by zael-mab          #+#    #+#             */
+/*   Updated: 2021/03/21 15:38:52 by zael-mab         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "asm.h"
 
-int	pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata)
+int			pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata)
 {
 	t_node	*instruct;
 
@@ -23,7 +23,8 @@ int	pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata)
 	{
 		sdata->x = -1;
 		while (instruct->data[++sdata->x])
-			if (instruct->data[sdata->x] < 'a' || instruct->data[sdata->x] > 'z')
+			if (instruct->data[sdata->x] < 'a'
+					|| instruct->data[sdata->x] > 'z')
 				break ;
 		if (!(trt_cmd(sdata, instruct, labels, head)))
 			return (0);
@@ -32,11 +33,12 @@ int	pars_instructions(t_head *head, t_head_lb labels, t_asmdata *sdata)
 	return (1);
 }
 
-int	trt_cmd(t_asmdata *data, t_node *instruct, t_head_lb labels, t_head *head)
+int			trt_cmd(t_asmdata *data, t_node *instruct, t_head_lb labels,
+		t_head *head)
 {
 	int		x;
 
-	if (data->x == 0 && ft_strlen (instruct->data) > 0)
+	if (data->x == 0 && ft_strlen(instruct->data) > 0)
 		return (print_oper_error(instruct->data, data));
 	if (data->x > 0)
 	{
@@ -50,7 +52,8 @@ int	trt_cmd(t_asmdata *data, t_node *instruct, t_head_lb labels, t_head *head)
 	return (1);
 }
 
-int	check_oper(t_node *instr, t_head_lb labels, t_head *head, t_asmdata *data)
+int			check_oper(t_node *instr, t_head_lb labels, t_head *head,
+		t_asmdata *data)
 {
 	int		x;
 	char	*tmp;
@@ -75,7 +78,8 @@ int	check_oper(t_node *instr, t_head_lb labels, t_head *head, t_asmdata *data)
 	return (x);
 }
 
-void	search_for_labels_init(t_head_lb labels, t_node *instr, t_head *head)
+void		search_for_labels_init(t_head_lb labels, t_node *instr,
+		t_head *head)
 {
 	t_label	*l;
 
@@ -93,7 +97,7 @@ void	search_for_labels_init(t_head_lb labels, t_node *instr, t_head *head)
 	}
 }
 
-void	init_oper_data(t_node *instr, t_asmdata *data, int x)
+void		init_oper_data(t_node *instr, t_asmdata *data, int x)
 {
 	instr->command_size += 1;
 	if (x == 17)

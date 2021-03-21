@@ -1,18 +1,18 @@
 /* ************************************************************************** */
-/*																			  */
-/*														  :::	   ::::::::   */
-/*	 pars_name_com.c									:+:		 :+:	:+:   */
-/*													  +:+ +:+		  +:+	  */
-/*	 By: zael-mab <zael-mab@student.42.fr>			+#+  +:+	   +#+		  */
-/*												  +#+#+#+#+#+	+#+			  */
-/*	 Created: 2021/01/26 11:48:24 by zael-mab		   #+#	  #+#			  */
-/*	 Updated: 2021/03/19 18:35:57 by zael-mab		  ###	########.fr		  */
-/*																			  */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pars_name_com.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/03/21 15:40:32 by zael-mab          #+#    #+#             */
+/*   Updated: 2021/03/21 15:40:36 by zael-mab         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "asm.h"
 
-int	check_champion (char *line, t_asmdata *sdata)
+int			check_champion(char *line, t_asmdata *sdata)
 {
 	int		j;
 	char	*tmp;
@@ -33,19 +33,18 @@ int	check_champion (char *line, t_asmdata *sdata)
 	}
 	tmp = avoid_comment(ft_strtrim(sdata->e + line));
 	j = ft_strlen(tmp);
-	free (tmp);
+	free(tmp);
 	if (sdata->e > 0 && (sdata->n == 1 || sdata->c == 1) && j != 0)
 		return (0);
 	return (pars_chmp_nm_cm(sdata, line));
 }
 
-int	search_for_exention(char *line, t_asmdata *data, int j)
+int			search_for_exention(char *line, t_asmdata *data, int j)
 {
 	while (line[++j])
 		if (line[j] != ' ' && line[j] != '\t')
 			break ;
 	if (line[j] == '.')
-	{
 		if (cmp_nm_cm(j + line) > 0)
 		{
 			if (data->s && !data->e)
@@ -53,13 +52,12 @@ int	search_for_exention(char *line, t_asmdata *data, int j)
 			data->e = 0;
 			data->s = 0;
 			data->x = -1;
-			return (set_jumper (data, line, j));
+			return (set_jumper(data, line, j));
 		}
-	}
 	return (-1);
 }
 
-int 	set_jumper(t_asmdata *data, char *line, int j)
+int			set_jumper(t_asmdata *data, char *line, int j)
 {
 	if ((cmp_nm_cm(j + line) == 1 && data->n == -1)
 		|| (cmp_nm_cm(j + line) == 2 && data->c == -1))
@@ -75,20 +73,18 @@ int 	set_jumper(t_asmdata *data, char *line, int j)
 	return (j);
 }
 
-char	*avoid_comment(char *line)
+char		*avoid_comment(char *line)
 {
 	int		i;
 	char	*str;
 
 	i = -1;
 	while (line[++i])
-	{
 		if (line[i] == COMMENT_CHAR || line[i] == ALT_COMMENT_CHAR)
 		{
-			str = ft_strncpy(ft_strnew (i), line, i);
-			free (line);
+			str = ft_strncpy(ft_strnew(i), line, i);
+			free(line);
 			return (str);
 		}
-	}
 	return (line);
 }

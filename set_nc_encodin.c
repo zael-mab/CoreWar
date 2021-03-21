@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_nc_encodin.c									:+:      :+:    :+:   */
+/*   set_nc_encodin.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zael-mab <zael-mab@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/28 10:48:04 by zael-mab          #+#    #+#             */
-/*   Updated: 2021/03/20 18:01:56 by zael-mab         ###   ########.fr       */
+/*   Created: 2021/03/21 15:18:04 by zael-mab          #+#    #+#             */
+/*   Updated: 2021/03/21 15:18:38 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "asm.h"
 
-int	        pars_chmp_nm_cm(t_asmdata *data, char *line)
+int			pars_chmp_nm_cm(t_asmdata *data, char *line)
 {
 	if (data->n == 1 && data->s && data->e && data->x == -1)
 	{
-		data->name = ft_strscpy(ft_strnew(data->e - data->s), line, data->s, data->e); // shiiit
+		data->name = ft_strsub(line, data->s, data->e - data->s - 1);
 		if (data->name)
 			data->n = -1;
 	}
 	if (data->c == 1 && data->s && data->e && data->x == -1)
 	{
-		data->comment = ft_strscpy(ft_strnew(data->e - data->s),
-				line, data->s, data->e);
+		data->comment = ft_strsub(line, data->s, data->e - data->s - 1);
 		if (data->comment)
 			data->c = -1;
 	}
@@ -33,12 +32,12 @@ int	        pars_chmp_nm_cm(t_asmdata *data, char *line)
 		if (data->n == 1)
 			return (join(line, data, &data->name, PROG_NAME_LENGTH));
 		if (data->c == 1)
-			return (join (line, data, &data->comment, COMMENT_LENGTH));
+			return (join(line, data, &data->comment, COMMENT_LENGTH));
 	}
 	return (1);
 }
 
-int	        join(char *line, t_asmdata *sdata, char **cmd, int v)
+int			join(char *line, t_asmdata *sdata, char **cmd, int v)
 {
 	char	*t;
 
@@ -51,19 +50,19 @@ int	        join(char *line, t_asmdata *sdata, char **cmd, int v)
 	}
 	if (sdata->x > 0 && !sdata->e)
 	{
-		t = ft_strjoin (*cmd, line);
+		t = ft_strjoin(*cmd, line);
 		free(*cmd);
-		*cmd = ft_strjoin (t, "\n");
+		*cmd = ft_strjoin(t, "\n");
 		free(t);
 	}
 	join_last_line(sdata, cmd, line);
 	return (1);
 }
 
-void	    join_last_line(t_asmdata *data, char **cmd, char *line)
+void		join_last_line(t_asmdata *data, char **cmd, char *line)
 {
-	char    *tmp;
-	char    *t;
+	char	*tmp;
+	char	*t;
 
 	if (data->x > 0 && data->e)
 	{
@@ -80,7 +79,7 @@ void	    join_last_line(t_asmdata *data, char **cmd, char *line)
 	}
 }
 
-void	add_encodin_code(t_asmdata *sdata, t_node *instruct)
+void		add_encodin_code(t_asmdata *sdata, t_node *instruct)
 {
 	sdata->x = 2;
 	while (++sdata->x < 6)
@@ -94,7 +93,7 @@ void	add_encodin_code(t_asmdata *sdata, t_node *instruct)
 	}
 }
 
-void	init_encodin_byte(t_node *instr, int p, int shift)
+void		init_encodin_byte(t_node *instr, int p, int shift)
 {
 	if (instr->w_args[p] == REG_CODE)
 		instr->encodin += REG_CODE << shift;

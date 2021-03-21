@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			  */
-/*														  :::	   ::::::::   */
-/*	 args.c												:+:		 :+:	:+:   */
-/*													  +:+ +:+		  +:+	  */
-/*	 By: zael-mab <marvin@42.fr>					+#+  +:+	   +#+		  */
-/*												  +#+#+#+#+#+	+#+			  */
-/*	 Created: 2021/02/21 17:44:27 by zael-mab		   #+#	  #+#			  */
-/*	 Updated: 2021/02/21 17:44:35 by zael-mab		  ###	########.fr		  */
-/*																			  */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   args.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/03/21 14:51:16 by zael-mab          #+#    #+#             */
+/*   Updated: 2021/03/21 14:55:29 by zael-mab         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "asm.h"
@@ -33,24 +33,25 @@ int			pars_args(t_node *instr, t_asmdata *data, int y, t_head_lb labels)
 			return (0);
 	}
 	if (data->y != g_op_tab[y].args_numb || c + 1 != g_op_tab[y].args_numb)
-		return (print_arg_error(*instr, data, data->y,
-				2 + (c + 1 > g_op_tab[y].args_numb)));
-	instr->command_size += g_op_tab[y].encoding_code;
+		return (print_arg_error(*instr,
+					data, data->y, 2 + (c + 1 > g_op_tab[y].args_numb)));
+	else
+		instr->command_size += g_op_tab[y].encoding_code;
 	return (1);
 }
 
-int		count_separator_char(char *line, t_asmdata *data)
+int			count_separator_char(char *line, t_asmdata *data)
 {
-	int 	c;
+	int		c;
 
 	c = 0;
 	while (line[++data->x])
 		if (line[data->x] == SEPARATOR_CHAR)
 			c++;
-	return(c);
+	return (c);
 }
 
-int	trt_arg(t_asmdata *data, t_node *instr, t_head_lb labels, int y)
+int			trt_arg(t_asmdata *data, t_node *instr, t_head_lb labels, int y)
 {
 	data->z = -1;
 	if (ft_strlen(data->op_tb[data->y]) == 0)
@@ -69,7 +70,8 @@ int	trt_arg(t_asmdata *data, t_node *instr, t_head_lb labels, int y)
 		else if (data->op_tb[data->y][data->z] == '%')
 			return (dir_lexical_analysis(data, instr, y));
 		else if (data->op_tb[data->y][data->z] == '+'
-			|| check_digit(data->op_tb[data->y]) || data->op_tb[data->y][data->z] == ':')
+				|| check_digit(data->op_tb[data->y])
+				|| data->op_tb[data->y][data->z] == ':')
 			return (ind_lexical_analysis(data, instr, labels, y));
 		else
 			return (print_arg_error(*instr, data, data->y, 0));
@@ -77,9 +79,9 @@ int	trt_arg(t_asmdata *data, t_node *instr, t_head_lb labels, int y)
 	return (1);
 }
 
-int	check_isdigit(char *tmp, int j)
+int			check_isdigit(char *tmp, int j)
 {
-	int	i;
+	int		i;
 
 	i = 0;
 	while (i <= j)

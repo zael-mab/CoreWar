@@ -6,7 +6,7 @@
 /*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/29 22:22:07 by zael-mab          #+#    #+#             */
-/*   Updated: 2021/03/15 15:27:29 by zael-mab         ###   ########.fr       */
+/*   Updated: 2021/03/21 15:47:44 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,14 @@
 # include <stdlib.h>
 # include <stdarg.h>
 
-# define NOTHING		0b000000000
-# define MINES			0b000000001
-# define PLUS			0b000000010
-# define HASH			0b000000100
-# define SPACE			0b000001000
-# define ZERO			0b000010000
-# define BUFF_SIZE 		50
-# define CON_ST			4846
-
-# define MNS(c)			(c - '0')
-# define PLS(c)			(c + '0')
+# define NOTHING		0
+# define MINES			1
+# define PLUS			2
+# define HASH			4
+# define SPACE			16
+# define ZERO			32
+# define FD_MAX 		4864
+# define BUFF_SIZE 		100
 
 typedef struct			s_data
 {

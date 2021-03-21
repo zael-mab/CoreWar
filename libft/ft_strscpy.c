@@ -6,7 +6,7 @@
 /*   By: zael-mab <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 15:40:31 by zael-mab          #+#    #+#             */
-/*   Updated: 2021/02/03 15:42:49 by zael-mab         ###   ########.fr       */
+/*   Updated: 2021/03/21 15:51:15 by zael-mab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,4 +26,3 @@ char	*ft_strscpy(char *dst, const char *src, size_t s, size_t len)
 		dst[j++] = '\0';
 	return (dst);
 }
-
